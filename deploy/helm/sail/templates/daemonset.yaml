@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: sail-proxy
+  labels:
+    k8s-app: proxy
+spec:
+  selector:
+    matchLabels:
+      name: sail-proxy
+  template:
+    metadata:
+      labels:
+        name: sail-proxy
+    spec:
+      containers:
+      - name: sail-proxy
+        image: inendless/sail.proxy:1.0.0
+        ports:
+         - containerPort: 80
+           hostPort: 80
+           name: http
+           protocol: TCP
