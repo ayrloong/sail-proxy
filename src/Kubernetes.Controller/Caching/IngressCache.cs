@@ -44,7 +44,7 @@ public class IngressCache : ICache
         var ingressClassName = ingressClass.Name();
         lock (_sync)
         {
-            if (eventType == WatchEventType.Added || eventType == WatchEventType.Modified)
+            if (eventType is WatchEventType.Added or WatchEventType.Modified)
             {
                 _ingressClassData[ingressClassName] = new IngressClassData(ingressClass);
             }

@@ -1,0 +1,16 @@
+{{- if .Values.controller.ingressController.enabled -}}
+apiVersion: networking.k8s.io/v1
+kind: IngressClass
+metadata:
+  name: {{ .Values.ingressController.ingressClass }}
+  {{- if .Values.ingressController.ingressClassAnnotations }}
+  annotations:
+  {{- range $key, $value := .Values.ingressController.ingressClassAnnotations }}
+    {{ $key }}: {{ $value | quote }}
+  {{- end }}
+  {{- end }}
+  labels:
+  {{- include "sail.metaLabels" . | nindent 4 }}
+spec:
+  controller: {{ .Values.controller.ingressController.controllerValue }}
+{{- end }}

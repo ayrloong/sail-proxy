@@ -1,10 +1,10 @@
-﻿using Microsoft.Extensions.Hosting;
+﻿using System.Text;
+using System.Text.Json;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Kubernetes.Controller.Hosting;
 using Microsoft.Kubernetes.Controller.Rate;
-using System.Text;
-using System.Text.Json;
 
 namespace Sail.Kubernetes.Protocol;
 public class Receiver: BackgroundHostedService
@@ -39,14 +39,10 @@ public class Receiver: BackgroundHostedService
 
 #pragma warning disable CA1303 // Do not pass literals as localized parameters
             Logger.LogInformation("Connecting with {ControllerUrl}", _options.ControllerUrl.ToString());
-
             try
             {
-#if NET
+                
                 using var stream = await client.GetStreamAsync(_options.ControllerUrl, cancellationToken).ConfigureAwait(false);
-#else
-                using var stream = await client.GetStreamAsync(_options.ControllerUrl).ConfigureAwait(false);
-#endif
                 using var reader = new StreamReader(stream, Encoding.UTF8, leaveOpen: true);
                 using var cancellation = cancellationToken.Register(stream.Close);
                 while (true)

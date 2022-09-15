@@ -47,8 +47,8 @@ public sealed record ClusterConfig
     /// <summary>
     /// config for Canary
     /// </summary>
-    public CanaryConfig Canary { get; set; }
-    
+    public CanaryConfig? Canary { get; init; }
+
     /// <summary>
     /// The set of destinations associated with this cluster.
     /// </summary>
@@ -67,7 +67,7 @@ public sealed record ClusterConfig
         }
 
         return EqualsExcludingDestinations(other)
-            && CollectionEqualityHelper.Equals(Destinations, other.Destinations);
+               && CollectionEqualityHelper.Equals(Destinations, other.Destinations);
     }
 
     internal bool EqualsExcludingDestinations(ClusterConfig other)
@@ -78,13 +78,13 @@ public sealed record ClusterConfig
         }
 
         return string.Equals(ClusterId, other.ClusterId, StringComparison.OrdinalIgnoreCase)
-            && string.Equals(LoadBalancingPolicy, other.LoadBalancingPolicy, StringComparison.OrdinalIgnoreCase)
-            // CS0252 warning only shows up in VS https://github.com/dotnet/roslyn/issues/49302
-            && SessionAffinity == other.SessionAffinity
-            && HealthCheck == other.HealthCheck
-            && HttpClient == other.HttpClient
-            && HttpRequest == other.HttpRequest
-            && CaseSensitiveEqualHelper.Equals(Metadata, other.Metadata);
+               && string.Equals(LoadBalancingPolicy, other.LoadBalancingPolicy, StringComparison.OrdinalIgnoreCase)
+               // CS0252 warning only shows up in VS https://github.com/dotnet/roslyn/issues/49302
+               && SessionAffinity == other.SessionAffinity
+               && HealthCheck == other.HealthCheck
+               && HttpClient == other.HttpClient
+               && HttpRequest == other.HttpRequest
+               && CaseSensitiveEqualHelper.Equals(Metadata, other.Metadata);
     }
 
     public override int GetHashCode()

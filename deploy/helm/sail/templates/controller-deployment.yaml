@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: ingress-yarp-controller
+  name: yarp-controller
+  namespace: yarp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ingress-yarp-controller
+  template:
+    metadata:
+      labels:
+        app: ingress-yarp-controller
+    spec:
+      containers:
+      - name: yarp-controller
+        imagePullPolicy: IfNotPresent
+        image: inendless/yarp-monitor:1.0
+        ports:
+        - containerPort: 8000
+          name: api
+          protocol: TCP
+        env:
+        - name: ASPNETCORE_URLS
+          value: http://*:8000
+        volumeMounts:
+          - name: config
+            readOnly: true
+            mountPath: /app/config
+      volumes:
+        - name: config
+          configMap:
+            name: yarp-config
+      serviceAccountName: yarp-serviceaccount

@@ -1,6 +1,6 @@
 using Serilog;
-using Serilog.Sinks.SystemConsole.Themes;
 using Sail.Kubernetes.Protocol;
+using Serilog.Sinks.SystemConsole.Themes;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 

@@ -9,7 +9,6 @@ internal sealed class CanaryMiddleware
 {
     private readonly RequestDelegate _next;
     private readonly IProxyStateLookup _lookup;
-
     public CanaryMiddleware(RequestDelegate next, IProxyStateLookup lookup)
     {
         _next = next;
@@ -20,12 +19,12 @@ internal sealed class CanaryMiddleware
     {
         var proxyFeature = context.GetReverseProxyFeature();
         var canary = proxyFeature.Cluster.Config.Canary;
-
+        
         if (!canary.Enabled ?? false)
         {
             return _next(context);
         }
-
+        
         var customHeader = canary.CustomHeader;
         var customHeaderValue = canary.CustomHeaderValue;
         if (!string.IsNullOrEmpty(customHeader))
@@ -44,7 +43,7 @@ internal sealed class CanaryMiddleware
         {
             context.ReassignProxyRequest(cluster);
         }
-
+        
         return _next(context);
     }
 }

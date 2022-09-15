@@ -1,7 +1,7 @@
-﻿using System.Collections.Immutable;
-using k8s;
+﻿using k8s;
 using k8s.Models;
 using Microsoft.Kubernetes;
+using System.Collections.Immutable;
 using Sail.Kubernetes.Controller.Services;
 
 namespace Sail.Kubernetes.Controller.Caching;
@@ -11,9 +11,7 @@ public class NamespaceCache
     private readonly object _sync = new object();
 
     private readonly Dictionary<string, ImmutableList<string>> _ingressToServiceNames = new();
-
     private readonly Dictionary<string, ImmutableList<string>> _serviceToIngressNames = new();
-
     private readonly Dictionary<string, IngressData> _ingressData = new();
     private readonly Dictionary<string, ServiceData> _serviceData = new();
     private readonly Dictionary<string, Endpoints> _endpointsData = new();
@@ -27,7 +25,7 @@ public class NamespaceCache
 
         var serviceNames = ImmutableList<string>.Empty;
 
-        if (eventType == WatchEventType.Added || eventType == WatchEventType.Modified)
+        if (eventType is WatchEventType.Added or WatchEventType.Modified)
         {
             // If the ingress exists, list out the related services
             var spec = ingress.Spec;
@@ -58,7 +56,7 @@ public class NamespaceCache
         lock (_sync)
         {
             var serviceNamesPrevious = ImmutableList<string>.Empty;
-            if (eventType == WatchEventType.Added || eventType == WatchEventType.Modified)
+            if (eventType is WatchEventType.Added or WatchEventType.Modified)
             {
                 // If the ingress exists then remember details
 
