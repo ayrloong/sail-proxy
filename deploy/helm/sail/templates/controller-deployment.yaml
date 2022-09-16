@@ -1,37 +1,61 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  name: {{ include "sail.fullname" . }}
   labels:
-    app: ingress-yarp-controller
-  name: yarp-controller
-  namespace: yarp
+    {{- include "sail.labels" . | nindent 4 }}
 spec:
-  replicas: 1
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
   selector:
     matchLabels:
-      app: ingress-yarp-controller
+      {{- include "nginx.selectorLabels" . | nindent 6 }}
   template:
     metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       labels:
-        app: ingress-yarp-controller
+        {{- include "nginx.selectorLabels" . | nindent 8 }}
     spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "nginx.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
-      - name: yarp-controller
-        imagePullPolicy: IfNotPresent
-        image: inendless/yarp-monitor:1.0
-        ports:
-        - containerPort: 8000
-          name: api
-          protocol: TCP
-        env:
-        - name: ASPNETCORE_URLS
-          value: http://*:8000
-        volumeMounts:
-          - name: config
-            readOnly: true
-            mountPath: /app/config
-      volumes:
-        - name: config
-          configMap:
-            name: yarp-config
-      serviceAccountName: yarp-serviceaccount
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
