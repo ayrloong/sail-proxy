@@ -6,13 +6,9 @@
 // regenerated.
 // </auto-generated>
 using k8s;
-using k8s.Autorest;
 using k8s.Models;
-using System;
+using k8s.Autorest;
 using System.Collections.Generic;
-using System.Net;
-using System.Net.Http;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 

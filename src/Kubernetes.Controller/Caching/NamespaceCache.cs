@@ -8,7 +8,7 @@ namespace Sail.Kubernetes.Controller.Caching;
 
 public class NamespaceCache
 {
-    private readonly object _sync = new object();
+    private readonly object _sync = new();
 
     private readonly Dictionary<string, ImmutableList<string>> _ingressToServiceNames = new();
     private readonly Dictionary<string, ImmutableList<string>> _serviceToIngressNames = new();

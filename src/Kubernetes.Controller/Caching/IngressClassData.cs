@@ -6,12 +6,7 @@ public struct IngressClassData
 {
     public IngressClassData(V1IngressClass ingressClass)
     {
-        if (ingressClass is null)
-        {
-            throw new ArgumentNullException(nameof(ingressClass));
-        }
-
-        IngressClass = ingressClass;
+        IngressClass = ingressClass ?? throw new ArgumentNullException(nameof(ingressClass));
         IsDefault = GetDefaultAnnotation(ingressClass);
     }
 

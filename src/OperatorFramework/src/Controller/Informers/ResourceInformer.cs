@@ -374,17 +374,12 @@ namespace Microsoft.Kubernetes.Controller.Informers
                 _cache.Remove(NamespacedName.From(item));
             }
 
-            if (watchEventType == WatchEventType.Added ||
-                watchEventType == WatchEventType.Modified ||
-                watchEventType == WatchEventType.Deleted ||
-                watchEventType == WatchEventType.Bookmark)
+            if (watchEventType is WatchEventType.Added or WatchEventType.Modified or WatchEventType.Deleted or WatchEventType.Bookmark)
             {
                 _lastResourceVersion = item.ResourceVersion();
             }
 
-            if (watchEventType == WatchEventType.Added ||
-                watchEventType == WatchEventType.Modified ||
-                watchEventType == WatchEventType.Deleted)
+            if (watchEventType is WatchEventType.Added or WatchEventType.Modified or WatchEventType.Deleted)
             {
                 InvokeRegistrationCallbacks(watchEventType, item);
             }

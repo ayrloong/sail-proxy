@@ -1,0 +1,30 @@
+{{- if .Values.controller.service.enabled -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "sail.controller.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  type: {{ .Values.controller.service.type }}
+{{- if .Values.controller.service.clusterIP }}
+  clusterIP: {{ .Values.controller.service.clusterIP }}
+{{- end }}
+{{- if .Values.controller.service.externalIPs }}
+  externalIPs: {{ toYaml .Values.controller.service.externalIPs | nindent 4 }}
+{{- end }}
+{{- if .Values.controller.service.loadBalancerIP }}
+  loadBalancerIP: {{ .Values.controller.service.loadBalancerIP }}
+{{- end }}  
+  ports:
+  - name: http
+    port: {{ .Values.controller.service.ports.http }}
+    protocol: TCP
+    targetPort: {{ .Values.controller.service.targetPorts.http }}
+  - name: https
+    port: {{ .Values.controller.service.ports.https }}
+    protocol: TCP
+    targetPort: {{ .Values.controller.service.targetPorts.https }}
+  selector:
+    {{- include "sail.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: controller
+{{- end}}

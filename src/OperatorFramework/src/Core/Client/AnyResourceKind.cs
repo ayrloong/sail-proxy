@@ -9,15 +9,12 @@
 using k8s;
 using k8s.Autorest;
 using k8s.Models;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Rest.Serialization;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Http;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -74,22 +71,22 @@ public class AnyResourceKind : IAnyResourceKind
         }
 
         var url = Pattern(group, namespaceParameter);
-        url = url.Replace("{group}", System.Uri.EscapeDataString(group));
-        url = url.Replace("{version}", System.Uri.EscapeDataString(version));
-        url = url.Replace("{namespace}", System.Uri.EscapeDataString(namespaceParameter));
-        url = url.Replace("{plural}", System.Uri.EscapeDataString(plural));
+        url = url.Replace("{group}", Uri.EscapeDataString(group));
+        url = url.Replace("{version}", Uri.EscapeDataString(version));
+        url = url.Replace("{namespace}", Uri.EscapeDataString(namespaceParameter));
+        url = url.Replace("{plural}", Uri.EscapeDataString(plural));
         var queryParameters = new List<string>();
         if (dryRun is not null)
         {
-            queryParameters.Add(string.Format("dryRun={0}", System.Uri.EscapeDataString(dryRun)));
+            queryParameters.Add($"dryRun={Uri.EscapeDataString(dryRun)}");
         }
         if (fieldManager is not null)
         {
-            queryParameters.Add(string.Format("fieldManager={0}", System.Uri.EscapeDataString(fieldManager)));
+            queryParameters.Add($"fieldManager={Uri.EscapeDataString(fieldManager)}");
         }
         if (pretty is not null)
         {
-            queryParameters.Add(string.Format("pretty={0}", System.Uri.EscapeDataString(pretty)));
+            queryParameters.Add($"pretty={Uri.EscapeDataString(pretty)}");
         }
         if (queryParameters.Count > 0)
         {
@@ -130,27 +127,29 @@ public class AnyResourceKind : IAnyResourceKind
             throw new ArgumentNullException();
         }
         var url = Pattern(group, namespaceParameter) + "/{name}";
-        url = url.Replace("{group}", System.Uri.EscapeDataString(group));
-        url = url.Replace("{version}", System.Uri.EscapeDataString(version));
-        url = url.Replace("{namespace}", System.Uri.EscapeDataString(namespaceParameter));
-        url = url.Replace("{plural}", System.Uri.EscapeDataString(plural));
-        url = url.Replace("{name}", System.Uri.EscapeDataString(name));
+        url = url.Replace("{group}", Uri.EscapeDataString(group));
+        url = url.Replace("{version}", Uri.EscapeDataString(version));
+        url = url.Replace("{namespace}", Uri.EscapeDataString(namespaceParameter));
+        url = url.Replace("{plural}", Uri.EscapeDataString(plural));
+        url = url.Replace("{name}", Uri.EscapeDataString(name));
         var queryParameters = new List<string>();
         if (gracePeriodSeconds is not null)
         {
-            queryParameters.Add(string.Format("gracePeriodSeconds={0}", System.Uri.EscapeDataString(JsonConvert.SerializeObject(gracePeriodSeconds).Trim('"'))));
+            queryParameters.Add(
+                $"gracePeriodSeconds={Uri.EscapeDataString(JsonConvert.SerializeObject(gracePeriodSeconds).Trim('"'))}");
         }
         if (orphanDependents is not null)
         {
-            queryParameters.Add(string.Format("orphanDependents={0}", System.Uri.EscapeDataString(JsonConvert.SerializeObject(orphanDependents).Trim('"'))));
+            queryParameters.Add(
+                $"orphanDependents={Uri.EscapeDataString(JsonConvert.SerializeObject(orphanDependents).Trim('"'))}");
         }
         if (propagationPolicy is not null)
         {
-            queryParameters.Add(string.Format("propagationPolicy={0}", System.Uri.EscapeDataString(propagationPolicy)));
+            queryParameters.Add($"propagationPolicy={Uri.EscapeDataString(propagationPolicy)}");
         }
         if (dryRun is not null)
         {
-            queryParameters.Add(string.Format("dryRun={0}", System.Uri.EscapeDataString(dryRun)));
+            queryParameters.Add($"dryRun={Uri.EscapeDataString(dryRun)}");
         }
         if (queryParameters.Count > 0)
         {
@@ -208,52 +207,50 @@ public class AnyResourceKind : IAnyResourceKind
         cancellationToken = cts.Token;
 
         var url =  "apis/{group}/{version}/{plural}";
-        url = string.IsNullOrEmpty(group) ? url.Replace("apis/{group}", "api") : url.Replace("{group}", System.Uri.EscapeDataString(group));
-        url = url.Replace("{version}", System.Uri.EscapeDataString(version));
-        url = url.Replace("{plural}", System.Uri.EscapeDataString(plural));
+        url = string.IsNullOrEmpty(group) ? url.Replace("apis/{group}", "api") : url.Replace("{group}", Uri.EscapeDataString(group));
+        url = url.Replace("{version}", Uri.EscapeDataString(version));
+        url = url.Replace("{plural}", Uri.EscapeDataString(plural));
 
         List<string> queryParameters = new List<string>();
         if (continueParameter is not null)
         {
-            queryParameters.Add(string.Format("continue={0}", System.Uri.EscapeDataString(continueParameter)));
+            queryParameters.Add($"continue={Uri.EscapeDataString(continueParameter)}");
         }
 
         if (fieldSelector is not null)
         {
-            queryParameters.Add(string.Format("fieldSelector={0}", System.Uri.EscapeDataString(fieldSelector)));
+            queryParameters.Add($"fieldSelector={Uri.EscapeDataString(fieldSelector)}");
         }
 
         if (labelSelector is not null)
         {
-            queryParameters.Add(string.Format("labelSelector={0}", System.Uri.EscapeDataString(labelSelector)));
+            queryParameters.Add($"labelSelector={Uri.EscapeDataString(labelSelector)}");
         }
 
         if (limit is not null)
         {
-            queryParameters.Add(string.Format("limit={0}",
-                System.Uri.EscapeDataString(JsonConvert.SerializeObject(limit).Trim('"'))));
+            queryParameters.Add($"limit={Uri.EscapeDataString(JsonConvert.SerializeObject(limit).Trim('"'))}");
         }
 
         if (resourceVersion is not null)
         {
-            queryParameters.Add(string.Format("resourceVersion={0}", System.Uri.EscapeDataString(resourceVersion)));
+            queryParameters.Add($"resourceVersion={Uri.EscapeDataString(resourceVersion)}");
         }
 
         if (timeoutSeconds is not null)
         {
-            queryParameters.Add(string.Format("timeoutSeconds={0}",
-                System.Uri.EscapeDataString(JsonConvert.SerializeObject(timeoutSeconds).Trim('"'))));
+            queryParameters.Add(
+                $"timeoutSeconds={Uri.EscapeDataString(JsonConvert.SerializeObject(timeoutSeconds).Trim('"'))}");
         }
 
         if (watch is not null)
         {
-            queryParameters.Add(string.Format("watch={0}",
-                System.Uri.EscapeDataString(JsonConvert.SerializeObject(watch).Trim('"'))));
+            queryParameters.Add($"watch={Uri.EscapeDataString(JsonConvert.SerializeObject(watch).Trim('"'))}");
         }
 
         if (pretty is not null)
         {
-            queryParameters.Add(string.Format("pretty={0}", System.Uri.EscapeDataString(pretty)));
+            queryParameters.Add($"pretty={Uri.EscapeDataString(pretty)}");
         }
 
         if (queryParameters.Count > 0)
@@ -303,23 +300,23 @@ public class AnyResourceKind : IAnyResourceKind
         }
 
         var url = Pattern(group, namespaceParameter) + "/{name}";
-        url = url.Replace("{group}", System.Uri.EscapeDataString(group));
-        url = url.Replace("{version}", System.Uri.EscapeDataString(version));
-        url = url.Replace("{namespace}", System.Uri.EscapeDataString(namespaceParameter));
-        url = url.Replace("{plural}", System.Uri.EscapeDataString(plural));
-        url = url.Replace("{name}", System.Uri.EscapeDataString(name));
+        url = url.Replace("{group}", Uri.EscapeDataString(group));
+        url = url.Replace("{version}", Uri.EscapeDataString(version));
+        url = url.Replace("{namespace}", Uri.EscapeDataString(namespaceParameter));
+        url = url.Replace("{plural}", Uri.EscapeDataString(plural));
+        url = url.Replace("{name}", Uri.EscapeDataString(name));
         List<string> queryParameters = new List<string>();
         if (dryRun is not null)
         {
-            queryParameters.Add(string.Format("dryRun={0}", System.Uri.EscapeDataString(dryRun)));
+            queryParameters.Add($"dryRun={Uri.EscapeDataString(dryRun)}");
         }
         if (fieldManager is not null)
         {
-            queryParameters.Add(string.Format("fieldManager={0}", System.Uri.EscapeDataString(fieldManager)));
+            queryParameters.Add($"fieldManager={Uri.EscapeDataString(fieldManager)}");
         }
         if (force is not null)
         {
-            queryParameters.Add(string.Format("force={0}", System.Uri.EscapeDataString(JsonConvert.SerializeObject(force).Trim('"'))));
+            queryParameters.Add($"force={Uri.EscapeDataString(JsonConvert.SerializeObject(force).Trim('"'))}");
         }
         if (queryParameters.Count > 0)
         {
@@ -374,8 +371,7 @@ public class AnyResourceKind : IAnyResourceKind
         if (!httpResponse.IsSuccessStatusCode)
         {
             string responseContent = null;
-            var ex = new HttpOperationException(string.Format("Operation returned an invalid status code '{0}'",
-                statusCode));
+            var ex = new HttpOperationException($"Operation returned an invalid status code '{statusCode}'");
             if (httpResponse.Content != null)
             {
                 responseContent = await httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
@@ -412,7 +408,7 @@ public class AnyResourceKind : IAnyResourceKind
             throw new ArgumentNullException(nameof(httpResponse));
         }
 
-        var result = new HttpOperationResponse<T>() { Request = httpRequest, Response = httpResponse };
+        var result = new HttpOperationResponse<T> { Request = httpRequest, Response = httpResponse };
 
         if (watch == true)
         {

@@ -50,6 +50,15 @@ app.kubernetes.io/name: {{ include "sail.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
+{{- define "sail.controller.fullname" -}}
+{{- printf "%s-%s" (include "sail.fullname" .) .Values.controller.name | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+
+
+{{- define "sail.proxy.fullname" -}}
+{{- printf "%s-%s" (include "sail.fullname" .) .Values.proxy.name | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+
 {{/*
 Create the name of the service account to use
 */}}

@@ -49,26 +49,14 @@ public class ResourcePatcher : IResourcePatcher
 
     private JsonPatchDocument MergeApplyAny(JsonPatchDocument patch, Context context)
     {
-        if (context.ApplyToken is JObject)
+        return context.ApplyToken switch
         {
-            return MergeObject(patch, context);
-        }
-        else if (context.ApplyToken is JArray)
-        {
-            return ReplaceListOfObjectOrPrimative(patch, context);
-        }
-        else if (context.ApplyToken is JValue)
-        {
-            return ReplacePrimative(patch, context);
-        }
-        else if (context.ApplyToken is null && context.LastAppliedToken is not null)
-        {
-            return patch.Remove(context.Path);
-        }
-        else
-        {
-            throw NewFormatException(context);
-        }
+            JObject => MergeObject(patch, context),
+            JArray => ReplaceListOfObjectOrPrimative(patch, context),
+            JValue => ReplacePrimative(patch, context),
+            null when context.LastAppliedToken is not null => patch.Remove(context.Path),
+            _ => throw NewFormatException(context)
+        };
     }
 
     private static FormatException NewFormatException(Context context)

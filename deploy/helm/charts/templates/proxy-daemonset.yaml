@@ -1,0 +1,66 @@
+{{- if and .Values.proxy.enabled (eq .Values.proxy.kind "DaemonSet") -}}
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  labels:
+    {{- include "sail.labels" . | nindent 4 }}
+    app.kubernetes.io/component: proxy  
+  name: {{ include "sail.proxy.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+spec:
+ selector:
+    matchLabels:
+      {{- include "sail.selectorLabels" . | nindent 6 }}
+ template:
+    metadata:
+    {{- if .Values.proxy.podAnnotations }}
+      annotations:
+      {{- range $key, $value := .Values.proxy.podAnnotations }}
+        {{ $key }}: {{ $value | quote }}
+      {{- end }}
+    {{- end }}
+      labels:
+        {{- include "sail.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: proxy  
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "sail.serviceAccountName" . }}
+      {{- if or .Values.proxy.podSecurityContext .Values.proxy.sysctls }}
+      securityContext:
+      {{- end }}
+      {{- if .Values.proxy.podSecurityContext }}
+        {{- toYaml .Values.proxy.podSecurityContext | nindent 8 }}
+      {{- end }}
+      containers:
+       - name: {{ .Values.proxy.containerName }}
+          {{- with .Values.proxy.image }}
+         image: "{{ .image }}:{{ .tag }}"
+          {{- end }}
+         imagePullPolicy: {{ .Values.proxy.image.pullPolicy }}
+         ports:
+            {{- range $key, $value := .Values.proxy.containerPort }}
+            - name: {{ $key }}
+              containerPort: {{ $value }}
+              protocol: TCP
+              {{- if $.Values.proxy.hostPort.enabled }}
+              hostPort: {{ index $.Values.proxy.hostPort.ports $key | default $value }}
+             {{- end }}
+          {{- end }}
+         livenessProbe: {{ toYaml .Values.proxy.livenessProbe | nindent 12 }}
+         readinessProbe: {{ toYaml .Values.proxy.readinessProbe | nindent 12 }}
+         {{- if .Values.proxy.resources }}
+         resources: {{ toYaml .Values.proxy.resources | nindent 12 }}
+         {{- end }}  
+      {{- if .Values.proxy.nodeSelector }}
+      nodeSelector: {{ toYaml .Values.proxy.nodeSelector | nindent 8 }}
+      {{- end }}  
+      {{- if .Values.proxy.tolerations }}
+      tolerations: {{ toYaml .Values.proxy.tolerations | nindent 8 }}
+      {{- end }}
+      {{- if .Values.proxy.affinity }}
+      affinity: {{ toYaml .Values.proxy.affinity | nindent 8 }}
+      {{- end }}         
+{{- end -}}

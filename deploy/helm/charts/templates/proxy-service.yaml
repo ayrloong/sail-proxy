@@ -1,0 +1,30 @@
+{{- if .Values.proxy.service.enabled -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "sail.proxy.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  type: {{ .Values.proxy.service.type }}
+{{- if .Values.proxy.service.clusterIP }}
+  clusterIP: {{ .Values.proxy.service.clusterIP }}
+{{- end }}
+{{- if .Values.proxy.service.externalIPs }}
+  externalIPs: {{ toYaml .Values.proxy.service.externalIPs | nindent 4 }}
+{{- end }}
+{{- if .Values.proxy.service.loadBalancerIP }}
+  loadBalancerIP: {{ .Values.proxy.service.loadBalancerIP }}
+{{- end }}
+  ports:
+  - name: http
+    port: {{ .Values.proxy.service.ports.http }}
+    protocol: TCP
+    targetPort: {{ .Values.proxy.service.targetPorts.http }}
+  - name: https
+    port: {{ .Values.proxy.service.ports.https }}
+    protocol: TCP
+    targetPort: {{ .Values.proxy.service.targetPorts.https }}
+  selector:
+    {{- include "sail.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: proxy     
+{{- end }}

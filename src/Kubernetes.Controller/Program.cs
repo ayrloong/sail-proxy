@@ -1,4 +1,6 @@
 using k8s.Models;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Sail.Kubernetes.Controller;
 using Sail.Kubernetes.Controller.Caching;
 using Sail.Kubernetes.Controller.Dispatching;
@@ -24,6 +26,7 @@ builder.WebHost.ConfigureLogging(options =>
 });
 
 builder.Services.AddControllers();
+builder.Services.AddHealthChecks().AddCheck("self", () => HealthCheckResult.Healthy());
 builder.Services.AddKubernetesControllerRuntime();
 builder.Services.AddHostedService<IngressController>();
 builder.Services.AddSingleton<ICache, IngressCache>();
@@ -40,9 +43,11 @@ var app = builder.Build();
 app.UseRouting();
 app.UseEndpoints(endpoints =>
 {
-    endpoints.MapControllerRoute(
-        name: "default",
-        pattern: "{controller=Home}/{action=Index}/{id?}");
+    endpoints.MapHealthChecks("/healthz", new HealthCheckOptions
+    {
+        Predicate = r => r.Name.Contains("self")
+    });
+    endpoints.MapDefaultControllerRoute();
 });
 
 app.Run();
