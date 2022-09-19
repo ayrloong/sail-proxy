@@ -24,7 +24,7 @@ builder.Services.AddAuthorization(options =>
     options.DefaultPolicy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
 });
 
-var jwtBearerOptions = builder.Configuration.GetValue<Sail.Proxy.JwtBearerOptions>("JwtBearer");
+var jwtBearerOptions = builder.Configuration.GetSection("JwtBearer").Get<Sail.Proxy.JwtBearerOptions>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>

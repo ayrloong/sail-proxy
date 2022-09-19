@@ -3,6 +3,7 @@ using k8s;
 using k8s.Models;
 using Microsoft.Extensions.Options;
 using Microsoft.Kubernetes;
+using Newtonsoft.Json;
 using Sail.Kubernetes.Controller.Services;
 
 namespace Sail.Kubernetes.Controller.Caching;
@@ -63,7 +64,7 @@ public class IngressCache : ICache
         {
             throw new ArgumentNullException(nameof(ingress));
         }
-
+        
         if (IsSailIngress(ingress.Spec))
         {
             Namespace(ingress.Namespace()).Update(eventType, ingress);

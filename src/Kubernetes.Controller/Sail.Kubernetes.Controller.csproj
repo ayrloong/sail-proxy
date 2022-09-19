@@ -5,7 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <ContainerImageName>inendless/ingress-controller</ContainerImageName>
-    <ContainerImageTag>1.0.0</ContainerImageTag>
+    <ContainerImageTag>1.0.2</ContainerImageTag>
   </PropertyGroup>
 
   <ItemGroup>

@@ -49,8 +49,12 @@ spec:
               hostPort: {{ index $.Values.proxy.hostPort.ports $key | default $value }}
              {{- end }}
           {{- end }}
+         {{- if .Values.proxy.livenessProbe }}
          livenessProbe: {{ toYaml .Values.proxy.livenessProbe | nindent 12 }}
+         {{- end }}
+         {{- if .Values.proxy.readinessProbe }}
          readinessProbe: {{ toYaml .Values.proxy.readinessProbe | nindent 12 }}
+         {{- end }}
          {{- if .Values.proxy.resources }}
          resources: {{ toYaml .Values.proxy.resources | nindent 12 }}
          {{- end }}  
