@@ -44,15 +44,15 @@ public class Reconciler : IReconciler
                 Key = string.Empty,
             };
 
-            var configContext = new SailConfigContext();
+            var configContext = new ConfigContext();
 
             foreach (var ingress in ingresses)
             {
                 if (_cache.TryGetReconcileData(
                         new NamespacedName(ingress.Metadata.NamespaceProperty, ingress.Metadata.Name), out var data))
                 {
-                    var ingressContext = new SailIngressContext(ingress, data.ServiceList, data.EndpointsList);
-                    SailParser.ConvertFromKubernetesIngress(ingressContext, configContext);
+                    var ingressContext = new IngressContext(ingress, data.ServiceList, data.EndpointsList);
+                    IngressParser.ConvertFromKubernetesIngress(ingressContext, configContext);
                 }
             }
 

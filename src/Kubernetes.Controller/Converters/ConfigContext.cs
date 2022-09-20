@@ -2,7 +2,7 @@
 
 namespace Sail.Kubernetes.Controller.Converters;
 
-public class SailConfigContext
+public class ConfigContext
 {
     public Dictionary<string, ClusterTransfer> ClusterTransfers { get; set; } = new();
     public List<RouteConfig> Routes { get; set; } = new();

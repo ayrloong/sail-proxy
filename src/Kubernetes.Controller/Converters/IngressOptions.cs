@@ -2,7 +2,7 @@
 
 namespace Sail.Kubernetes.Controller.Converters;
 
-public sealed class SailIngressOptions
+public sealed class IngressOptions
 {
     public bool Https { get; set; }
     public List<Dictionary<string, string>> Transforms { get; set; }

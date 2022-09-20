@@ -5,12 +5,11 @@ using Yarp.ReverseProxy.Configuration;
 
 namespace Sail.Kubernetes.Controller.Converters;
 
-public static class SailParser
+public static class IngressParser
 {
     private static readonly Deserializer YamlDeserializer = new();
     
-    internal static void ConvertFromKubernetesIngress(SailIngressContext ingressContext,
-        SailConfigContext configContext)
+    internal static void ConvertFromKubernetesIngress(IngressContext ingressContext,ConfigContext configContext)
     {
         var spec = ingressContext.Ingress.Spec;
         var defaultBackend = spec?.DefaultBackend;
@@ -31,8 +30,8 @@ public static class SailParser
         }
     }
 
-    private static void HandleIngressRule(SailIngressContext ingressContext, List<Endpoints> endpoints,
-        IList<V1EndpointSubset> defaultSubsets, V1IngressRule rule, SailConfigContext configContext)
+    private static void HandleIngressRule(IngressContext ingressContext, List<Endpoints> endpoints,
+        IList<V1EndpointSubset> defaultSubsets, V1IngressRule rule, ConfigContext configContext)
     {
         var http = rule.Http;
         foreach (var path in http.Paths ?? Enumerable.Empty<V1HTTPIngressPath>())
@@ -43,9 +42,9 @@ public static class SailParser
         }
     }
 
-    private static void HandleIngressRulePath(SailIngressContext ingressContext, V1ServicePort servicePort,
+    private static void HandleIngressRulePath(IngressContext ingressContext, V1ServicePort servicePort,
         List<Endpoints> endpoints, IList<V1EndpointSubset> defaultSubsets, V1IngressRule rule, V1HTTPIngressPath path,
-        SailConfigContext configContext)
+        ConfigContext configContext)
     {
         var backend = path.Backend;
         var ingressServiceBackend = backend.Service;
@@ -154,7 +153,7 @@ public static class SailParser
         return pathMatch;
     }
 
-    private static SailIngressOptions HandleAnnotations(SailIngressContext context, V1ObjectMeta metadata)
+    private static IngressOptions HandleAnnotations(IngressContext context, V1ObjectMeta metadata)
     {
         var options = context.Options;
         var annotations = metadata.Annotations;

@@ -29,7 +29,7 @@ builder.Services.AddControllers();
 builder.Services.AddHealthChecks().AddCheck("self", () => HealthCheckResult.Healthy());
 builder.Services.AddKubernetesControllerRuntime();
 builder.Services.AddHostedService<IngressController>();
-builder.Services.AddSingleton<ICache, IngressCache>();
+builder.Services.AddSingleton<ICache, ControllerCache>();
 builder.Services.AddTransient<IReconciler, Reconciler>();
 builder.Services.AddSingleton<IDispatcher, Dispatcher>();
 builder.Services.Configure<SailOptions>(builder.Configuration.GetSection("Sail"));

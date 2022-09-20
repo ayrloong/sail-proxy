@@ -8,17 +8,17 @@ using Sail.Kubernetes.Controller.Services;
 
 namespace Sail.Kubernetes.Controller.Caching;
 
-public class IngressCache : ICache
+public class ControllerCache : ICache
 {
     private readonly object _sync = new();
     private readonly Dictionary<string, IngressClassData> _ingressClassData = new();
     private readonly Dictionary<string, NamespaceCache> _namespaceCaches = new();
     private readonly SailOptions _options;
-    private readonly ILogger<IngressCache> _logger;
+    private readonly ILogger<ControllerCache> _logger;
 
     private bool _isDefaultController;
 
-    public IngressCache(IOptions<SailOptions> options, ILogger<IngressCache> logger)
+    public ControllerCache(IOptions<SailOptions> options, ILogger<ControllerCache> logger)
     {
         _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
