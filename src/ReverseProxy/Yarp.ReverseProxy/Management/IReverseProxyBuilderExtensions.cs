@@ -67,12 +67,14 @@ internal static class IReverseProxyBuilderExtensions
     {
         builder.Services.TryAddSingleton<IRandomFactory, RandomFactory>();
 
-        builder.Services.TryAddEnumerable(new[] {
+        builder.Services.TryAddEnumerable(new[]
+        {
             ServiceDescriptor.Singleton<ILoadBalancingPolicy, FirstLoadBalancingPolicy>(),
             ServiceDescriptor.Singleton<ILoadBalancingPolicy, LeastRequestsLoadBalancingPolicy>(),
             ServiceDescriptor.Singleton<ILoadBalancingPolicy, RandomLoadBalancingPolicy>(),
             ServiceDescriptor.Singleton<ILoadBalancingPolicy, PowerOfTwoChoicesLoadBalancingPolicy>(),
-            ServiceDescriptor.Singleton<ILoadBalancingPolicy, RoundRobinLoadBalancingPolicy>()
+            ServiceDescriptor.Singleton<ILoadBalancingPolicy, RoundRobinLoadBalancingPolicy>(),
+            ServiceDescriptor.Singleton<ILoadBalancingPolicy, WeightLoadBalancingPolicy>()
         });
 
         return builder;
