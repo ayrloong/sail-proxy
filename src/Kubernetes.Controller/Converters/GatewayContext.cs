@@ -12,5 +12,6 @@ public class GatewayContext
 
     public GatewayOptions Options { get; set; } = new();
     public GatewayData Gateway { get; }
+    public List<ServiceData> Services { get; }
     public List<HttpRouteData> HttpRoutes { get; }
 }

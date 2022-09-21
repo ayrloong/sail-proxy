@@ -81,6 +81,6 @@ public class V1beta1HttpBackendRef
     [JsonProperty("kind")] public string Kind { get; set; }
     [JsonProperty("name")] public string Name { get; set; }
     [JsonProperty("namespace")] public string Namespace { get; set; }
-    [JsonProperty("port")] public int Port { get; set; }
+    [JsonProperty("port")] public int? Port { get; set; }
     [JsonProperty("weight")] public int Weight { get; set; }
 }
