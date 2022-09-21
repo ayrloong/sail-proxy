@@ -13,7 +13,6 @@ public class ConfigContext
             Destinations = c.Destinations,
             ClusterId = c.ClusterId,
             HealthCheck = c.HealthCheck,
-            Canary = c.Canary,
             LoadBalancingPolicy = c.LoadBalancingPolicy,
             SessionAffinity = c.SessionAffinity,
             HttpClient = c.HttpClientConfig

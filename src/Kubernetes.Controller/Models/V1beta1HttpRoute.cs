@@ -46,7 +46,7 @@ public class V1beta1HttpRouteMatch
 
     [JsonProperty("path")] public V1beta1HttpPathMatch Path { get; set; }
 
-    [JsonProperty("headers")] public V1beta1HttpHeaderMatch Headers { get; set; }
+    [JsonProperty("headers")] public List<V1beta1HttpHeaderMatch> Headers { get; set; }
 
     [JsonProperty("queryParams")] public V1beta1HttpQueryParamMatch QueryParams { get; set; }
 

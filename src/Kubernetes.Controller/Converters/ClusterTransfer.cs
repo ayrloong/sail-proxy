@@ -11,5 +11,4 @@ public class ClusterTransfer
     public SessionAffinityConfig SessionAffinity { get; set; }
     public HealthCheckConfig HealthCheck { get; set; }
     public HttpClientConfig HttpClientConfig { get; set; }
-    public CanaryConfig Canary { get; set; }
 }

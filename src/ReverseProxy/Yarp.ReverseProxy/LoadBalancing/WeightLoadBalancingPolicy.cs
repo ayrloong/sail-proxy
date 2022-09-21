@@ -14,7 +14,7 @@ internal sealed class WeightLoadBalancingPolicy : ILoadBalancingPolicy
         IReadOnlyList<DestinationState> availableDestinations)
     {
         var dictionary = availableDestinations.ToDictionary(x => x, x => (float)x.Model.Config.Weight / 100);
-        var destination = dictionary.Weight(x => x.Value).Key;
-        return destination;
+        var selectedDestination = dictionary.SelectedWeight(x => x.Value).Key;
+        return selectedDestination;
     }
 }

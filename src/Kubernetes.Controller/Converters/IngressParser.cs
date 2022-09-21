@@ -71,7 +71,6 @@ public static class IngressParser
         cluster.SessionAffinity = ingressContext.Options.SessionAffinity;
         cluster.HealthCheck = ingressContext.Options.HealthCheck;
         cluster.HttpClientConfig = ingressContext.Options.HttpClientConfig;
-        cluster.Canary = ingressContext.Options.Canary;
         // make sure cluster is present
         foreach (var subset in subsets ?? Enumerable.Empty<V1EndpointSubset>())
         {
@@ -201,11 +200,6 @@ public static class IngressParser
         if (annotations.TryGetValue("sail.ingress.kubernetes.io/health-check", out var healthCheck))
         {
             options.HealthCheck = YamlDeserializer.Deserialize<HealthCheckConfig>(healthCheck);
-        }
-
-        if (annotations.TryGetValue("sail.ingress.kubernetes.io/canary", out var canary))
-        {
-            options.Canary = YamlDeserializer.Deserialize<CanaryConfig>(canary);
         }
 
         if (annotations.TryGetValue("sail.ingress.kubernetes.io/route-metadata", out var routeMetadata))

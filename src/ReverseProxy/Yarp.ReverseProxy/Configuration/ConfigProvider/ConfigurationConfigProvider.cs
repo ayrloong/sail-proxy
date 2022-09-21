@@ -128,7 +128,6 @@ internal sealed class ConfigurationConfigProvider : IProxyConfigProvider, IDispo
             HealthCheck = CreateHealthCheckConfig(section.GetSection(nameof(ClusterConfig.HealthCheck))),
             HttpClient = CreateHttpClientConfig(section.GetSection(nameof(ClusterConfig.HttpClient))),
             HttpRequest = CreateProxyRequestConfig(section.GetSection(nameof(ClusterConfig.HttpRequest))),
-            Canary = CreateCanaryConfig(section.GetSection(nameof(ClusterConfig.Canary))),
             Metadata = section.GetSection(nameof(ClusterConfig.Metadata)).ReadStringDictionary(),
             Destinations = destinations,
         };
@@ -276,18 +275,6 @@ internal sealed class ConfigurationConfigProvider : IProxyConfigProvider, IDispo
         };
     }
 
-    private static CanaryConfig? CreateCanaryConfig(IConfigurationSection section)
-    {
-        if (!section.Exists())
-        {
-            return null;
-        }
-        return new CanaryConfig()
-        {
-             Enabled = section.ReadBool(nameof(CanaryConfig.Enabled)),
-             Weight = section.ReadInt32(nameof(CanaryConfig.Weight))
-        };
-    }
     private static PassiveHealthCheckConfig? CreatePassiveHealthCheckConfig(IConfigurationSection section)
     {
         if (!section.Exists())

@@ -30,11 +30,11 @@ namespace Microsoft.Kubernetes.Controller.Informers
     public class ResourceInformer<TResource> : BackgroundHostedService, IResourceInformer<TResource>
         where TResource : class, IKubernetesObject<V1ObjectMeta>, new()
     {
-        private readonly object _sync = new object();
+        private readonly object _sync = new();
         private readonly IAnyResourceKind _client;
         private readonly GroupApiVersionKind _names;
-        private readonly SemaphoreSlim _ready = new SemaphoreSlim(0);
-        private readonly SemaphoreSlim _start = new SemaphoreSlim(0);
+        private readonly SemaphoreSlim _ready = new(0);
+        private readonly SemaphoreSlim _start = new(0);
         private ImmutableList<Registration> _registrations = ImmutableList<Registration>.Empty;
         private IDictionary<NamespacedName, IList<V1OwnerReference>> _cache = new Dictionary<NamespacedName, IList<V1OwnerReference>>();
         private string _lastResourceVersion;

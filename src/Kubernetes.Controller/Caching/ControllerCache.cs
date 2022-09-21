@@ -4,6 +4,7 @@ using k8s.Models;
 using Microsoft.Extensions.Options;
 using Microsoft.Kubernetes;
 using Newtonsoft.Json;
+using Sail.Kubernetes.Controller.Models;
 using Sail.Kubernetes.Controller.Services;
 
 namespace Sail.Kubernetes.Controller.Caching;
@@ -22,6 +23,21 @@ public class ControllerCache : ICache
     {
         _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+    }
+
+    public bool Update(WatchEventType eventType, V1beta1GatewayClass gatewayClass)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void Update(WatchEventType eventType, V1beta1Gateway gateway)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void Update(WatchEventType eventType, V1beta1HttpRoute httpRoute)
+    {
+        throw new NotImplementedException();
     }
 
     public void Update(WatchEventType eventType, V1IngressClass ingressClass)
@@ -45,13 +61,14 @@ public class ControllerCache : ICache
         var ingressClassName = ingressClass.Name();
         lock (_sync)
         {
-            if (eventType is WatchEventType.Added or WatchEventType.Modified)
+            switch (eventType)
             {
-                _ingressClassData[ingressClassName] = new IngressClassData(ingressClass);
-            }
-            else if (eventType == WatchEventType.Deleted)
-            {
-                _ingressClassData.Remove(ingressClassName);
+                case WatchEventType.Added or WatchEventType.Modified:
+                    _ingressClassData[ingressClassName] = new IngressClassData(ingressClass);
+                    break;
+                case WatchEventType.Deleted:
+                    _ingressClassData.Remove(ingressClassName);
+                    break;
             }
 
             _isDefaultController = _ingressClassData.Values.Any(ic => ic.IsDefault);

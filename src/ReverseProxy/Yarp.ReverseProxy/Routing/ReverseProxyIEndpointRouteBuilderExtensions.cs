@@ -5,7 +5,6 @@ using System;
 using System.Linq;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
-using Yarp.ReverseProxy.Canary;
 using Yarp.ReverseProxy.Management;
 using Yarp.ReverseProxy.Model;
 using Yarp.ReverseProxy.Forwarder;
@@ -29,7 +28,6 @@ public static class ReverseProxyIEndpointRouteBuilderExtensions
             app.UseSessionAffinity();
             app.UseLoadBalancing();
             app.UsePassiveHealthChecks();
-            app.UseCanary();
         });
     }
 

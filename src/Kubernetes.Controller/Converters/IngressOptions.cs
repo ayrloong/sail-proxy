@@ -12,6 +12,5 @@ public sealed class IngressOptions
     public string LoadBalancingPolicy { get; set; }
     public string CorsPolicy { get; set; }
     public HealthCheckConfig HealthCheck { get; set; }
-    public CanaryConfig Canary { get; set; }
     public Dictionary<string, string> RouteMetadata { get; set; }
 }

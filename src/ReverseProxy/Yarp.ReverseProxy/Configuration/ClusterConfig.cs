@@ -44,10 +44,6 @@ public sealed record ClusterConfig
     /// </summary>
     public ForwarderRequestConfig? HttpRequest { get; init; }
 
-    /// <summary>
-    /// config for Canary
-    /// </summary>
-    public CanaryConfig? Canary { get; init; }
 
     /// <summary>
     /// The set of destinations associated with this cluster.

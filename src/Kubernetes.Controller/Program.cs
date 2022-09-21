@@ -4,6 +4,7 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Sail.Kubernetes.Controller;
 using Sail.Kubernetes.Controller.Caching;
 using Sail.Kubernetes.Controller.Dispatching;
+using Sail.Kubernetes.Controller.Models;
 using Sail.Kubernetes.Controller.Services;
 using Serilog;
 using Serilog.Sinks.SystemConsole.Themes;
@@ -29,14 +30,17 @@ builder.Services.AddControllers();
 builder.Services.AddHealthChecks().AddCheck("self", () => HealthCheckResult.Healthy());
 builder.Services.AddKubernetesControllerRuntime();
 builder.Services.AddHostedService<IngressController>();
+builder.Services.AddHostedService<GatewayController>();
 builder.Services.AddSingleton<ICache, ControllerCache>();
 builder.Services.AddTransient<IReconciler, Reconciler>();
 builder.Services.AddSingleton<IDispatcher, Dispatcher>();
 builder.Services.Configure<SailOptions>(builder.Configuration.GetSection("Sail"));
-builder.Services.RegisterResourceInformer<V1Ingress>();
-builder.Services.RegisterResourceInformer<V1Service>();
-builder.Services.RegisterResourceInformer<V1Endpoints>();
-builder.Services.RegisterResourceInformer<V1IngressClass>();
+//builder.Services.RegisterResourceInformer<V1Ingress>();
+//builder.Services.RegisterResourceInformer<V1Service>();
+//builder.Services.RegisterResourceInformer<V1Endpoints>();
+//builder.Services.RegisterResourceInformer<V1IngressClass>();
+
+builder.Services.RegisterResourceInformer<V1beta1HttpRoute>();
 
 var app = builder.Build();
 

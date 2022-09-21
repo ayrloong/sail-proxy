@@ -1,0 +1,21 @@
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: HTTPRoute
+metadata:
+  name: bar-route
+spec:
+  parentRefs:
+  - name: sail
+  hostnames:
+  - "bar.example.com"
+  rules:
+  - matches:
+    - headers:
+      - type: Exact
+        name: env
+        value: canary
+    backendRefs:
+    - name: bar-svc-canary
+      port: 8080
+  - backendRefs:
+    - name: bar-svc
+      port: 8080
