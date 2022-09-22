@@ -132,16 +132,6 @@ public class IngressController : BackgroundHostedService
         }
     }
 
-    private void NotificationIngressChanged()
-    {
-        if (!_registrationsReady)
-        {
-            return;
-        }
-
-        _queue.Add(_ingressChangeQueueItem);
-    }
-
     /// <summary>
     /// Called by the informer with real-time resource updates.
     /// </summary>
@@ -180,6 +170,16 @@ public class IngressController : BackgroundHostedService
         _cache.Update(eventType, resource);
     }
 
+    private void NotificationIngressChanged()
+    {
+        if (!_registrationsReady)
+        {
+            return;
+        }
+
+        _queue.Add(_ingressChangeQueueItem);
+    }
+    
     /// <summary>
     /// Called once at startup by the hosting infrastructure. This function must remain running
     /// for the entire lifetime of an application.

@@ -1,5 +1,6 @@
 ﻿using k8s;
 using k8s.Models;
+using Microsoft.Kubernetes;
 using Microsoft.Kubernetes.Controller.Hosting;
 using Microsoft.Kubernetes.Controller.Informers;
 using Microsoft.Kubernetes.Controller.Queues;
@@ -59,6 +60,7 @@ public class GatewayController : BackgroundHostedService
         {
             throw new ArgumentNullException(nameof(logger));
         }
+
         _registrations = new[]
         {
             gatewayInformer.Register(Notification),
@@ -72,7 +74,7 @@ public class GatewayController : BackgroundHostedService
         gatewayClassInformer.StartWatching();
         httpRouteInformer.StartWatching();
         serviceInformer.StartWatching();
-        
+
         _queue = new ProcessingRateLimitedQueue<QueueItem>(perSecond: 0.5, burst: 1);
         _cache = cache ?? throw new ArgumentNullException(nameof(cache));
         _reconciler = reconciler ?? throw new ArgumentNullException(nameof(reconciler));
@@ -90,7 +92,7 @@ public class GatewayController : BackgroundHostedService
 
         // At this point we know that all of the Ingress and Endpoint caches are at least in sync
         // with cluster's state as of the start of this controller.
-        _registrationsReady = true; 
+        _registrationsReady = true;
 
         // Now begin one loop to process work until an application shutdown is requested.
         while (!cancellationToken.IsCancellationRequested)
@@ -122,25 +124,69 @@ public class GatewayController : BackgroundHostedService
         Logger.LogInformation("Reconciliation loop cancelled");
     }
 
+    private void NotificationGatewayChanged()
+    {
+        if (!_registrationsReady)
+        {
+            return;
+        }
+
+        _queue.Add(_gatewayChangeQueueItem);
+    }
 
     private void TargetAttached(IDispatchTarget target)
     {
-        
+        var keys = new List<NamespacedName>();
+        _cache.GetKeys(keys);
+        if (keys.Count > 0)
+        {
+            _queue.Add(new QueueItem("Target Attached", target));
+        }
     }
+
     private void Notification(WatchEventType eventType, V1beta1Gateway resource)
     {
+        if (_cache.Update(eventType, resource))
+        {
+            NotificationGatewayChanged();
+        }
     }
 
     private void Notification(WatchEventType eventType, V1beta1GatewayClass resource)
     {
+        _cache.Update(eventType, resource);
     }
 
     private void Notification(WatchEventType eventType, V1beta1HttpRoute resource)
     {
+        var gatewayNames = _cache.Update(eventType, resource);
+        if (gatewayNames.Count > 0)
+        {
+            NotificationGatewayChanged();
+        }
     }
 
     private void Notification(WatchEventType eventType, V1Service resource)
     {
+        var gatewayNames = _cache.Update(eventType, resource);
+        if (gatewayNames.Count > 0)
+        {
+            NotificationGatewayChanged();
+        }
     }
 
+    protected override void Dispose(bool disposing)
+    {
+        if (disposing)
+        {
+            foreach (var registration in _registrations)
+            {
+                registration.Dispose();
+            }
+
+            _queue.Dispose();
+        }
+
+        base.Dispose(disposing);
+    }
 }

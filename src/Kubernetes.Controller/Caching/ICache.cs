@@ -10,9 +10,9 @@ namespace Sail.Kubernetes.Controller.Caching;
 public interface ICache
 {
 
-    bool Update(WatchEventType eventType, V1beta1GatewayClass gatewayClass);
-    void Update(WatchEventType eventType, V1beta1Gateway gateway);
-    void Update(WatchEventType eventType, V1beta1HttpRoute httpRoute);
+    void Update(WatchEventType eventType, V1beta1GatewayClass gatewayClass);
+    bool Update(WatchEventType eventType, V1beta1Gateway gateway);
+    ImmutableList<string> Update(WatchEventType eventType, V1beta1HttpRoute httpRoute);
     void Update(WatchEventType eventType, V1IngressClass ingressClass);
     bool Update(WatchEventType eventType, V1Ingress ingress);
     ImmutableList<string> Update(WatchEventType eventType, V1Service service);

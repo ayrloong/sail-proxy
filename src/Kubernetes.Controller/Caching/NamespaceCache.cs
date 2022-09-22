@@ -13,6 +13,7 @@ public class NamespaceCache
 
     private readonly Dictionary<string, ImmutableList<string>> _ingressToServiceNames = new();
     private readonly Dictionary<string, ImmutableList<string>> _serviceToIngressNames = new();
+
     private readonly Dictionary<string, GatewayData> _gatewayData = new();
     private readonly Dictionary<string, IngressData> _ingressData = new();
     private readonly Dictionary<string, HttpRouteData> _httpRouteData = new();
@@ -25,9 +26,7 @@ public class NamespaceCache
         {
             throw new ArgumentNullException(nameof(ingress));
         }
-
         var serviceNames = ImmutableList<string>.Empty;
-
         if (eventType is WatchEventType.Added or WatchEventType.Modified)
         {
             // If the ingress exists, list out the related services
@@ -59,57 +58,56 @@ public class NamespaceCache
         lock (_sync)
         {
             var serviceNamesPrevious = ImmutableList<string>.Empty;
-            if (eventType is WatchEventType.Added or WatchEventType.Modified)
+            switch (eventType)
             {
-                // If the ingress exists then remember details
-
-                _ingressData[ingressName] = new IngressData(ingress);
-
-                if (_ingressToServiceNames.TryGetValue(ingressName, out serviceNamesPrevious))
+                case WatchEventType.Added or WatchEventType.Modified:
                 {
-                    _ingressToServiceNames[ingressName] = serviceNames;
+                    // If the ingress exists then remember details
+                    _ingressData[ingressName] = new IngressData(ingress);
+
+                    if (_ingressToServiceNames.TryGetValue(ingressName, out serviceNamesPrevious))
+                    {
+                        _ingressToServiceNames[ingressName] = serviceNames;
+                    }
+                    else
+                    {
+                        serviceNamesPrevious = ImmutableList<string>.Empty;
+                        _ingressToServiceNames.Add(ingressName, serviceNames);
+                    }
+
+                    break;
                 }
-                else
+                case WatchEventType.Deleted:
                 {
-                    serviceNamesPrevious = ImmutableList<string>.Empty;
-                    _ingressToServiceNames.Add(ingressName, serviceNames);
-                }
-            }
-            else if (eventType == WatchEventType.Deleted)
-            {
-                // otherwise clear out details
+                    // otherwise clear out details
+                    _ingressData.Remove(ingressName);
 
-                _ingressData.Remove(ingressName);
+                    if (_ingressToServiceNames.TryGetValue(ingressName, out serviceNamesPrevious))
+                    {
+                        _ingressToServiceNames.Remove(ingressName);
+                    }
 
-                if (_ingressToServiceNames.TryGetValue(ingressName, out serviceNamesPrevious))
-                {
-                    _ingressToServiceNames.Remove(ingressName);
+                    break;
                 }
             }
 
             // update cross-reference for new ingress-to-services linkage not previously known
-            foreach (var serviceName in serviceNames)
+            foreach (var serviceName in serviceNames.Where(serviceName => !serviceNamesPrevious.Contains(serviceName)))
             {
-                if (!serviceNamesPrevious.Contains(serviceName))
+                if (_serviceToIngressNames.TryGetValue(serviceName, out var ingressNamesPrevious))
                 {
-                    if (_serviceToIngressNames.TryGetValue(serviceName, out var ingressNamesPrevious))
-                    {
-                        _serviceToIngressNames[serviceName] = _serviceToIngressNames[serviceName].Add(ingressName);
-                    }
-                    else
-                    {
-                        _serviceToIngressNames.Add(serviceName, ImmutableList<string>.Empty.Add(ingressName));
-                    }
+                    _serviceToIngressNames[serviceName] = _serviceToIngressNames[serviceName].Add(ingressName);
+                }
+                else
+                {
+                    _serviceToIngressNames.Add(serviceName, ImmutableList<string>.Empty.Add(ingressName));
                 }
             }
 
             // remove cross-reference for previous ingress-to-services linkage no longer present
-            foreach (var serviceName in serviceNamesPrevious)
+            foreach (var serviceName in serviceNamesPrevious.Where(serviceName => !serviceNames.Contains(serviceName)))
             {
-                if (!serviceNames.Contains(serviceName))
-                {
-                    _serviceToIngressNames[serviceName] = _serviceToIngressNames[serviceName].Remove(ingressName);
-                }
+                _serviceToIngressNames[serviceName] = _serviceToIngressNames[serviceName].Remove(ingressName);
             }
         }
     }
@@ -120,11 +118,31 @@ public class NamespaceCache
         {
             throw new ArgumentNullException(nameof(gateway));
         }
-        var gatewayName = gateway.Name();
+        
+    }
+
+    public ImmutableList<string> Update(WatchEventType eventType, V1beta1HttpRoute httpRoute)
+    {
+        if (httpRoute is null)
+        {
+            throw new ArgumentNullException(nameof(httpRoute));
+        }
+
+        var httpRouteName = httpRoute.Name();
         lock (_sync)
         {
-            
+            switch (eventType)
+            {
+                case WatchEventType.Added or WatchEventType.Modified:
+                    _httpRouteData[httpRouteName] = new HttpRouteData(httpRoute);
+                    break;
+                case WatchEventType.Deleted:
+                    _httpRouteData.Remove(httpRouteName);
+                    break;
+            }
         }
+
+        return ImmutableList<string>.Empty;
     }
 
     public ImmutableList<string> Update(WatchEventType eventType, V1Service service)
@@ -205,11 +223,20 @@ public class NamespaceCache
         return _ingressData.Values;
     }
 
+    public IEnumerable<GatewayData> GetGateways()
+    {
+        return _gatewayData.Values;
+    }
+
     public bool IngressExists(V1Ingress ingress)
     {
         return _ingressData.ContainsKey(ingress.Name());
     }
-
+    
+    public bool GatewayExists(V1beta1Gateway gateway)
+    {
+        return _gatewayData.ContainsKey(gateway.Name());
+    }
     public bool TryLookup(NamespacedName key, out ReconcileData data)
     {
         var endspointsList = new List<Endpoints>();
