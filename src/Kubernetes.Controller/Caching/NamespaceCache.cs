@@ -120,9 +120,11 @@ public class NamespaceCache
         {
             throw new ArgumentNullException(nameof(gateway));
         }
-
         var gatewayName = gateway.Name();
-     
+        lock (_sync)
+        {
+            
+        }
     }
 
     public ImmutableList<string> Update(WatchEventType eventType, V1Service service)

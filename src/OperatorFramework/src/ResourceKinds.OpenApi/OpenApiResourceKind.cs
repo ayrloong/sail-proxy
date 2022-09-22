@@ -11,8 +11,8 @@ namespace Microsoft.Kubernetes.ResourceKindProvider.OpenApi;
 
 public class OpenApiResourceKind : IResourceKind
 {
-    private readonly Dictionary<JsonSchema, IResourceKindElement> _elements = new Dictionary<JsonSchema, IResourceKindElement>();
-    private readonly object _elementsSync = new object();
+    private readonly Dictionary<JsonSchema, IResourceKindElement> _elements = new();
+    private readonly object _elementsSync = new();
 
     public OpenApiResourceKind(string apiVersion, string kind, JsonSchema jsonSchema)
     {
@@ -128,9 +128,7 @@ public class OpenApiResourceKind : IResourceKind
     private static bool IsPrimative(JsonSchema schema)
     {
         return
-            schema.Type == JsonObjectType.String ||
-            schema.Type == JsonObjectType.Integer ||
-            schema.Type == JsonObjectType.Boolean ||
-            schema.Type == JsonObjectType.Number;
+            schema.Type is JsonObjectType.String or JsonObjectType.Integer or JsonObjectType.Boolean
+                or JsonObjectType.Number;
     }
 }
