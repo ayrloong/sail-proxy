@@ -38,18 +38,8 @@ public static class GatewayParser
         var methodMatches= rule.Matches.Where(x => x.Method != null).Select(x => x.Method).ToList();
         var queryParamMatches = rule.Matches.Where(x => x.QueryParams != null).Select(x => x.QueryParams).ToList();
         var headerMatches = rule.Matches.Where(x => x.Headers != null).SelectMany(x => x.Headers).ToList();
- 
-        if (!pathMatches.Any())
-        {
-            var pathMatch = new V1beta1HttpPathMatch
-            {
-                Type = string.Empty,
-                Value = string.Empty
-            };
-            pathMatches.Add(pathMatch);
-        }
 
-        var clusterKey = string.Empty;
+        var clusterKey = "test";
         
         foreach (var pathMatch in pathMatches)
         {
@@ -106,12 +96,12 @@ public static class GatewayParser
         foreach (var backendRef in backendRefs)
         {
             var protocol = gatewayContext.Options.Https ? "https" : "http";
-            var service = gatewayContext.Services.SingleOrDefault(s => s.Metadata.Name == backendRef.Name);
-            var servicePort = service.Spec.Ports.SingleOrDefault(p => MatchesPort(p, backendRef));
-            var uri = $"{protocol}://{service.Spec.ClusterIP}:{servicePort.Port}";
+            //var service = gatewayContext.Services.SingleOrDefault(s => s.Metadata.Name == backendRef.Name);
+            //var servicePort = service.Spec.Ports.SingleOrDefault(p => MatchesPort(p, backendRef));
+            //var uri = $"{protocol}://{service.Spec.ClusterIP}:{servicePort.Port}";
             cluster.Destinations[clusterKey] = new DestinationConfig()
             {
-                Address = uri,
+                Address = string.Empty,
                 Weight = backendRef.Weight
             };
         }

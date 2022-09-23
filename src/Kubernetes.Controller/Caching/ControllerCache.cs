@@ -33,7 +33,7 @@ public class ControllerCache : ICache
             throw new ArgumentNullException(nameof(gatewayClass));
         }
 
-        if (!string.Equals(_options.ControllerClass, gatewayClass.Spec.ControllerName,
+        if (!string.Equals(_options.GatewayControllerClass, gatewayClass.Spec.ControllerName,
                 StringComparison.OrdinalIgnoreCase))
         {
             _logger.LogInformation(
@@ -103,7 +103,7 @@ public class ControllerCache : ICache
             throw new ArgumentNullException(nameof(ingressClass));
         }
 
-        if (!string.Equals(_options.ControllerClass, ingressClass.Spec.Controller, StringComparison.OrdinalIgnoreCase))
+        if (!string.Equals(_options.IngressControllerClass, ingressClass.Spec.Controller, StringComparison.OrdinalIgnoreCase))
         {
 #pragma warning disable CA1303 // Do not pass literals as localized parameters
             _logger.LogInformation(

@@ -1,8 +1,10 @@
 ﻿using System.Text.Json;
+using k8s.Models;
 using Microsoft.Kubernetes;
 using Sail.Kubernetes.Controller.Caching;
 using Sail.Kubernetes.Controller.Converters;
 using Sail.Kubernetes.Controller.Dispatching;
+using Sail.Kubernetes.Controller.Models;
 using Sail.Kubernetes.Protocol;
 
 namespace Sail.Kubernetes.Controller.Services;
@@ -38,7 +40,7 @@ public class Reconciler : IReconciler
         {
             var ingresses = _cache.GetIngresses().ToArray();
             var gateways = _cache.GetGateways().ToArray();
-
+            
             var message = new Message
             {
                 MessageType = MessageType.Update,
@@ -50,7 +52,7 @@ public class Reconciler : IReconciler
             foreach (var ingress in ingresses)
             {
                 if (_cache.TryGetReconcileData(
-                        new NamespacedName(ingress.Metadata.NamespaceProperty, ingress.Metadata.Name), out var data))
+                        new NamespacedName(ingress.Metadata.NamespaceProperty, ingress.Metadata.Name,V1Ingress.KubeKind), out var data))
                 {
                     var ingressContext = new IngressContext(ingress, data.ServiceList, data.EndpointsList);
                     IngressParser.ConvertFromKubernetesIngress(ingressContext, configContext);
@@ -59,8 +61,12 @@ public class Reconciler : IReconciler
 
             foreach (var gateway in gateways)
             {
-                var gatewayContext = new GatewayContext(gateway,null);
-                GatewayParser.ConvertFromKubernetesGateway(gatewayContext, configContext);
+                if (_cache.TryGetReconcileData(
+                        new NamespacedName(gateway.Metadata.NamespaceProperty, gateway.Metadata.Name,V1beta1Gateway.KubeKind), out var data))
+                {
+                    var gatewayContext = new GatewayContext(gateway,data.HttpRouteList);
+                    GatewayParser.ConvertFromKubernetesGateway(gatewayContext, configContext);
+                }
             }
 
             message.Cluster = configContext.BuildClusterConfig();

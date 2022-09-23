@@ -29,7 +29,7 @@ public class V1beta1HttpRouteParentRef
     [JsonProperty("group")] public string Group { get; set; }
     [JsonProperty("kind")] public string Kind { get; set; }
     [JsonProperty("namespace")] public string Namespace { get; set; }
-    [JsonProperty("name")] public string ObjectName { get; set; }
+    [JsonProperty("name")] public string Name { get; set; }
     [JsonProperty("sectionName")] public string SectionName { get; set; }
     [JsonProperty("port")] public int PortNumber { get; set; }
 }

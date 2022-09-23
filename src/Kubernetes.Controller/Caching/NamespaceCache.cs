@@ -12,8 +12,9 @@ public class NamespaceCache
     private readonly object _sync = new();
 
     private readonly Dictionary<string, ImmutableList<string>> _ingressToServiceNames = new();
-    private readonly Dictionary<string, ImmutableList<string>> _serviceToIngressNames = new();
-
+    private readonly Dictionary<string, ImmutableList<string>> _serviceToIngressNames = new(); 
+    private readonly Dictionary<string, ImmutableList<string>> _gatewayToHttpRouteNames = new();
+    
     private readonly Dictionary<string, GatewayData> _gatewayData = new();
     private readonly Dictionary<string, IngressData> _ingressData = new();
     private readonly Dictionary<string, HttpRouteData> _httpRouteData = new();
@@ -26,6 +27,7 @@ public class NamespaceCache
         {
             throw new ArgumentNullException(nameof(ingress));
         }
+
         var serviceNames = ImmutableList<string>.Empty;
         if (eventType is WatchEventType.Added or WatchEventType.Modified)
         {
@@ -119,6 +121,25 @@ public class NamespaceCache
             throw new ArgumentNullException(nameof(gateway));
         }
         
+        var gatewayName = gateway.Name();
+
+        lock (_sync)
+        {
+            switch (eventType)
+            {
+                case WatchEventType.Added or WatchEventType.Modified:
+                {
+                    _gatewayData[gatewayName] = new GatewayData(gateway);
+                    
+                    break;
+                }
+                case WatchEventType.Deleted:
+                {
+                    _gatewayData.Remove(gatewayName);
+                    break;
+                }
+            }
+        }
     }
 
     public ImmutableList<string> Update(WatchEventType eventType, V1beta1HttpRoute httpRoute)
@@ -128,21 +149,40 @@ public class NamespaceCache
             throw new ArgumentNullException(nameof(httpRoute));
         }
 
+        var parentRef = httpRoute.Spec.ParentRefs.FirstOrDefault();
+        var gatewayName = parentRef.Name;
         var httpRouteName = httpRoute.Name();
+      
         lock (_sync)
         {
+            var httpRouteNamesPrevious = ImmutableList<string>.Empty;
             switch (eventType)
             {
                 case WatchEventType.Added or WatchEventType.Modified:
                     _httpRouteData[httpRouteName] = new HttpRouteData(httpRoute);
+                    var names = ImmutableList<string>.Empty;
+                    names = names.Add(httpRouteName);
+                    if (_gatewayToHttpRouteNames.TryGetValue(gatewayName, out httpRouteNamesPrevious))
+                    {
+                        _gatewayToHttpRouteNames[gatewayName] = names;
+                    }
+                    else
+                    {
+                        httpRouteNamesPrevious = ImmutableList<string>.Empty;
+                        _gatewayToHttpRouteNames.Add(gatewayName, names);
+                    }
+
                     break;
                 case WatchEventType.Deleted:
                     _httpRouteData.Remove(httpRouteName);
                     break;
             }
+
+            return _gatewayToHttpRouteNames.TryGetValue(gatewayName, out var httpRouteNames)
+                ? httpRouteNames
+                : ImmutableList<string>.Empty;
         }
 
-        return ImmutableList<string>.Empty;
     }
 
     public ImmutableList<string> Update(WatchEventType eventType, V1Service service)
@@ -232,48 +272,80 @@ public class NamespaceCache
     {
         return _ingressData.ContainsKey(ingress.Name());
     }
-    
+
     public bool GatewayExists(V1beta1Gateway gateway)
     {
         return _gatewayData.ContainsKey(gateway.Name());
     }
+
     public bool TryLookup(NamespacedName key, out ReconcileData data)
     {
         var endspointsList = new List<Endpoints>();
         var servicesList = new List<ServiceData>();
-
+        var httpRouteList = new List<HttpRouteData>();
         lock (_sync)
         {
-            if (!_ingressData.TryGetValue(key.Name, out var ingress))
+            switch (key.Kind)
             {
-                data = default;
-                return false;
-            }
-
-            if (_ingressToServiceNames.TryGetValue(key.Name, out var serviceNames))
-            {
-                foreach (var serviceName in serviceNames)
+                case V1beta1Gateway.KubeKind:
                 {
-                    if (_serviceData.TryGetValue(serviceName, out var serviceData))
+                    if (!_gatewayData.TryGetValue(key.Name, out var gateway))
                     {
-                        servicesList.Add(serviceData);
+                        data = default;
+                        return false;
                     }
 
-                    if (_endpointsData.TryGetValue(serviceName, out var endpoints))
+                    if (_gatewayToHttpRouteNames.TryGetValue(key.Name, out var httpRouteNames))
                     {
-                        endspointsList.Add(endpoints);
+                        foreach (var httpRouteName in httpRouteNames)
+                        {
+                            if (_httpRouteData.TryGetValue(httpRouteName, out var httpRouteData))
+                            {
+                                httpRouteList.Add(httpRouteData);
+                            }
+                        }
                     }
+
+                    data = new ReconcileData(default, gateway, httpRouteList, servicesList, endspointsList);
+                    return true;
                 }
-            }
+                case V1Ingress.KubeKind:
+                {
+                    if (!_ingressData.TryGetValue(key.Name, out var ingress))
+                    {
+                        data = default;
+                        return false;
+                    }
 
-            if (_serviceData.Count == 0)
-            {
-                data = default;
-                return false;
-            }
+                    if (_ingressToServiceNames.TryGetValue(key.Name, out var serviceNames))
+                    {
+                        foreach (var serviceName in serviceNames)
+                        {
+                            if (_serviceData.TryGetValue(serviceName, out var serviceData))
+                            {
+                                servicesList.Add(serviceData);
+                            }
 
-            data = new ReconcileData(ingress, servicesList, endspointsList);
-            return true;
+                            if (_endpointsData.TryGetValue(serviceName, out var endpoints))
+                            {
+                                endspointsList.Add(endpoints);
+                            }
+                        }
+                    }
+
+                    if (_serviceData.Count == 0)
+                    {
+                        data = default;
+                        return false;
+                    }
+
+                    data = new ReconcileData(ingress, default, default, servicesList, endspointsList);
+                    return true;
+                }
+                default:
+                    data = default;
+                    return false;
+            }
         }
     }
 }

@@ -2,5 +2,6 @@
 
 public class SailOptions
 {
-    public string ControllerClass { get; set; }
+    public string GatewayControllerClass { get; set; }
+    public string IngressControllerClass { get; set; }
 }
