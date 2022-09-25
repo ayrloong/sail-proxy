@@ -64,7 +64,8 @@ public class Reconciler : IReconciler
                 if (_cache.TryGetReconcileData(
                         new NamespacedName(gateway.Metadata.NamespaceProperty, gateway.Metadata.Name,V1beta1Gateway.KubeKind), out var data))
                 {
-                    var gatewayContext = new GatewayContext(gateway,data.HttpRouteList);
+                    var gatewayContext =
+                        new GatewayContext(gateway, data.HttpRouteList, data.ServiceList, data.EndpointsList);
                     GatewayParser.ConvertFromKubernetesGateway(gatewayContext, configContext);
                 }
             }

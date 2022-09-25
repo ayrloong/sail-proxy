@@ -385,7 +385,7 @@ public class NamespaceCache
                         data = default;
                         return false;
                     }
-
+                    
                     data = new ReconcileData(ingress, default, default, servicesList, endspointsList);
                     return true;
                 }

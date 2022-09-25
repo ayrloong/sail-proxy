@@ -217,7 +217,6 @@ public static class IngressParser
         // HTTP2
         // Connection limits
         // rate limits
-
         // backend health checks.
         return options;
     }

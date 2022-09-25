@@ -55,9 +55,7 @@ public class Receiver: BackgroundHostedService
 
                     var message = JsonSerializer.Deserialize<Message>(json);
                     Logger.LogInformation("Received {MessageType} for {MessageKey}", message.MessageType, message.Key);
-
-                    Logger.LogInformation(json);
-                    Logger.LogInformation(message.MessageType.ToString());
+                        Logger.LogInformation(message.MessageType.ToString());
 
                     if (message.MessageType == MessageType.Update)
                     {
