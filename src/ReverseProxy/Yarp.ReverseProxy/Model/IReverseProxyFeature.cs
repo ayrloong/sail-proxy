@@ -19,7 +19,7 @@ public interface IReverseProxyFeature
     /// The cluster model for the current request.
     /// </summary>
     ClusterModel Cluster { get; }
-
+    
     /// <summary>
     /// All destinations for the current cluster.
     /// </summary>

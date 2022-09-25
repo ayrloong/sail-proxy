@@ -25,6 +25,7 @@ public static class ReverseProxyIEndpointRouteBuilderExtensions
     {
         return endpoints.MapReverseProxy(app =>
         {
+            app.UseCanary();
             app.UseSessionAffinity();
             app.UseLoadBalancing();
             app.UsePassiveHealthChecks();

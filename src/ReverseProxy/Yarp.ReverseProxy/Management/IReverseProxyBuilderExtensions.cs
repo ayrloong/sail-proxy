@@ -74,7 +74,6 @@ internal static class IReverseProxyBuilderExtensions
             ServiceDescriptor.Singleton<ILoadBalancingPolicy, RandomLoadBalancingPolicy>(),
             ServiceDescriptor.Singleton<ILoadBalancingPolicy, PowerOfTwoChoicesLoadBalancingPolicy>(),
             ServiceDescriptor.Singleton<ILoadBalancingPolicy, RoundRobinLoadBalancingPolicy>(),
-            ServiceDescriptor.Singleton<ILoadBalancingPolicy, WeightLoadBalancingPolicy>()
         });
 
         return builder;

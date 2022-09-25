@@ -13,8 +13,10 @@ public class NamespaceCache
 
     private readonly Dictionary<string, ImmutableList<string>> _ingressToServiceNames = new();
     private readonly Dictionary<string, ImmutableList<string>> _serviceToIngressNames = new(); 
-    private readonly Dictionary<string, ImmutableList<string>> _gatewayToHttpRouteNames = new();
     
+    private readonly Dictionary<string, ImmutableList<string>> _gatewayToHttpRouteNames = new();
+    private readonly Dictionary<string, ImmutableList<string>> _httpRouteToServiceNames = new();
+
     private readonly Dictionary<string, GatewayData> _gatewayData = new();
     private readonly Dictionary<string, IngressData> _ingressData = new();
     private readonly Dictionary<string, HttpRouteData> _httpRouteData = new();
@@ -152,15 +154,30 @@ public class NamespaceCache
         var parentRef = httpRoute.Spec.ParentRefs.FirstOrDefault();
         var gatewayName = parentRef.Name;
         var httpRouteName = httpRoute.Name();
-      
+        
+        var serviceNames = ImmutableList<string>.Empty;
+        if (eventType is WatchEventType.Added or WatchEventType.Modified)
+        {
+            var spec = httpRoute.Spec;
+
+            foreach (var service in spec.Rules.SelectMany(rule => rule.BackendRefs.Where(service => !serviceNames.Contains(service.Name))))
+            {
+                serviceNames = serviceNames.Add(service.Name);
+                
+                
+            }
+        }
+
         lock (_sync)
         {
             var httpRouteNamesPrevious = ImmutableList<string>.Empty;
+            var serviceNamesPrevious = ImmutableList<string>.Empty;
             switch (eventType)
             {
                 case WatchEventType.Added or WatchEventType.Modified:
                     _httpRouteData[httpRouteName] = new HttpRouteData(httpRoute);
                     var names = ImmutableList<string>.Empty;
+                    
                     names = names.Add(httpRouteName);
                     if (_gatewayToHttpRouteNames.TryGetValue(gatewayName, out httpRouteNamesPrevious))
                     {
@@ -168,10 +185,18 @@ public class NamespaceCache
                     }
                     else
                     {
-                        httpRouteNamesPrevious = ImmutableList<string>.Empty;
                         _gatewayToHttpRouteNames.Add(gatewayName, names);
                     }
-
+                    
+                    if (_httpRouteToServiceNames.TryGetValue(httpRouteName, out serviceNamesPrevious))
+                    {
+                        _httpRouteToServiceNames[httpRouteName] = serviceNames;
+                    }
+                    else
+                    {
+                        _httpRouteToServiceNames.Add(httpRouteName, serviceNames);
+                    }
+ 
                     break;
                 case WatchEventType.Deleted:
                     _httpRouteData.Remove(httpRouteName);
@@ -304,6 +329,28 @@ public class NamespaceCache
                                 httpRouteList.Add(httpRouteData);
                             }
                         }
+                    }
+                    
+                    if (_httpRouteToServiceNames.TryGetValue(key.Name, out var serviceNames))
+                    {
+                        foreach (var serviceName in serviceNames)
+                        {
+                            if (_serviceData.TryGetValue(serviceName, out var serviceData))
+                            {
+                                servicesList.Add(serviceData);
+                            }
+
+                            if (_endpointsData.TryGetValue(serviceName, out var endpoints))
+                            {
+                                endspointsList.Add(endpoints);
+                            }
+                        }
+                    }
+
+                    if (_serviceData.Count == 0)
+                    {
+                        data = default;
+                        return false;
                     }
 
                     data = new ReconcileData(default, gateway, httpRouteList, servicesList, endspointsList);

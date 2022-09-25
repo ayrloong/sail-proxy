@@ -57,7 +57,7 @@ internal static class ConfigurationReadingExtensions
 
         return new ReadOnlyDictionary<string, string>(children.ToDictionary(s => s.Key, s => s.Value!, StringComparer.OrdinalIgnoreCase));
     }
-
+    
     internal static string[]? ReadStringArray(this IConfigurationSection section)
     {
         if (section.GetChildren() is var children && !children.Any())

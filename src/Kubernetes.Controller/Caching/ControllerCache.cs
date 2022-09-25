@@ -67,7 +67,7 @@ public class ControllerCache : ICache
             throw new ArgumentNullException(nameof(gateway));
         }
 
-        if (IsSailGateway(gateway.Spec))
+        if (IsGatewayClass(gateway.Spec))
         {
             Namespace(gateway.Namespace()).Update(eventType, gateway);
             return true;
@@ -138,7 +138,7 @@ public class ControllerCache : ICache
             throw new ArgumentNullException(nameof(ingress));
         }
         
-        if (IsSailIngress(ingress.Spec))
+        if (IsIngressClass(ingress.Spec))
         {
             Namespace(ingress.Namespace()).Update(eventType, ingress);
             return true;
@@ -223,7 +223,7 @@ public class ControllerCache : ICache
         return gateways;
     }
 
-    private bool IsSailIngress(V1IngressSpec spec)
+    private bool IsIngressClass(V1IngressSpec spec)
     {
         if (spec.IngressClassName is not null)
         {
@@ -236,7 +236,7 @@ public class ControllerCache : ICache
         return _isDefaultIngressController;
     }
 
-    private bool IsSailGateway(V1beta1GatewaySpec spec)
+    private bool IsGatewayClass(V1beta1GatewaySpec spec)
     {
         if (spec.GatewayClassName is not null)
         {

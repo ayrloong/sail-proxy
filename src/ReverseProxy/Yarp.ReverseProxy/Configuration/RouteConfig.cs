@@ -35,7 +35,11 @@ public sealed record RouteConfig
     /// should be proxied to.
     /// </summary>
     public string? ClusterId { get; init; }
-
+    
+    /// <summary>
+    ///  Gets weight cluster
+    /// </summary>
+    public WeightClusterConfig? WeightCluster { get; init; }
     /// <summary>
     /// The name of the AuthorizationPolicy to apply to this route.
     /// If not set then only the FallbackPolicy will apply.

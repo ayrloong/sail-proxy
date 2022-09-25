@@ -43,8 +43,7 @@ public sealed record ClusterConfig
     /// Config for outgoing HTTP requests.
     /// </summary>
     public ForwarderRequestConfig? HttpRequest { get; init; }
-
-
+    
     /// <summary>
     /// The set of destinations associated with this cluster.
     /// </summary>

@@ -102,7 +102,7 @@ public static class GatewayParser
             cluster.Destinations[clusterKey] = new DestinationConfig()
             {
                 Address = string.Empty,
-                Weight = backendRef.Weight
+                
             };
         }
     }

@@ -149,10 +149,43 @@ internal sealed class ConfigurationConfigProvider : IProxyConfigProvider, IDispo
             CorsPolicy = section[nameof(RouteConfig.CorsPolicy)],
             Metadata = section.GetSection(nameof(RouteConfig.Metadata)).ReadStringDictionary(),
             Transforms = CreateTransforms(section.GetSection(nameof(RouteConfig.Transforms))),
+            WeightCluster = CreateWeightClusters(section.GetSection(nameof(RouteConfig.WeightCluster))),
             Match = CreateRouteMatch(section.GetSection(nameof(RouteConfig.Match))),
+            
         };
     }
 
+    private static WeightClusterConfig? CreateWeightClusters(IConfigurationSection section)
+    {
+        if (!section.Exists())
+        {
+            return null;
+        }
+
+        return new WeightClusterConfig
+        {
+            Clusters = CreateClusters(section.GetSection(nameof(WeightClusterConfig.Clusters))),
+        };
+    }
+    
+    private static List<WeightCluster> CreateClusters(IConfigurationSection section)
+    {
+        if (!section.Exists())
+        {
+            return null;
+        }
+
+        return section.GetChildren().Select(data => CreateWeightCluster(data)).ToList();
+    }
+    
+    private static WeightCluster CreateWeightCluster(IConfigurationSection section)
+    {
+        return new WeightCluster
+        {
+            ClusterId = section[nameof(WeightCluster.ClusterId)],
+            Weight = section.ReadInt32(nameof(WeightCluster.Weight))
+        };
+    }
     private static IReadOnlyList<IReadOnlyDictionary<string, string>>? CreateTransforms(IConfigurationSection section)
     {
         if (section.GetChildren() is var children && !children.Any())
@@ -372,7 +405,6 @@ internal sealed class ConfigurationConfigProvider : IProxyConfigProvider, IDispo
         {
             Address = section[nameof(DestinationConfig.Address)]!,
             Health = section[nameof(DestinationConfig.Health)],
-            Weight =  section.ReadInt32(nameof(DestinationConfig.Weight)),
             Metadata = section.GetSection(nameof(DestinationConfig.Metadata)).ReadStringDictionary(),
         };
     }
