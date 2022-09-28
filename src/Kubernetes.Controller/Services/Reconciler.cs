@@ -1,6 +1,4 @@
-﻿using k8s.Models;
-using Microsoft.Kubernetes;
-using Newtonsoft.Json;
+﻿using Microsoft.Kubernetes;
 using Sail.Kubernetes.Controller.Caching;
 using Sail.Kubernetes.Controller.Converters;
 using Sail.Kubernetes.Controller.Dispatching;
@@ -51,9 +49,11 @@ public class Reconciler : IReconciler
             foreach (var gateway in gateways)
             {
                 if (_cache.TryGetReconcileData(
-                        new NamespacedName(gateway.Metadata.NamespaceProperty, gateway.Metadata.Name,V1beta1Gateway.KubeKind), out var data))
+                        new NamespacedName(gateway.Metadata.NamespaceProperty, gateway.Metadata.Name,
+                            V1beta1Gateway.KubeKind), out var data))
                 {
-                    var gatewayContext = new GatewayContext(gateway, data.HttpRouteList, data.ServiceList, data.EndpointsList); 
+                    var gatewayContext =
+                        new GatewayContext(gateway, data.HttpRouteList, data.ServiceList, data.EndpointsList);
                     GatewayParser.ConvertFromKubernetesGateway(gatewayContext, configContext);
                 }
             }
@@ -64,7 +64,7 @@ public class Reconciler : IReconciler
             var bytes = JsonSerializer.SerializeToUtf8Bytes(message);
 
             _logger.LogInformation(JsonSerializer.Serialize(message));
-            
+
             await _dispatcher.SendAsync(null, bytes, cancellationToken).ConfigureAwait(false);
         }
         catch (Exception ex)
