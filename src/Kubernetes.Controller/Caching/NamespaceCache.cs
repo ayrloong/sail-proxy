@@ -11,9 +11,7 @@ public class NamespaceCache
 {
     private readonly object _sync = new();
     private readonly Dictionary<string, ImmutableList<string>> _gatewayToHttpRouteNames = new();
-    
     private readonly Dictionary<string, ImmutableList<string>> _gatewayToServiceNames = new();
-    
     private readonly Dictionary<string, ImmutableList<string>> _serviceToGatewayNames = new();
     
     private readonly Dictionary<string, GatewayData> _gatewayData = new();

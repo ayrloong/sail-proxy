@@ -34,7 +34,7 @@ public sealed record RouteConfig
     /// Gets or sets the cluster that requests matching this route
     /// should be proxied to.
     /// </summary>
-    public string? ClusterId { get; set; }
+    public string? ClusterId { get; init; }
     
     /// <summary>
     ///  Gets weight cluster

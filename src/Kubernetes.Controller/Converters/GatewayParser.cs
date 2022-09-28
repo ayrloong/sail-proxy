@@ -12,7 +12,6 @@ public static class GatewayParser
         var routes = gatewayContext.HttpRoutes;
         foreach (var route in routes)
         {
-
             HandleGatewayRoute(gatewayContext, route, route.Spec.Hostnames, configContext);
         }
     }
@@ -30,7 +29,7 @@ public static class GatewayParser
     }
 
     private static void HandleGatewayRule(GatewayContext gatewayContext,
-        List<Endpoints> endpoints,
+        IEnumerable<Endpoints> endpoints,
         V1beta1HttpRouteRule rule,
         IReadOnlyList<string> hosts,
         HttpRouteData httpRoute,
@@ -44,7 +43,7 @@ public static class GatewayParser
     }
 
     private static void HandleGatewayRulePath(GatewayContext gatewayContext,
-        List<Endpoints> endpoints,
+        IEnumerable<Endpoints> endpoints,
         V1beta1HttpPathMatch path,
         V1beta1HttpRouteRule rule,
         IReadOnlyList<string> hosts,
@@ -53,16 +52,8 @@ public static class GatewayParser
     {
 
         var routes = configContext.Routes;
-        var route = new RouteConfig
-        {
-            Match = new RouteMatch()
-            {
-                Hosts = hosts,
-                Path = path.Value,
-            },
-            RouteId = $"{httpRoute.Metadata.Name}.{httpRoute.Metadata.NamespaceProperty}:{path.Value}",
-        };
-        var weightCluster = new WeightClusterConfig
+
+        var clusters = new WeightClusterConfig
         {
             Clusters = new List<WeightCluster>()
         };
@@ -75,8 +66,7 @@ public static class GatewayParser
             {
                 var key = UpstreamName(httpRoute.Metadata.NamespaceProperty, backendRef);
                 HandleGatewayRuleBackend(gatewayContext, servicePort, endpoints, backendRef, key, configContext);
-                route.ClusterId = key;
-                weightCluster.Clusters.Add(new WeightCluster
+                clusters.Clusters.Add(new WeightCluster
                 {
                     ClusterId = key,
                     Weight = backendRef.Weight,
@@ -84,9 +74,20 @@ public static class GatewayParser
             }
         }
 
+        var route = new RouteConfig
+        {
+            Match = new RouteMatch()
+            {
+                Hosts = hosts,
+                Path = path.Value,
+            },
+            ClusterId = clusters.Clusters.FirstOrDefault().ClusterId,
+            RouteId = $"{httpRoute.Metadata.Name}.{httpRoute.Metadata.NamespaceProperty}:{path.Value}",
+        };
+
         if (rule.BackendRefs.Count > 1)
         {
-            route.WeightCluster = weightCluster;
+            route.WeightCluster = clusters;
         }
 
         routes.Add(route);
@@ -94,7 +95,7 @@ public static class GatewayParser
 
     private static void HandleGatewayRuleBackend(GatewayContext gatewayContext,
         V1ServicePort servicePort,
-        List<Endpoints> endpoints,
+        IEnumerable<Endpoints> endpoints,
         V1beta1HttpBackendRef backendRef,
         string key,
         ConfigContext configContext)

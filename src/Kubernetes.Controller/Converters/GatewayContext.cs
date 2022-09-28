@@ -13,7 +13,7 @@ public class GatewayContext
         Endpoints = endpoints;
     }
 
-    public GatewayOptions Options { get; set; } = new();
+    public GatewayOptions Options { get; } = new();
     public GatewayData Gateway { get; }
     public List<HttpRouteData> HttpRoutes { get; }
     public List<ServiceData> Services { get; }
