@@ -16,6 +16,7 @@ spec:
     backendRefs:
     - name: backend-sail
       port: 8085
-  - backendRefs:
+      weight: 10
     - name: backend
       port: 80
+      weight: 90 

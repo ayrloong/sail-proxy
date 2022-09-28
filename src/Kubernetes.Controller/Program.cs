@@ -29,23 +29,18 @@ builder.WebHost.ConfigureLogging(options =>
 builder.Services.AddControllers();
 builder.Services.AddHealthChecks().AddCheck("self", () => HealthCheckResult.Healthy());
 builder.Services.AddKubernetesControllerRuntime();
-//builder.Services.AddHostedService<IngressController>();
 builder.Services.AddHostedService<GatewayController>();
-builder.Services.AddSingleton<ICache, ControllerCache>();
+builder.Services.AddSingleton<ICache, GatewayCache>();
 builder.Services.AddTransient<IReconciler, Reconciler>();
 builder.Services.AddSingleton<IDispatcher, Dispatcher>();
 builder.Services.Configure<SailOptions>(builder.Configuration.GetSection("Sail"));
-//builder.Services.RegisterResourceInformer<V1Ingress>();
-//builder.Services.RegisterResourceInformer<V1IngressClass>();
 builder.Services.RegisterResourceInformer<V1beta1Gateway>();
 builder.Services.RegisterResourceInformer<V1beta1GatewayClass>();
 builder.Services.RegisterResourceInformer<V1beta1HttpRoute>();
 builder.Services.RegisterResourceInformer<V1Service>();
 builder.Services.RegisterResourceInformer<V1Endpoints>();
 
-
 var app = builder.Build();
-
 app.UseRouting();
 app.UseEndpoints(endpoints =>
 {

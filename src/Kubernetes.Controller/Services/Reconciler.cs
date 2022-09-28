@@ -1,11 +1,12 @@
-﻿using System.Text.Json;
-using k8s.Models;
+﻿using k8s.Models;
 using Microsoft.Kubernetes;
+using Newtonsoft.Json;
 using Sail.Kubernetes.Controller.Caching;
 using Sail.Kubernetes.Controller.Converters;
 using Sail.Kubernetes.Controller.Dispatching;
 using Sail.Kubernetes.Controller.Models;
 using Sail.Kubernetes.Protocol;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace Sail.Kubernetes.Controller.Services;
 
@@ -38,9 +39,7 @@ public class Reconciler : IReconciler
     {
         try
         {
-            var ingresses = _cache.GetIngresses().ToArray();
             var gateways = _cache.GetGateways().ToArray();
-            
             var message = new Message
             {
                 MessageType = MessageType.Update,
@@ -49,23 +48,12 @@ public class Reconciler : IReconciler
 
             var configContext = new ConfigContext();
 
-            foreach (var ingress in ingresses)
-            {
-                if (_cache.TryGetReconcileData(
-                        new NamespacedName(ingress.Metadata.NamespaceProperty, ingress.Metadata.Name,V1Ingress.KubeKind), out var data))
-                {
-                    var ingressContext = new IngressContext(ingress, data.ServiceList, data.EndpointsList);
-                    IngressParser.ConvertFromKubernetesIngress(ingressContext, configContext);
-                }
-            }
-
             foreach (var gateway in gateways)
             {
                 if (_cache.TryGetReconcileData(
                         new NamespacedName(gateway.Metadata.NamespaceProperty, gateway.Metadata.Name,V1beta1Gateway.KubeKind), out var data))
                 {
-                    var gatewayContext =
-                        new GatewayContext(gateway, data.HttpRouteList, data.ServiceList, data.EndpointsList);
+                    var gatewayContext = new GatewayContext(gateway, data.HttpRouteList, data.ServiceList, data.EndpointsList); 
                     GatewayParser.ConvertFromKubernetesGateway(gatewayContext, configContext);
                 }
             }

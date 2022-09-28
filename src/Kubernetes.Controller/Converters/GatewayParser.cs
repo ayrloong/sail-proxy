@@ -12,99 +12,154 @@ public static class GatewayParser
         var routes = gatewayContext.HttpRoutes;
         foreach (var route in routes)
         {
-            HandleGatewayRoute(gatewayContext, route, route.Spec.Hostnames, configContext);
+            var namespaceName = route.Metadata.NamespaceProperty;
+            HandleGatewayRoute(gatewayContext, route, route.Spec.Hostnames, namespaceName, configContext);
         }
     }
     
     private static void HandleGatewayRoute(GatewayContext gatewayContext, 
         HttpRouteData route,
-        IReadOnlyList<string> hostnames,
+        IReadOnlyList<string> hosts,
+        string namespaceName,
         ConfigContext configContext)
     {
         var rules = route.Spec.Rules;
         foreach (var rule in rules)
         {
-            HandleGatewayRule(gatewayContext, rule, hostnames, configContext);
+            HandleGatewayRule(gatewayContext, gatewayContext.Endpoints, rule, hosts,namespaceName, configContext);
         }
     }
     
     private static void HandleGatewayRule(GatewayContext gatewayContext, 
+        List<Endpoints> endpoints,
         V1beta1HttpRouteRule rule,
-        IReadOnlyList<string> hostnames,
+        IReadOnlyList<string> hosts,
+        string namespaceName,
         ConfigContext configContext)
     {
-
-        var pathMatches = rule.Matches.Where(x => x.Path != null).Select(x => x.Path).ToList();
-        var methodMatches= rule.Matches.Where(x => x.Method != null).Select(x => x.Method).ToList();
-        var queryParamMatches = rule.Matches.Where(x => x.QueryParams != null).Select(x => x.QueryParams).ToList();
-        var headerMatches = rule.Matches.Where(x => x.Headers != null).SelectMany(x => x.Headers).ToList();
-
-        var clusterKey = "test";
-        
-        foreach (var pathMatch in pathMatches)
+        var paths = rule.Matches.Where(x => x.Path != null).Select(x => x.Path);
+        foreach (var path in paths)
         {
-            HandleGatewayRulePath(gatewayContext, pathMatch, hostnames, methodMatches, queryParamMatches, headerMatches,
-                clusterKey,
-                configContext);
+            HandleGatewayRulePath(gatewayContext, endpoints, path, rule,hosts,namespaceName,configContext);
         }
-
-        HandleGatewayRuleBackend(gatewayContext,rule.BackendRefs,clusterKey,configContext);
-
     }
 
     private static void HandleGatewayRulePath(GatewayContext gatewayContext,
+        List<Endpoints> endpoints,
         V1beta1HttpPathMatch path,
-        IReadOnlyList<string> hostnames,
-        IReadOnlyList<string> methodMatches,
-        List<V1beta1HttpQueryParamMatch> queryParamMatches,
-        List<V1beta1HttpHeaderMatch> headerMatches,
-        string clusterKey,
+        V1beta1HttpRouteRule rule,
+        IReadOnlyList<string> hosts,
+        string namespaceName,
         ConfigContext configContext)
     {
-       
-        var routes = configContext.Routes;
-        var headers = ConvertHeaderMatch(headerMatches);
-        var queryParameters = ConvertQueryParamMatch(queryParamMatches);
 
-        routes.Add(new RouteConfig()
+        var routes = configContext.Routes;
+        var route = new RouteConfig
         {
-            ClusterId = clusterKey,
             Match = new RouteMatch()
             {
-                Hosts = hostnames,
+                Hosts = hosts,
                 Path = path.Value,
-                Methods = methodMatches,
-                Headers = headers,
-                QueryParameters = queryParameters
+            },
+        };
+        var weightCluster = new WeightClusterConfig
+        {
+            Clusters = new List<WeightCluster>()
+        };
+
+        foreach (var backendRef in rule.BackendRefs)
+        {
+            var service = gatewayContext.Services.SingleOrDefault(s => s.Metadata.Name == backendRef.Name);
+            var servicePort = service.Spec?.Ports.SingleOrDefault(p => MatchesPort(p, backendRef));
+            if (servicePort != null)
+            {
+                var key = UpstreamName(namespaceName, backendRef);
+                HandleGatewayRuleBackend(gatewayContext, servicePort, endpoints, backendRef, key, configContext);
+                route.ClusterId = key;
+                weightCluster.Clusters.Add(new WeightCluster
+                {
+                    ClusterId = key,
+                    Weight = backendRef.Weight,
+                });
             }
-        });
+        }
+
+        if (rule.BackendRefs.Count > 1)
+        {
+            route.WeightCluster = weightCluster;
+        }
+
+        routes.Add(route);
     }
 
     private static void HandleGatewayRuleBackend(GatewayContext gatewayContext,
-        List<V1beta1HttpBackendRef> backendRefs,
-        string clusterKey,
+        V1ServicePort servicePort,
+        List<Endpoints> endpoints,
+        V1beta1HttpBackendRef backendRef,
+        string key,
         ConfigContext configContext)
     {
         var clusters = configContext.ClusterTransfers;
-        if (!clusters.ContainsKey(clusterKey))
+        if (!clusters.ContainsKey(key))
         {
-            clusters.Add(clusterKey, new ClusterTransfer());
+            clusters.Add(key, new ClusterTransfer());
         }
-        
-        var cluster = clusters[clusterKey];
-        cluster.ClusterId = clusterKey;
-        foreach (var backendRef in backendRefs)
+
+        var cluster = clusters[key];
+        cluster.ClusterId = key;
+
+        var subsets = endpoints.SingleOrDefault(x => x.Name == backendRef?.Name).Subsets;
+        foreach (var subset in subsets ?? Enumerable.Empty<V1EndpointSubset>())
         {
-            var protocol = gatewayContext.Options.Https ? "https" : "http";
-            //var service = gatewayContext.Services.SingleOrDefault(s => s.Metadata.Name == backendRef.Name);
-            //var servicePort = service.Spec.Ports.SingleOrDefault(p => MatchesPort(p, backendRef));
-            //var uri = $"{protocol}://{service.Spec.ClusterIP}:{servicePort.Port}";
-            cluster.Destinations[clusterKey] = new DestinationConfig()
+            foreach (var port in subset.Ports ?? Enumerable.Empty<Corev1EndpointPort>())
             {
-                Address = string.Empty,
+                if (!MatchesPort(port, servicePort?.TargetPort))
+                {
+                    continue;
+                }
                 
-            };
+                foreach (var address in subset.Addresses ?? Enumerable.Empty<V1EndpointAddress>())
+                {
+                    var protocol = gatewayContext.Options.Https ? "https" : "http";
+                    var uri = $"{protocol}://{address.Ip}:{port.Port}";
+                    cluster.Destinations[uri] = new DestinationConfig()
+                    {
+                        Address = uri
+                    };
+                }
+            }
         }
+    }
+
+    private static bool MatchesPort(Corev1EndpointPort port1, IntstrIntOrString port2)
+    {
+        if (port1 is null || port2 is null)
+        {
+            return false;
+        }
+        if (int.TryParse(port2, out var port2Number) && port2Number == port1.Port)
+        {
+            return true;
+        }
+        return string.Equals(port2, port1.Name, StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static string UpstreamName(string namespaceName, V1beta1HttpBackendRef backendRef)
+    {
+        if (backendRef is not null)
+        {
+            if (backendRef.Port is > 0)
+            {
+                return $"{backendRef.Name}.{namespaceName}:{backendRef.Port}";
+            }
+
+            if (!string.IsNullOrWhiteSpace(backendRef.Name))
+            {
+                return $"{backendRef.Name}.{namespaceName}:{backendRef.Name}";
+            }
+        }
+
+        return $"{namespaceName}-INVALID";
     }
 
     private static bool MatchesPort(V1ServicePort port1, V1beta1HttpBackendRef port2)
@@ -121,11 +176,11 @@ public static class GatewayParser
 
         return port2.Name is not null && string.Equals(port2.Name, port1.Name, StringComparison.Ordinal);
     }
-    private static List<RouteHeader> ConvertHeaderMatch(List<V1beta1HttpHeaderMatch> headerMatches)
+    private static List<RouteHeader> ConvertHeaderMatch(IEnumerable<V1beta1HttpHeaderMatch> headerMatches)
     {
         return new List<RouteHeader>();
     }
-    private static List<RouteQueryParameter> ConvertQueryParamMatch(List<V1beta1HttpQueryParamMatch> queryParamMatches)
+    private static List<RouteQueryParameter> ConvertQueryParamMatch(IEnumerable<V1beta1HttpQueryParamMatch> queryParamMatches)
     {
         return new List<RouteQueryParameter>();
     }

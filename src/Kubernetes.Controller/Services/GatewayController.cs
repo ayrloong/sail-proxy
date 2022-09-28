@@ -26,9 +26,10 @@ public class GatewayController : BackgroundHostedService
         IResourceInformer<V1beta1Gateway> gatewayInformer,
         IResourceInformer<V1beta1GatewayClass> gatewayClassInformer,
         IResourceInformer<V1beta1HttpRoute> httpRouteInformer,
+        IResourceInformer<V1Endpoints> endpointsInformer,
         IResourceInformer<V1Service> serviceInformer,
         IHostApplicationLifetime hostApplicationLifetime,
-        ILogger<IngressController> logger)
+        ILogger<GatewayController> logger)
         : base(hostApplicationLifetime, logger)
     {
         if (gatewayInformer is null)
@@ -67,6 +68,7 @@ public class GatewayController : BackgroundHostedService
             gatewayClassInformer.Register(Notification),
             httpRouteInformer.Register(Notification),
             serviceInformer.Register(Notification),
+            endpointsInformer.Register(Notification),
         };
 
         _registrationsReady = false;
@@ -74,6 +76,7 @@ public class GatewayController : BackgroundHostedService
         gatewayClassInformer.StartWatching();
         httpRouteInformer.StartWatching();
         serviceInformer.StartWatching();
+        endpointsInformer.StartWatching();
 
         _queue = new ProcessingRateLimitedQueue<QueueItem>(perSecond: 0.5, burst: 1);
         _cache = cache ?? throw new ArgumentNullException(nameof(cache));
@@ -93,7 +96,7 @@ public class GatewayController : BackgroundHostedService
         // At this point we know that all of the Ingress and Endpoint caches are at least in sync
         // with cluster's state as of the start of this controller.
         _registrationsReady = true;
-
+        NotificationGatewayChanged();
         // Now begin one loop to process work until an application shutdown is requested.
         while (!cancellationToken.IsCancellationRequested)
         {
@@ -174,7 +177,16 @@ public class GatewayController : BackgroundHostedService
             NotificationGatewayChanged();
         }
     }
-
+    
+    private void Notification(WatchEventType eventType, V1Endpoints resource)
+    {
+        var gatewayNames = _cache.Update(eventType, resource);
+        if (gatewayNames.Count > 0)
+        {
+            NotificationGatewayChanged();
+        }
+    }
+    
     protected override void Dispose(bool disposing)
     {
         if (disposing)
