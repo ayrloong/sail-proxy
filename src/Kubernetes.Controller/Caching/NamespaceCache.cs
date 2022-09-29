@@ -11,8 +11,8 @@ public class NamespaceCache
 {
     private readonly object _sync = new();
     private readonly Dictionary<string, ImmutableList<string>> _gatewayToHttpRouteNames = new();
-    private readonly Dictionary<string, ImmutableList<string>> _gatewayToServiceNames = new();
-    private readonly Dictionary<string, ImmutableList<string>> _serviceToGatewayNames = new();
+    private readonly Dictionary<string, ImmutableList<string>> _httpRouteToServiceNames = new();
+    private readonly Dictionary<string, ImmutableList<string>> _serviceToHttpRouteNames = new();
     
     private readonly Dictionary<string, GatewayData> _gatewayData = new();
     private readonly Dictionary<string, HttpRouteData> _httpRouteData = new();
@@ -94,22 +94,22 @@ public class NamespaceCache
             {
                 case WatchEventType.Added or WatchEventType.Modified:
                     _httpRouteData[httpRouteName] = new HttpRouteData(httpRoute);
-                    if (_gatewayToServiceNames.TryGetValue(gatewayName, out serviceNamesPrevious))
+                    if (_httpRouteToServiceNames.TryGetValue(httpRouteName, out serviceNamesPrevious))
                     {
-                        _gatewayToServiceNames[gatewayName] = serviceNames;
+                        _httpRouteToServiceNames[httpRouteName] = serviceNames;
                     }
                     else
                     {
                         serviceNamesPrevious = ImmutableList<string>.Empty;
-                        _gatewayToServiceNames.Add(gatewayName, serviceNames);
+                        _httpRouteToServiceNames.Add(httpRouteName, serviceNames);
                     }
 
                     break;
                 case WatchEventType.Deleted:
                     _httpRouteData.Remove(httpRouteName);
-                    if (_gatewayToServiceNames.TryGetValue(gatewayName, out serviceNamesPrevious))
+                    if (_httpRouteToServiceNames.TryGetValue(httpRouteName, out serviceNamesPrevious))
                     {
-                        _gatewayToServiceNames[gatewayName] = serviceNamesPrevious.RemoveRange(serviceNames);
+                        _httpRouteToServiceNames.Remove(httpRouteName);
                     }
 
                     break;
@@ -117,20 +117,20 @@ public class NamespaceCache
 
             foreach (var serviceName in serviceNames.Where(serviceName => !serviceNamesPrevious.Contains(serviceName)))
             {
-                if (_serviceToGatewayNames.TryGetValue(serviceName, out var _))
+                if (_serviceToHttpRouteNames.TryGetValue(serviceName, out var _))
                 {
-                    _serviceToGatewayNames[serviceName] = _serviceToGatewayNames[serviceName].Add(gatewayName);
+                    _serviceToHttpRouteNames[serviceName] = _serviceToHttpRouteNames[serviceName].Add(httpRouteName);
                 }
                 else
                 {
-                    _serviceToGatewayNames.Add(serviceName, ImmutableList<string>.Empty.Add(gatewayName));
+                    _serviceToHttpRouteNames.Add(serviceName, ImmutableList<string>.Empty.Add(httpRouteName));
                 }
             }
 
             // remove cross-reference for previous ingress-to-services linkage no longer present
             foreach (var serviceName in serviceNamesPrevious.Where(serviceName => !serviceNames.Contains(serviceName)))
             {
-                _serviceToGatewayNames[serviceName] = _serviceToGatewayNames[serviceName].Remove(gatewayName);
+                _serviceToHttpRouteNames[serviceName] = _serviceToHttpRouteNames[serviceName].Remove(httpRouteName);
             }
             return _gatewayToHttpRouteNames.TryGetValue(gatewayName, out var httpRouteNames)
                 ? httpRouteNames
@@ -159,8 +159,8 @@ public class NamespaceCache
             }
         }
 
-        return _serviceToGatewayNames.TryGetValue(serviceName, out var gatewayNames)
-            ? gatewayNames
+        return _serviceToHttpRouteNames.TryGetValue(serviceName, out var httpRouteNames)
+            ? httpRouteNames
             : ImmutableList<string>.Empty;
     }
 
@@ -198,8 +198,8 @@ public class NamespaceCache
                     break;
             }
 
-            return _serviceToGatewayNames.TryGetValue(serviceName, out var gatewayNames)
-                ? gatewayNames
+            return _serviceToHttpRouteNames.TryGetValue(serviceName, out var httpRouteNames)
+                ? httpRouteNames
                 : ImmutableList<string>.Empty;
         }
     }
@@ -233,22 +233,25 @@ public class NamespaceCache
                 }
             }
 
-            if (_gatewayToServiceNames.TryGetValue(key.Name, out var serviceNames))
+            foreach (var httpRouteName in _gatewayToHttpRouteNames.SelectMany(x => x.Value))
             {
-                foreach (var serviceName in serviceNames)
+                if (_httpRouteToServiceNames.TryGetValue(httpRouteName, out var serviceNames))
                 {
-                    if (_serviceData.TryGetValue(serviceName, out var serviceData))
+                    foreach (var serviceName in serviceNames)
                     {
-                        servicesList.Add(serviceData);
-                    }
+                        if (_serviceData.TryGetValue(serviceName, out var serviceData))
+                        {
+                            servicesList.Add(serviceData);
+                        }
 
-                    if (_endpointsData.TryGetValue(serviceName, out var endpoints))
-                    {
-                        endspointsList.Add(endpoints);
+                        if (_endpointsData.TryGetValue(serviceName, out var endpoints))
+                        {
+                            endspointsList.Add(endpoints);
+                        }
                     }
                 }
             }
-
+            
             if (_serviceData.Count == 0)
             {
                 data = default;

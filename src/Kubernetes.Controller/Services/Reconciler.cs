@@ -60,9 +60,7 @@ public class Reconciler : IReconciler
 
             message.Cluster = configContext.BuildClusterConfig();
             message.Routes = configContext.Routes;
-
             var bytes = JsonSerializer.SerializeToUtf8Bytes(message);
-
             _logger.LogInformation(JsonSerializer.Serialize(message));
 
             await _dispatcher.SendAsync(null, bytes, cancellationToken).ConfigureAwait(false);
