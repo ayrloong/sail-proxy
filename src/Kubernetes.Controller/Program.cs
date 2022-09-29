@@ -30,6 +30,7 @@ builder.Services.AddControllers();
 builder.Services.AddHealthChecks().AddCheck("self", () => HealthCheckResult.Healthy());
 builder.Services.AddKubernetesControllerRuntime();
 builder.Services.AddHostedService<GatewayController>();
+builder.Services.AddSingleton<IStatusService, StatusService>();
 builder.Services.AddSingleton<ICache, GatewayCache>();
 builder.Services.AddTransient<IReconciler, Reconciler>();
 builder.Services.AddSingleton<IDispatcher, Dispatcher>();

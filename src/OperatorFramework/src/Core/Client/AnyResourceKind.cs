@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -93,8 +94,9 @@ public class AnyResourceKind : IAnyResourceKind
             url += "?" + string.Join("&", queryParameters);
         }
 
+    
         var httpRequest = CreateRequest(url, HttpMethod.Post, customHeaders);
-        var httpResponse = await SendRequestRaw(string.Empty, httpRequest, cancellationToken);
+        var httpResponse = await SendRequestRaw(KubernetesJson.Serialize(body), httpRequest, cancellationToken);
         // Create Result
         var result = await CreateResultAsync<object>(httpRequest, httpResponse, null, cancellationToken);
         return result;
@@ -286,10 +288,7 @@ public class AnyResourceKind : IAnyResourceKind
         {
             throw new ArgumentNullException();
         }
-        if (namespaceParameter is null)
-        {
-            throw new ArgumentNullException();
-        }
+       
         if (plural is null)
         {
             throw new ArgumentNullException();
@@ -302,10 +301,9 @@ public class AnyResourceKind : IAnyResourceKind
         var url = Pattern(group, namespaceParameter) + "/{name}";
         url = url.Replace("{group}", Uri.EscapeDataString(group));
         url = url.Replace("{version}", Uri.EscapeDataString(version));
-        url = url.Replace("{namespace}", Uri.EscapeDataString(namespaceParameter));
         url = url.Replace("{plural}", Uri.EscapeDataString(plural));
         url = url.Replace("{name}", Uri.EscapeDataString(name));
-        List<string> queryParameters = new List<string>();
+        List<string> queryParameters = new();
         if (dryRun is not null)
         {
             queryParameters.Add($"dryRun={Uri.EscapeDataString(dryRun)}");
@@ -323,7 +321,7 @@ public class AnyResourceKind : IAnyResourceKind
             url += "?" + string.Join("&", queryParameters);
         }
         var httpRequest = CreateRequest(url, HttpMethod.Patch, customHeaders);
-        var httpResponse = await SendRequestRaw(string.Empty, httpRequest, cancellationToken);
+        var httpResponse = await SendRequest(body, httpRequest, cancellationToken);
         // Create Result
         var result = await CreateResultAsync<object>(httpRequest, httpResponse, null, cancellationToken);
         return result;
@@ -346,10 +344,23 @@ public class AnyResourceKind : IAnyResourceKind
 
         return httpRequest;
     }
+   
+    private Task<HttpResponseMessage> SendRequest<T>(T body, HttpRequestMessage httpRequest, CancellationToken cancellationToken)
+    {
+        if (body != null)
+        {
+            var requestContent = KubernetesJson.Serialize(body);
+            httpRequest.Content = new StringContent(requestContent, System.Text.Encoding.UTF8);
+            httpRequest.Content.Headers.ContentType = GetHeader(body);
+            return SendRequestRaw(requestContent, httpRequest, cancellationToken);
+        }
 
+        return SendRequestRaw("", httpRequest, cancellationToken);
+    }
+    
     private async Task<HttpResponseMessage> SendRequestRaw(string requestContent, HttpRequestMessage httpRequest,
         CancellationToken cancellationToken)
-    {
+    { 
         if (httpRequest == null)
         {
             throw new ArgumentNullException(nameof(httpRequest));
@@ -360,7 +371,7 @@ public class AnyResourceKind : IAnyResourceKind
             cancellationToken.ThrowIfCancellationRequested();
             await Client.Credentials.ProcessHttpRequestAsync(httpRequest, cancellationToken).ConfigureAwait(false);
         }
-
+        
         // Send Request
         cancellationToken.ThrowIfCancellationRequested();
         var httpResponse = await Client.HttpClient
@@ -376,11 +387,7 @@ public class AnyResourceKind : IAnyResourceKind
             {
                 responseContent = await httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
             }
-            else
-            {
-                responseContent = string.Empty;
-            }
-
+   
             ex.Request = new HttpRequestMessageWrapper(httpRequest, requestContent);
             ex.Response = new HttpResponseMessageWrapper(httpResponse, responseContent);
             httpRequest.Dispose();
@@ -433,4 +440,42 @@ public class AnyResourceKind : IAnyResourceKind
 
         return result;
     }
+    
+     private MediaTypeHeaderValue GetHeader(object body)
+    {
+        if (body == null)
+        {
+            throw new ArgumentNullException(nameof(body));
+        }
+
+        if (body is V1Patch patch)
+        {
+            return GetHeader(patch);
+        }
+
+        return MediaTypeHeaderValue.Parse("application/json; charset=utf-8");
+    }
+
+     private MediaTypeHeaderValue GetHeader(V1Patch body)
+     {
+         if (body == null)
+         {
+             throw new ArgumentNullException(nameof(body));
+         }
+
+         switch (body.Type)
+         {
+             case V1Patch.PatchType.JsonPatch:
+                 return MediaTypeHeaderValue.Parse("application/json-patch+json; charset=utf-8");
+             case V1Patch.PatchType.MergePatch:
+                 return MediaTypeHeaderValue.Parse("application/merge-patch+json; charset=utf-8");
+             case V1Patch.PatchType.StrategicMergePatch:
+                 return MediaTypeHeaderValue.Parse("application/strategic-merge-patch+json; charset=utf-8");
+             case V1Patch.PatchType.ApplyPatch:
+                 return MediaTypeHeaderValue.Parse("application/apply-patch+yaml; charset=utf-8");
+             default:
+                 throw new ArgumentOutOfRangeException(nameof(body.Type), "");
+         }
+     }
+
 }

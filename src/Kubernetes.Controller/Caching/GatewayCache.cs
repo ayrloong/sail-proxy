@@ -42,6 +42,7 @@ public class GatewayCache : ICache
             return;
         }
 
+        
         var gatewayClassName = gatewayClass.Name();
         lock (_sync)
         {
