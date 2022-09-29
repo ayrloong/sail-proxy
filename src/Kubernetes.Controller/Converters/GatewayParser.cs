@@ -73,23 +73,23 @@ public static class GatewayParser
                 });
             }
         }
-
+        var headers = rule.Matches.Where(x => x.Headers != null).SelectMany(x => x.Headers);
+        var queryParams = rule.Matches.Where(x => x.QueryParams != null).Select(x => x.QueryParams);
+        var methods = rule.Matches.Where(x => x.Method != null).Select(x => x.Method).ToList();
         var route = new RouteConfig
         {
             Match = new RouteMatch()
             {
                 Hosts = hosts,
                 Path = path.Value,
+                Headers = ConvertHeaderMatch(headers),
+                QueryParameters = ConvertQueryParamMatch(queryParams),
+                Methods = methods
             },
             ClusterId = clusters.Clusters.FirstOrDefault().ClusterId,
             RouteId = $"{httpRoute.Metadata.Name}.{httpRoute.Metadata.NamespaceProperty}:{path.Value}",
+            WeightCluster = rule.BackendRefs.Count > 1 ? clusters : null
         };
-
-        if (rule.BackendRefs.Count > 1)
-        {
-            route.WeightCluster = clusters;
-        }
-
         routes.Add(route);
     }
 
@@ -105,10 +105,8 @@ public static class GatewayParser
         {
             clusters.Add(key, new ClusterTransfer());
         }
-
         var cluster = clusters[key];
         cluster.ClusterId = key;
-
         var subsets = endpoints.SingleOrDefault(x => x.Name == backendRef?.Name).Subsets;
         foreach (var subset in subsets ?? Enumerable.Empty<V1EndpointSubset>())
         {
@@ -182,12 +180,20 @@ public static class GatewayParser
 
     private static List<RouteHeader> ConvertHeaderMatch(IEnumerable<V1beta1HttpHeaderMatch> headerMatches)
     {
-        return new List<RouteHeader>();
+        var headers = headerMatches.Select(x => new RouteHeader
+        {
+            Name = x.Name,
+        }).ToList();
+        return headers;
     }
 
     private static List<RouteQueryParameter> ConvertQueryParamMatch(
         IEnumerable<V1beta1HttpQueryParamMatch> queryParamMatches)
     {
-        return new List<RouteQueryParameter>();
+        var queryParams = queryParamMatches.Select(x => new RouteQueryParameter
+        {
+            Name = x.Name
+        }).ToList();
+        return queryParams;
     }
 }

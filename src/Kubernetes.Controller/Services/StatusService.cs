@@ -50,7 +50,7 @@ public class StatusService : IStatusService
             }
         };
         var kubernetesEntity = gatewayClass.GetType().GetCustomAttribute<KubernetesEntityAttribute>();
-
+        
         using var response = await _client.PatchAnyResourceKindWithHttpMessagesAsync(
             body: new V1Patch(new V1beta1GatewayClass { Status = status }, V1Patch.PatchType.JsonPatch),
             group: kubernetesEntity.Group,

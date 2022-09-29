@@ -13,7 +13,7 @@ public class NamespaceCache
     private readonly Dictionary<string, ImmutableList<string>> _gatewayToHttpRouteNames = new();
     private readonly Dictionary<string, ImmutableList<string>> _httpRouteToServiceNames = new();
     private readonly Dictionary<string, ImmutableList<string>> _serviceToHttpRouteNames = new();
-    
+
     private readonly Dictionary<string, GatewayData> _gatewayData = new();
     private readonly Dictionary<string, HttpRouteData> _httpRouteData = new();
     private readonly Dictionary<string, ServiceData> _serviceData = new();
@@ -56,8 +56,8 @@ public class NamespaceCache
         var parentRef = httpRoute.Spec.ParentRefs.FirstOrDefault();
         var gatewayName = parentRef.Name;
         var httpRouteName = httpRoute.Name();
-
         var serviceNames = ImmutableList<string>.Empty;
+        
         if (eventType is WatchEventType.Added or WatchEventType.Modified)
         {
             var spec = httpRoute.Spec;
@@ -66,7 +66,7 @@ public class NamespaceCache
             {
                 serviceNames = serviceNames.Add(service.Name);
             }
-            
+
             if (_gatewayToHttpRouteNames.TryGetValue(gatewayName, out var httpRouteNamesPrevious))
             {
                 _gatewayToHttpRouteNames[gatewayName] = httpRouteNamesPrevious.Add(httpRouteName);
@@ -75,7 +75,6 @@ public class NamespaceCache
             {
                 _gatewayToHttpRouteNames.Add(gatewayName, ImmutableList<string>.Empty.Add(httpRouteName));
             }
-            
         }
 
         if (eventType is WatchEventType.Deleted)
@@ -84,7 +83,6 @@ public class NamespaceCache
             {
                 _gatewayToHttpRouteNames[gatewayName] = httpRouteNamesPrevious.Remove(httpRouteName);
             }
-
         }
 
         lock (_sync)
@@ -103,7 +101,6 @@ public class NamespaceCache
                         serviceNamesPrevious = ImmutableList<string>.Empty;
                         _httpRouteToServiceNames.Add(httpRouteName, serviceNames);
                     }
-
                     break;
                 case WatchEventType.Deleted:
                     _httpRouteData.Remove(httpRouteName);
@@ -111,7 +108,6 @@ public class NamespaceCache
                     {
                         _httpRouteToServiceNames.Remove(httpRouteName);
                     }
-
                     break;
             }
 
@@ -132,6 +128,7 @@ public class NamespaceCache
             {
                 _serviceToHttpRouteNames[serviceName] = _serviceToHttpRouteNames[serviceName].Remove(httpRouteName);
             }
+            
             return _gatewayToHttpRouteNames.TryGetValue(gatewayName, out var httpRouteNames)
                 ? httpRouteNames
                 : ImmutableList<string>.Empty;
@@ -221,7 +218,7 @@ public class NamespaceCache
                 data = default;
                 return false;
             }
-            
+
             if (_gatewayToHttpRouteNames.TryGetValue(key.Name, out var httpRouteNames))
             {
                 foreach (var httpRouteName in httpRouteNames)
@@ -233,7 +230,8 @@ public class NamespaceCache
                 }
             }
 
-            foreach (var httpRouteName in _gatewayToHttpRouteNames.SelectMany(x => x.Value))
+            foreach (var httpRouteName in _gatewayToHttpRouteNames.Where(x => x.Key == key.Name)
+                         .SelectMany(x => x.Value))
             {
                 if (_httpRouteToServiceNames.TryGetValue(httpRouteName, out var serviceNames))
                 {
@@ -251,8 +249,8 @@ public class NamespaceCache
                     }
                 }
             }
-            
-            if (_serviceData.Count == 0)
+
+            if (!_serviceData.Any())
             {
                 data = default;
                 return false;

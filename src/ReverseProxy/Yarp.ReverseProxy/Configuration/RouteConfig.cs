@@ -39,7 +39,7 @@ public sealed record RouteConfig
     /// <summary>
     ///  Gets weight cluster
     /// </summary>
-    public WeightClusterConfig? WeightCluster { get; set; }
+    public WeightClusterConfig? WeightCluster { get; init; }
     /// <summary>
     /// The name of the AuthorizationPolicy to apply to this route.
     /// If not set then only the FallbackPolicy will apply.

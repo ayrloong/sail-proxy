@@ -37,7 +37,6 @@ public class DispatchActionResult : IActionResult, IDispatchTarget
         _httpContext.Response.ContentType = "text/plain";
         _httpContext.Response.Headers["Connection"] = "close";
         await _httpContext.Response.Body.FlushAsync(cancellationToken).ConfigureAwait(false);
-
         _dispatcher.Attach(this);
 
         try
