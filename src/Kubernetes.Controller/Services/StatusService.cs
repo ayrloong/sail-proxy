@@ -25,7 +25,7 @@ public class StatusService : IStatusService
         CancellationToken cancellationToken)
     {
 
-        if (!string.Equals(_options.GatewayControllerClass, gatewayClass.Spec.ControllerName,
+        if (!string.Equals(_options.ControllerClass, gatewayClass.Spec.ControllerName,
                 StringComparison.OrdinalIgnoreCase))
         {
             _logger.LogInformation(
@@ -41,7 +41,6 @@ public class StatusService : IStatusService
             {
                 new()
                 {
-                    
                     Reason = "True",
                     Status = "True",
                     Message = "Valid GatewayClass",

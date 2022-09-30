@@ -2,8 +2,8 @@ controller:
   name: controller
   image:
     registry: docker.io
-    image: inendless/ingress-controller
-    tag: "1.0.2"
+    image: inendless/sail-controller
+    tag: "1.0.1"
     pullPolicy: IfNotPresent
   containerName: controller  
   containerPort:
@@ -24,8 +24,15 @@ controller:
   ingressClassResource:
     name: sail-controller
     ingressClass: sail
-    enabled: true
+    enabled: false
     controllerValue: inendless.com/ingress-sail
+    parameters: {}
+
+  gatewayClassResource:
+    name: sail-controller
+    gatewayClass: sail
+    enabled: true
+    controllerValue: inendless.com/gateway-sail
     parameters: {}
 
   livenessProbe: {}
@@ -69,7 +76,7 @@ proxy:
   image:
     registry: docker.io
     image: inendless/sail-proxy
-    tag: "1.0.4"
+    tag: "1.0.5"
     pullPolicy: IfNotPresent  
 
   containerPort:

@@ -6,17 +6,13 @@ spec:
   parentRefs:
   - name: sail
   hostnames:
-  - "bar.example.com"
+  - "foo.bar.com"
   rules:
   - matches:
-    - headers:
-      - type: Exact
-        name: env
-        value: canary
     backendRefs:
     - name: backend-sail
       port: 8085
-      weight: 10
+      weight: 50
     - name: backend
       port: 80
-      weight: 90 
+      weight: 50 

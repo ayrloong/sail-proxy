@@ -108,7 +108,7 @@ public static class GatewayParser
         var cluster = clusters[key];
         cluster.ClusterId = key;
         var subsets = endpoints.SingleOrDefault(x => x.Name == backendRef?.Name).Subsets;
-        foreach (var subset in subsets ?? Enumerable.Empty<V1EndpointSubset>())
+        foreach (var subset in subsets)
         {
             foreach (var port in subset.Ports ?? Enumerable.Empty<Corev1EndpointPort>())
             {
@@ -183,6 +183,8 @@ public static class GatewayParser
         var headers = headerMatches.Select(x => new RouteHeader
         {
             Name = x.Name,
+            Values = new[] { x.Value },
+            Mode = HeaderMatchMode.ExactHeader
         }).ToList();
         return headers;
     }
@@ -192,7 +194,9 @@ public static class GatewayParser
     {
         var queryParams = queryParamMatches.Select(x => new RouteQueryParameter
         {
-            Name = x.Name
+            Name = x.Name,
+            Values = new[] { x.Value },
+            
         }).ToList();
         return queryParams;
     }

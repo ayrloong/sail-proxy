@@ -4,8 +4,8 @@
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <ContainerImageName>inendless/ingress-controller</ContainerImageName>
-    <ContainerImageTag>1.0.2</ContainerImageTag>
+    <ContainerImageName>inendless/sail-controller</ContainerImageName>
+    <ContainerImageTag>1.0.1</ContainerImageTag>
   </PropertyGroup>
 
   <ItemGroup>

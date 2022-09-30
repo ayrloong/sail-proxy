@@ -32,7 +32,7 @@ public class GatewayCache : ICache
             throw new ArgumentNullException(nameof(gatewayClass));
         }
 
-        if (!string.Equals(_options.GatewayControllerClass, gatewayClass.Spec.ControllerName,
+        if (!string.Equals(_options.ControllerClass, gatewayClass.Spec.ControllerName,
                 StringComparison.OrdinalIgnoreCase))
         {
             _logger.LogInformation(

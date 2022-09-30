@@ -5,7 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <ContainerImageName>inendless/sail-proxy</ContainerImageName>
-    <ContainerImageTag>1.0.4</ContainerImageTag>
+    <ContainerImageTag>1.0.5</ContainerImageTag>
   </PropertyGroup>
 
   <ItemGroup>

@@ -161,7 +161,6 @@ public class GatewayController : BackgroundHostedService
     private void Notification(WatchEventType eventType, V1beta1GatewayClass resource)
     {
         _cache.Update(eventType, resource);
-        _statusService.PatchGatewayClassStatusAsync(resource, new CancellationToken()).Wait();
     }
 
     private void Notification(WatchEventType eventType, V1beta1HttpRoute resource)
