@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Sail.Kubernetes.Controller;
 using Sail.Kubernetes.Controller.Caching;
+using Sail.Kubernetes.Controller.Certificates;
 using Sail.Kubernetes.Controller.Dispatching;
 using Sail.Kubernetes.Controller.Models;
 using Sail.Kubernetes.Controller.Services;
@@ -25,21 +26,25 @@ builder.WebHost.ConfigureLogging(options =>
 {
     config.AddJsonFile("/app/config/sail.json", optional: true);
 });
+builder.WebHost.UseKubernetesCertificateSelector();
 
 builder.Services.AddControllers();
 builder.Services.AddHealthChecks().AddCheck("self", () => HealthCheckResult.Healthy());
 builder.Services.AddKubernetesControllerRuntime();
 builder.Services.AddHostedService<GatewayController>();
+builder.Services.AddSingleton<IServerCertificateSelector, ServerCertificateSelector>();
+builder.Services.AddSingleton<ICertificateHelper, CertificateHelper>();
 builder.Services.AddSingleton<IStatusService, StatusService>();
 builder.Services.AddSingleton<ICache, GatewayCache>();
-builder.Services.AddTransient<IReconciler, Reconciler>();
 builder.Services.AddSingleton<IDispatcher, Dispatcher>();
+builder.Services.AddTransient<IReconciler, Reconciler>();
 builder.Services.Configure<SailOptions>(builder.Configuration.GetSection("Sail"));
 builder.Services.RegisterResourceInformer<V1beta1Gateway>();
 builder.Services.RegisterResourceInformer<V1beta1GatewayClass>();
 builder.Services.RegisterResourceInformer<V1beta1HttpRoute>();
 builder.Services.RegisterResourceInformer<V1Service>();
 builder.Services.RegisterResourceInformer<V1Endpoints>();
+
 
 var app = builder.Build();
 app.UseRouting();
