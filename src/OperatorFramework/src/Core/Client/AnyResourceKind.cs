@@ -44,9 +44,11 @@ public class AnyResourceKind : IAnyResourceKind
             : "apis/{group}/{version}/namespaces/{namespace}/{plural}";
     }
 
-    public async Task<HttpOperationResponse<object>> CreateAnyResourceKindWithHttpMessagesAsync<TResource>(TResource body,
+    public async Task<HttpOperationResponse<object>> CreateAnyResourceKindWithHttpMessagesAsync<TResource>(
+        TResource body,
         string group, string version, string namespaceParameter, string plural, string dryRun = null,
-        string fieldManager = null, string pretty = null, IReadOnlyDictionary<string, IReadOnlyList<string>> customHeaders = null,
+        string fieldManager = null, string pretty = null,
+        IReadOnlyDictionary<string, IReadOnlyList<string>> customHeaders = null,
         CancellationToken cancellationToken = default) where TResource : IKubernetesObject
     {
 
@@ -54,18 +56,22 @@ public class AnyResourceKind : IAnyResourceKind
         {
             throw new ArgumentNullException();
         }
+
         if (group is null)
         {
             throw new ArgumentNullException();
         }
+
         if (version is null)
         {
             throw new ArgumentNullException();
         }
+
         if (namespaceParameter is null)
         {
             throw new ArgumentNullException();
         }
+
         if (plural is null)
         {
             throw new ArgumentNullException();
@@ -81,20 +87,23 @@ public class AnyResourceKind : IAnyResourceKind
         {
             queryParameters.Add($"dryRun={Uri.EscapeDataString(dryRun)}");
         }
+
         if (fieldManager is not null)
         {
             queryParameters.Add($"fieldManager={Uri.EscapeDataString(fieldManager)}");
         }
+
         if (pretty is not null)
         {
             queryParameters.Add($"pretty={Uri.EscapeDataString(pretty)}");
         }
+
         if (queryParameters.Count > 0)
         {
             url += "?" + string.Join("&", queryParameters);
         }
 
-    
+
         var httpRequest = CreateRequest(url, HttpMethod.Post, customHeaders);
         var httpResponse = await SendRequestRaw(KubernetesJson.Serialize(body), httpRequest, cancellationToken);
         // Create Result
@@ -102,7 +111,8 @@ public class AnyResourceKind : IAnyResourceKind
         return result;
     }
 
-    public async Task<HttpOperationResponse<object>> DeleteAnyResourceKindWithHttpMessagesAsync(string group, string version,
+    public async Task<HttpOperationResponse<object>> DeleteAnyResourceKindWithHttpMessagesAsync(string group,
+        string version,
         string namespaceParameter, string plural, string name, V1DeleteOptions body = null,
         int? gracePeriodSeconds = null, bool? orphanDependents = null, string propagationPolicy = null,
         string dryRun = null, IReadOnlyDictionary<string, IReadOnlyList<string>> customHeaders = null,
@@ -112,22 +122,27 @@ public class AnyResourceKind : IAnyResourceKind
         {
             throw new ArgumentNullException();
         }
+
         if (version is null)
         {
             throw new ArgumentNullException();
         }
+
         if (namespaceParameter is null)
         {
             throw new ArgumentNullException();
         }
+
         if (plural is null)
         {
             throw new ArgumentNullException();
         }
+
         if (name is null)
         {
             throw new ArgumentNullException();
         }
+
         var url = Pattern(group, namespaceParameter) + "/{name}";
         url = url.Replace("{group}", Uri.EscapeDataString(group));
         url = url.Replace("{version}", Uri.EscapeDataString(version));
@@ -140,19 +155,23 @@ public class AnyResourceKind : IAnyResourceKind
             queryParameters.Add(
                 $"gracePeriodSeconds={Uri.EscapeDataString(JsonConvert.SerializeObject(gracePeriodSeconds).Trim('"'))}");
         }
+
         if (orphanDependents is not null)
         {
             queryParameters.Add(
                 $"orphanDependents={Uri.EscapeDataString(JsonConvert.SerializeObject(orphanDependents).Trim('"'))}");
         }
+
         if (propagationPolicy is not null)
         {
             queryParameters.Add($"propagationPolicy={Uri.EscapeDataString(propagationPolicy)}");
         }
+
         if (dryRun is not null)
         {
             queryParameters.Add($"dryRun={Uri.EscapeDataString(dryRun)}");
         }
+
         if (queryParameters.Count > 0)
         {
             url += "?" + string.Join("&", queryParameters);
@@ -165,7 +184,8 @@ public class AnyResourceKind : IAnyResourceKind
         return result;
     }
 
-    public async Task<HttpOperationResponse<KubernetesList<TResource>>> ListClusterAnyResourceKindWithHttpMessagesAsync<TResource>(
+    public async Task<HttpOperationResponse<KubernetesList<TResource>>>
+        ListClusterAnyResourceKindWithHttpMessagesAsync<TResource>(
             string group,
             string version,
             string plural,
@@ -208,8 +228,10 @@ public class AnyResourceKind : IAnyResourceKind
 
         cancellationToken = cts.Token;
 
-        var url =  "apis/{group}/{version}/{plural}";
-        url = string.IsNullOrEmpty(group) ? url.Replace("apis/{group}", "api") : url.Replace("{group}", Uri.EscapeDataString(group));
+        var url = "apis/{group}/{version}/{plural}";
+        url = string.IsNullOrEmpty(group)
+            ? url.Replace("apis/{group}", "api")
+            : url.Replace("{group}", Uri.EscapeDataString(group));
         url = url.Replace("{version}", Uri.EscapeDataString(version));
         url = url.Replace("{plural}", Uri.EscapeDataString(plural));
 
@@ -271,28 +293,33 @@ public class AnyResourceKind : IAnyResourceKind
         return result;
     }
 
-    public async Task<HttpOperationResponse<object>> PatchAnyResourceKindWithHttpMessagesAsync(V1Patch body, string group,
+    public async Task<HttpOperationResponse<object>> PatchAnyResourceKindWithHttpMessagesAsync(V1Patch body,
+        string group,
         string version, string namespaceParameter, string plural, string name, string dryRun = null,
-        string fieldManager = null, bool? force = null, IReadOnlyDictionary<string, IReadOnlyList<string>> customHeaders = null,
+        string fieldManager = null, bool? force = null,
+        IReadOnlyDictionary<string, IReadOnlyList<string>> customHeaders = null,
         CancellationToken cancellationToken = default)
     {
         if (body is null)
         {
             throw new ArgumentNullException();
         }
+
         if (group is null)
         {
             throw new ArgumentNullException();
         }
+
         if (version is null)
         {
             throw new ArgumentNullException();
         }
-       
+
         if (plural is null)
         {
             throw new ArgumentNullException();
         }
+
         if (name is null)
         {
             throw new ArgumentNullException();
@@ -308,18 +335,22 @@ public class AnyResourceKind : IAnyResourceKind
         {
             queryParameters.Add($"dryRun={Uri.EscapeDataString(dryRun)}");
         }
+
         if (fieldManager is not null)
         {
             queryParameters.Add($"fieldManager={Uri.EscapeDataString(fieldManager)}");
         }
+
         if (force is not null)
         {
             queryParameters.Add($"force={Uri.EscapeDataString(JsonConvert.SerializeObject(force).Trim('"'))}");
         }
+
         if (queryParameters.Count > 0)
         {
             url += "?" + string.Join("&", queryParameters);
         }
+
         var httpRequest = CreateRequest(url, HttpMethod.Patch, customHeaders);
         var httpResponse = await SendRequest(body, httpRequest, cancellationToken);
         // Create Result
@@ -344,8 +375,9 @@ public class AnyResourceKind : IAnyResourceKind
 
         return httpRequest;
     }
-   
-    private Task<HttpResponseMessage> SendRequest<T>(T body, HttpRequestMessage httpRequest, CancellationToken cancellationToken)
+
+    private Task<HttpResponseMessage> SendRequest<T>(T body, HttpRequestMessage httpRequest,
+        CancellationToken cancellationToken)
     {
         if (body != null)
         {
@@ -357,10 +389,10 @@ public class AnyResourceKind : IAnyResourceKind
 
         return SendRequestRaw("", httpRequest, cancellationToken);
     }
-    
+
     private async Task<HttpResponseMessage> SendRequestRaw(string requestContent, HttpRequestMessage httpRequest,
         CancellationToken cancellationToken)
-    { 
+    {
         if (httpRequest == null)
         {
             throw new ArgumentNullException(nameof(httpRequest));
@@ -371,7 +403,7 @@ public class AnyResourceKind : IAnyResourceKind
             cancellationToken.ThrowIfCancellationRequested();
             await Client.Credentials.ProcessHttpRequestAsync(httpRequest, cancellationToken).ConfigureAwait(false);
         }
-        
+
         // Send Request
         cancellationToken.ThrowIfCancellationRequested();
         var httpResponse = await Client.HttpClient
@@ -387,7 +419,7 @@ public class AnyResourceKind : IAnyResourceKind
             {
                 responseContent = await httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
             }
-   
+
             ex.Request = new HttpRequestMessageWrapper(httpRequest, requestContent);
             ex.Response = new HttpResponseMessageWrapper(httpResponse, responseContent);
             httpRequest.Dispose();
@@ -440,8 +472,8 @@ public class AnyResourceKind : IAnyResourceKind
 
         return result;
     }
-    
-     private MediaTypeHeaderValue GetHeader(object body)
+
+    private MediaTypeHeaderValue GetHeader(object body)
     {
         if (body == null)
         {
@@ -456,26 +488,25 @@ public class AnyResourceKind : IAnyResourceKind
         return MediaTypeHeaderValue.Parse("application/json; charset=utf-8");
     }
 
-     private MediaTypeHeaderValue GetHeader(V1Patch body)
-     {
-         if (body == null)
-         {
-             throw new ArgumentNullException(nameof(body));
-         }
+    private MediaTypeHeaderValue GetHeader(V1Patch body)
+    {
+        if (body == null)
+        {
+            throw new ArgumentNullException(nameof(body));
+        }
 
-         switch (body.Type)
-         {
-             case V1Patch.PatchType.JsonPatch:
-                 return MediaTypeHeaderValue.Parse("application/json-patch+json; charset=utf-8");
-             case V1Patch.PatchType.MergePatch:
-                 return MediaTypeHeaderValue.Parse("application/merge-patch+json; charset=utf-8");
-             case V1Patch.PatchType.StrategicMergePatch:
-                 return MediaTypeHeaderValue.Parse("application/strategic-merge-patch+json; charset=utf-8");
-             case V1Patch.PatchType.ApplyPatch:
-                 return MediaTypeHeaderValue.Parse("application/apply-patch+yaml; charset=utf-8");
-             default:
-                 throw new ArgumentOutOfRangeException(nameof(body.Type), "");
-         }
-     }
-
+        switch (body.Type)
+        {
+            case V1Patch.PatchType.JsonPatch:
+                return MediaTypeHeaderValue.Parse("application/json-patch+json; charset=utf-8");
+            case V1Patch.PatchType.MergePatch:
+                return MediaTypeHeaderValue.Parse("application/merge-patch+json; charset=utf-8");
+            case V1Patch.PatchType.StrategicMergePatch:
+                return MediaTypeHeaderValue.Parse("application/strategic-merge-patch+json; charset=utf-8");
+            case V1Patch.PatchType.ApplyPatch:
+                return MediaTypeHeaderValue.Parse("application/apply-patch+yaml; charset=utf-8");
+            default:
+                throw new ArgumentOutOfRangeException(nameof(body.Type), "");
+        }
+    }
 }

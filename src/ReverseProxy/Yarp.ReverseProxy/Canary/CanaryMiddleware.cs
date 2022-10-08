@@ -8,7 +8,7 @@ public class CanaryMiddleware
 {
     private readonly RequestDelegate _next;
     private readonly IProxyStateLookup _lookup;
-
+    
     public CanaryMiddleware(RequestDelegate next, IProxyStateLookup lookup)
     {
         _next = next;

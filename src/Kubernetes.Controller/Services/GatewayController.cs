@@ -15,7 +15,6 @@ public class GatewayController : BackgroundHostedService
     private readonly IResourceInformerRegistration[] _registrations;
     private readonly ICache _cache;
     private readonly IReconciler _reconciler;
-    private readonly IStatusService _statusService;
     
     private bool _registrationsReady;
     private readonly IWorkQueue<QueueItem> _queue;
@@ -24,7 +23,6 @@ public class GatewayController : BackgroundHostedService
     public GatewayController(
         ICache cache,
         IReconciler reconciler,
-        IStatusService statusService,
         IResourceInformer<V1beta1Gateway> gatewayInformer,
         IResourceInformer<V1beta1GatewayClass> gatewayClassInformer,
         IResourceInformer<V1beta1HttpRoute> httpRouteInformer,
@@ -82,7 +80,6 @@ public class GatewayController : BackgroundHostedService
 
         _queue = new ProcessingRateLimitedQueue<QueueItem>(perSecond: 0.5, burst: 1);
         _cache = cache ?? throw new ArgumentNullException(nameof(cache));
-        _statusService = statusService;
         _reconciler = reconciler ?? throw new ArgumentNullException(nameof(reconciler));
         _reconciler.OnAttach(TargetAttached);
         

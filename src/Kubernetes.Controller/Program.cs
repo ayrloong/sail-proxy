@@ -45,7 +45,6 @@ builder.Services.RegisterResourceInformer<V1beta1HttpRoute>();
 builder.Services.RegisterResourceInformer<V1Service>();
 builder.Services.RegisterResourceInformer<V1Endpoints>();
 
-
 var app = builder.Build();
 app.UseRouting();
 app.UseEndpoints(endpoints =>
