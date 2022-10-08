@@ -58,30 +58,39 @@ public class NamespaceCache
         var httpRouteName = httpRoute.Name();
         var serviceNames = ImmutableList<string>.Empty;
         
-        if (eventType is WatchEventType.Added or WatchEventType.Modified)
+        switch (eventType)
         {
-            var spec = httpRoute.Spec;
-            foreach (var service in spec.Rules.SelectMany(rule =>
-                         rule.BackendRefs.Where(service => !serviceNames.Contains(service.Name))))
+            case WatchEventType.Added or WatchEventType.Modified:
             {
-                serviceNames = serviceNames.Add(service.Name);
-            }
+                var spec = httpRoute.Spec;
+                foreach (var service in spec.Rules.SelectMany(rule =>
+                             rule.BackendRefs.Where(service => !serviceNames.Contains(service.Name))))
+                {
+                    serviceNames = serviceNames.Add(service.Name);
+                }
 
-            if (_gatewayToHttpRouteNames.TryGetValue(gatewayName, out var httpRouteNamesPrevious))
-            {
-                _gatewayToHttpRouteNames[gatewayName] = httpRouteNamesPrevious.Add(httpRouteName);
-            }
-            else
-            {
-                _gatewayToHttpRouteNames.Add(gatewayName, ImmutableList<string>.Empty.Add(httpRouteName));
-            }
-        }
+                if (_gatewayToHttpRouteNames.TryGetValue(gatewayName, out var httpRouteNamesPrevious))
+                {
+                    if (!httpRouteNamesPrevious.Contains(httpRouteName))
+                    {
+                        _gatewayToHttpRouteNames[gatewayName] = httpRouteNamesPrevious.Add(httpRouteName);
+                    }
+                }
+                else
+                {
+                    _gatewayToHttpRouteNames.Add(gatewayName, ImmutableList<string>.Empty.Add(httpRouteName));
+                }
 
-        if (eventType is WatchEventType.Deleted)
-        {
-            if (_gatewayToHttpRouteNames.TryGetValue(gatewayName, out var httpRouteNamesPrevious))
+                break;
+            }
+            case WatchEventType.Deleted:
             {
-                _gatewayToHttpRouteNames[gatewayName] = httpRouteNamesPrevious.Remove(httpRouteName);
+                if (_gatewayToHttpRouteNames.TryGetValue(gatewayName, out var httpRouteNamesPrevious))
+                {
+                    _gatewayToHttpRouteNames[gatewayName] = httpRouteNamesPrevious.Remove(httpRouteName);
+                }
+
+                break;
             }
         }
 
@@ -229,7 +238,7 @@ public class NamespaceCache
                     }
                 }
             }
-
+            
             foreach (var httpRouteName in _gatewayToHttpRouteNames.Where(x => x.Key == key.Name)
                          .SelectMany(x => x.Value))
             {

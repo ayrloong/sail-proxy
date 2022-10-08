@@ -9,10 +9,9 @@ spec:
   - "foo.bar.com"
   rules:
   - matches:
+     - path:
+        type: PathPrefix
+        value: /login
     backendRefs:
     - name: backend-sail
       port: 8085
-      weight: 50
-    - name: backend
-      port: 80
-      weight: 50 
