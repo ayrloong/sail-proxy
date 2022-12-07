@@ -39,7 +39,7 @@ builder.Services.AddHostedService<Receiver>();
 builder.Services.AddReverseProxy().LoadFromMessages();
 
 var app = builder.Build();
-
+ 
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();

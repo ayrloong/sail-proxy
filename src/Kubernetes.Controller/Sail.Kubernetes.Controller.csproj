@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\OperatorFramework\src\Controller\Microsoft.Kubernetes.Controller.csproj" />
+    <ProjectReference Include="..\..\packages\OperatorFramework\src\Controller\Microsoft.Kubernetes.Controller.csproj" />
     <ProjectReference Include="..\Kubernetes.Protocol\Sail.Kubernetes.Protocol.csproj" />
   </ItemGroup>
   
