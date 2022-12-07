@@ -42,6 +42,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Kubernetes.Resour
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Kubernetes.Testing", "packages\OperatorFramework\src\Testing\Microsoft.Kubernetes.Testing.csproj", "{84145EAD-B4A5-460D-A696-F6DDF8574D04}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GrpcSample", "samples\GrpcSample\GrpcSample.csproj", "{B364C68E-3761-455F-9224-CB3DADFB5ADC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sail.Metrics.Prometheus", "src\Sail.Metrics.Prometheus\Sail.Metrics.Prometheus.csproj", "{3FDCF065-8A23-4D39-AB9E-64715EF14D69}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -92,6 +96,14 @@ Global
 		{84145EAD-B4A5-460D-A696-F6DDF8574D04}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{84145EAD-B4A5-460D-A696-F6DDF8574D04}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{84145EAD-B4A5-460D-A696-F6DDF8574D04}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B364C68E-3761-455F-9224-CB3DADFB5ADC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B364C68E-3761-455F-9224-CB3DADFB5ADC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B364C68E-3761-455F-9224-CB3DADFB5ADC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B364C68E-3761-455F-9224-CB3DADFB5ADC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3FDCF065-8A23-4D39-AB9E-64715EF14D69}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3FDCF065-8A23-4D39-AB9E-64715EF14D69}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3FDCF065-8A23-4D39-AB9E-64715EF14D69}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3FDCF065-8A23-4D39-AB9E-64715EF14D69}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -111,6 +123,8 @@ Global
 		{8A699685-8A51-467A-B4C5-2EA6FA13BDED} = {7E6953BC-7A8A-4C2B-9899-4CB28DC8CD43}
 		{C8BD7A5B-42D3-4056-A10E-4E672448FFAF} = {7E6953BC-7A8A-4C2B-9899-4CB28DC8CD43}
 		{84145EAD-B4A5-460D-A696-F6DDF8574D04} = {7E6953BC-7A8A-4C2B-9899-4CB28DC8CD43}
+		{B364C68E-3761-455F-9224-CB3DADFB5ADC} = {479AB920-CA34-486E-B44E-48BE16F05C1F}
+		{3FDCF065-8A23-4D39-AB9E-64715EF14D69} = {6830C59F-102F-4D18-AA09-47F98B6132CE}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B3C84937-2943-40FB-8932-9C0FB17E72F4}
