@@ -15,10 +15,12 @@ public class GatewayController : BackgroundHostedService
     private readonly IResourceInformerRegistration[] _registrations;
     private readonly ICache _cache;
     private readonly IReconciler _reconciler;
-    
+
     private bool _registrationsReady;
     private readonly IWorkQueue<QueueItem> _queue;
     private readonly QueueItem _gatewayChangeQueueItem;
+    private readonly IGatewayClassResourceStatusUpdater _updater;
+
 
     public GatewayController(
         ICache cache,
@@ -28,6 +30,7 @@ public class GatewayController : BackgroundHostedService
         IResourceInformer<V1beta1HttpRoute> httpRouteInformer,
         IResourceInformer<V1Endpoints> endpointsInformer,
         IResourceInformer<V1Service> serviceInformer,
+        IGatewayClassResourceStatusUpdater updater,
         IHostApplicationLifetime hostApplicationLifetime,
         ILogger<GatewayController> logger)
         : base(hostApplicationLifetime, logger)
@@ -80,9 +83,10 @@ public class GatewayController : BackgroundHostedService
 
         _queue = new ProcessingRateLimitedQueue<QueueItem>(perSecond: 0.5, burst: 1);
         _cache = cache ?? throw new ArgumentNullException(nameof(cache));
+        _updater = updater ?? throw new ArgumentNullException(nameof(cache));
         _reconciler = reconciler ?? throw new ArgumentNullException(nameof(reconciler));
         _reconciler.OnAttach(TargetAttached);
-        
+
         _gatewayChangeQueueItem = new QueueItem("Gateway Change", null);
     }
 
@@ -111,6 +115,7 @@ public class GatewayController : BackgroundHostedService
             try
             {
                 await _reconciler.ProcessAsync(cancellationToken).ConfigureAwait(false);
+                await _updater.UpdateStatusAsync().ConfigureAwait(false);
             }
             catch
             {
@@ -177,7 +182,7 @@ public class GatewayController : BackgroundHostedService
             NotificationGatewayChanged();
         }
     }
-    
+
     private void Notification(WatchEventType eventType, V1Endpoints resource)
     {
         var gatewayNames = _cache.Update(eventType, resource);
@@ -186,7 +191,7 @@ public class GatewayController : BackgroundHostedService
             NotificationGatewayChanged();
         }
     }
-    
+
     protected override void Dispose(bool disposing)
     {
         if (disposing)

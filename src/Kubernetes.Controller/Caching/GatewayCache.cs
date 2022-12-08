@@ -15,15 +15,13 @@ public class GatewayCache : ICache
     private readonly Dictionary<string, GatewayClassData> _gatewayClassData = new();
     private readonly Dictionary<string, NamespaceCache> _namespaceCaches = new();
     private readonly SailOptions _options;
-    private readonly IStatusService _statusService;
     private readonly ILogger<GatewayCache> _logger;
     
     private bool _isDefaultController;
 
-    public GatewayCache(IOptions<SailOptions> options,IStatusService statusService, ILogger<GatewayCache> logger)
+    public GatewayCache(IOptions<SailOptions> options, ILogger<GatewayCache> logger)
     {
         _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
-        _statusService = statusService;
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
@@ -44,8 +42,6 @@ public class GatewayCache : ICache
             return;
         }
 
-        _statusService.PatchGatewayClassStatusAsync(gatewayClass, new CancellationToken()).Wait();
-        
         var gatewayClassName = gatewayClass.Name();
         lock (_sync)
         {

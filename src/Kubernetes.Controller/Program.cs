@@ -34,7 +34,6 @@ builder.Services.AddKubernetesControllerRuntime();
 builder.Services.AddHostedService<GatewayController>();
 builder.Services.AddSingleton<IServerCertificateSelector, ServerCertificateSelector>();
 builder.Services.AddSingleton<ICertificateHelper, CertificateHelper>();
-builder.Services.AddSingleton<IStatusService, StatusService>();
 builder.Services.AddSingleton<ICache, GatewayCache>();
 builder.Services.AddSingleton<IDispatcher, Dispatcher>();
 builder.Services.AddTransient<IReconciler, Reconciler>();
