@@ -21,7 +21,8 @@ public interface ICustomResourceDefinitionGenerator
     /// <typeparam name="TResource">The type of the resource to generate.</typeparam>
     /// <param name="scope">The scope indicates whether the defined custom resource is cluster- or namespace-scoped. Allowed values are `Cluster` and `Namespaced`.</param>
     /// <returns>The generated V1CustomResourceDefinition instance.</returns>
-    Task<V1CustomResourceDefinition> GenerateCustomResourceDefinitionAsync<TResource>(string scope, CancellationToken cancellationToken = default);
+    Task<V1CustomResourceDefinition> GenerateCustomResourceDefinitionAsync<TResource>(string scope,
+        CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Generates the custom resource definition from the <typeparamref name="TResource"/> class.
@@ -30,5 +31,6 @@ public interface ICustomResourceDefinitionGenerator
     /// <typeparam name="TResource">The type of the resource to generate.</typeparam>
     /// <param name="scope">The scope indicates whether the defined custom resource is cluster- or namespace-scoped. Allowed values are `Cluster` and `Namespaced`.</param>
     /// <returns>The generated V1CustomResourceDefinition instance.</returns>
-    Task<V1CustomResourceDefinition> GenerateCustomResourceDefinitionAsync(Type resourceType, string scope, CancellationToken cancellationToken = default);
+    Task<V1CustomResourceDefinition> GenerateCustomResourceDefinitionAsync(Type resourceType, string scope,
+        CancellationToken cancellationToken = default);
 }

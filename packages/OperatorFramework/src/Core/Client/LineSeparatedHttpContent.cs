@@ -28,7 +28,7 @@ public class LineSeparatedHttpContent : HttpContent
 
     protected override async Task SerializeToStreamAsync(Stream stream, TransportContext context)
     {
-        _originStream = await _originContent.ReadAsStreamAsync().ConfigureAwait(false);
+        _originStream = await _originContent.ReadAsStreamAsync(_cancellationToken).ConfigureAwait(false);
 
         var reader = new PeekableStreamReader(new CancelableStream(_originStream, _cancellationToken));
         StreamReader = reader;

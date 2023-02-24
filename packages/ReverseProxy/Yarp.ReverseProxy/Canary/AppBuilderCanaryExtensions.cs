@@ -1,7 +1,6 @@
-using Microsoft.AspNetCore.Builder;
-using Yarp.ReverseProxy.Canary;
+﻿using Yarp.ReverseProxy.Canary;
 
-namespace Microsoft.AspNetCore.Builder;
+namespace  Microsoft.AspNetCore.Builder;
 
 public static class AppBuilderCanaryExtensions
 {

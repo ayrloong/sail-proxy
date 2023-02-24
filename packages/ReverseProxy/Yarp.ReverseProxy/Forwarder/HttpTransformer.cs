@@ -7,6 +7,7 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
@@ -59,10 +60,33 @@ public class HttpTransformer
     /// See <see cref="RequestUtilities.MakeDestinationAddress(string, PathString, QueryString)"/> for constructing a custom request Uri.
     /// The string parameter represents the destination URI prefix that should be used when constructing the RequestUri.
     /// The headers are copied by the base implementation, excluding some protocol headers like HTTP/2 pseudo headers (":authority").
+    /// This method may be overridden to conditionally produce a response, such as for error conditions, and prevent the request from
+    /// being proxied. This is indicated by setting the `HttpResponse.StatusCode` to a value other than 200, or calling `HttpResponse.StartAsync()`,
+    /// or writing to the `HttpResponse.Body` or `BodyWriter`.
     /// </summary>
     /// <param name="httpContext">The incoming request.</param>
     /// <param name="proxyRequest">The outgoing proxy request.</param>
     /// <param name="destinationPrefix">The uri prefix for the selected destination server which can be used to create the RequestUri.</param>
+    /// <param name="cancellationToken">Indicates that the request is being canceled.</param>
+    public virtual ValueTask TransformRequestAsync(HttpContext httpContext, HttpRequestMessage proxyRequest, string destinationPrefix, CancellationToken cancellationToken)
+#pragma warning disable CS0618 // We're calling the overload without the CancellationToken for backwards compatibility.
+        => TransformRequestAsync(httpContext, proxyRequest, destinationPrefix);
+#pragma warning restore CS0618
+
+    /// <summary>
+    /// A callback that is invoked prior to sending the proxied request. All HttpRequestMessage fields are
+    /// initialized except RequestUri, which will be initialized after the callback if no value is provided.
+    /// See <see cref="RequestUtilities.MakeDestinationAddress(string, PathString, QueryString)"/> for constructing a custom request Uri.
+    /// The string parameter represents the destination URI prefix that should be used when constructing the RequestUri.
+    /// The headers are copied by the base implementation, excluding some protocol headers like HTTP/2 pseudo headers (":authority").
+    /// This method may be overridden to conditionally produce a response, such as for error conditions, and prevent the request from
+    /// being proxied. This is indicated by setting the `HttpResponse.StatusCode` to a value other than 200, or calling `HttpResponse.StartAsync()`,
+    /// or writing to the `HttpResponse.Body` or `BodyWriter`.
+    /// </summary>
+    /// <param name="httpContext">The incoming request.</param>
+    /// <param name="proxyRequest">The outgoing proxy request.</param>
+    /// <param name="destinationPrefix">The uri prefix for the selected destination server which can be used to create the RequestUri.</param>
+    [Obsolete("This overload of TransformRequestAsync is obsolete. Override and use the overload accepting a CancellationToken instead.")]
     public virtual ValueTask TransformRequestAsync(HttpContext httpContext, HttpRequestMessage proxyRequest, string destinationPrefix)
     {
         foreach (var header in httpContext.Request.Headers)
@@ -123,9 +147,27 @@ public class HttpTransformer
     /// </summary>
     /// <param name="httpContext">The incoming request.</param>
     /// <param name="proxyResponse">The response from the destination. This can be null if the destination did not respond.</param>
+    /// <param name="cancellationToken">Indicates that the request is being canceled.</param>
     /// <returns>A bool indicating if the response should be proxied to the client or not. A derived implementation 
     /// that returns false may send an alternate response inline or return control to the caller for it to retry, respond, 
     /// etc.</returns>
+    public virtual ValueTask<bool> TransformResponseAsync(HttpContext httpContext, HttpResponseMessage? proxyResponse, CancellationToken cancellationToken)
+#pragma warning disable CS0618 // We're calling the overload without the CancellationToken for backwards compatibility.
+        => TransformResponseAsync(httpContext, proxyResponse);
+#pragma warning restore CS0618
+
+    /// <summary>
+    /// A callback that is invoked when the proxied response is received. The status code and reason phrase will be copied
+    /// to the HttpContext.Response before the callback is invoked, but may still be modified there. The headers will be
+    /// copied to HttpContext.Response.Headers by the base implementation, excludes certain protocol headers like
+    /// `Transfer-Encoding: chunked`.
+    /// </summary>
+    /// <param name="httpContext">The incoming request.</param>
+    /// <param name="proxyResponse">The response from the destination. This can be null if the destination did not respond.</param>
+    /// <returns>A bool indicating if the response should be proxied to the client or not. A derived implementation
+    /// that returns false may send an alternate response inline or return control to the caller for it to retry, respond,
+    /// etc.</returns>
+    [Obsolete("This overload of TransformResponseAsync is obsolete. Override and use the overload accepting a CancellationToken instead.")]
     public virtual ValueTask<bool> TransformResponseAsync(HttpContext httpContext, HttpResponseMessage? proxyResponse)
     {
         if (proxyResponse is null)
@@ -174,6 +216,19 @@ public class HttpTransformer
     /// </summary>
     /// <param name="httpContext">The incoming request.</param>
     /// <param name="proxyResponse">The response from the destination.</param>
+    /// <param name="cancellationToken">Indicates that the request is being canceled.</param>
+    public virtual ValueTask TransformResponseTrailersAsync(HttpContext httpContext, HttpResponseMessage proxyResponse, CancellationToken cancellationToken)
+#pragma warning disable CS0618 // We're calling the overload without the CancellationToken for backwards compatibility.
+        => TransformResponseTrailersAsync(httpContext, proxyResponse);
+#pragma warning restore CS0618
+
+    /// <summary>
+    /// A callback that is invoked after the response body to modify trailers, if supported. The trailers will be
+    /// copied to the HttpContext.Response by the base implementation.
+    /// </summary>
+    /// <param name="httpContext">The incoming request.</param>
+    /// <param name="proxyResponse">The response from the destination.</param>
+    [Obsolete("This overload of TransformResponseTrailersAsync is obsolete. Override and use the overload accepting a CancellationToken instead.")]
     public virtual ValueTask TransformResponseTrailersAsync(HttpContext httpContext, HttpResponseMessage proxyResponse)
     {
         // NOTE: Deliberately not using `context.Response.SupportsTrailers()`, `context.Response.AppendTrailer(...)`

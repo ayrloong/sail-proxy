@@ -1,4 +1,4 @@
-namespace Yarp.ReverseProxy.Configuration;
+﻿namespace Yarp.ReverseProxy.Configuration;
 
 public struct WeightCluster
 {

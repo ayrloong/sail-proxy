@@ -1,0 +1,22 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress
+  annotations:
+    sail.ingress.kubernetes.io/middlewares: |
+      - add-foo
+      - remove-foo
+      - limits
+spec:
+  ingressClassName: sail
+  rules:
+  - host: test.zero.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: backend-sail
+            port:
+              number: 8097

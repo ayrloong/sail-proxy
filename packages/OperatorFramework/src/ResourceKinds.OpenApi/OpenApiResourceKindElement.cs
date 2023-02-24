@@ -12,7 +12,7 @@ public class OpenApiResourceKindElement : IResourceKindElement
     private readonly OpenApiResourceKind _resourceKind;
     private readonly JsonSchema _jsonSchema;
     private readonly Lazy<IResourceKindElement> _collectionElementType;
-    
+
     public OpenApiResourceKindElement(
         OpenApiResourceKind resourceKind,
         JsonSchema jsonSchema,

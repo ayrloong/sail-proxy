@@ -385,7 +385,8 @@ public class ResourcePatcher : IResourcePatcher
             LiveToken = (JToken)context.LiveResource;
         }
 
-        public Context(string path, IResourceKind kind, IResourceKindElement element, JToken apply, JToken lastApplied, JToken live) : this()
+        public Context(string path, IResourceKind kind, IResourceKindElement element, JToken apply, JToken lastApplied,
+            JToken live) : this()
         {
             Path = path;
             Kind = kind;

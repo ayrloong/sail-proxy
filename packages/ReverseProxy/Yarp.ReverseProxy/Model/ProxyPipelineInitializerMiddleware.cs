@@ -2,7 +2,6 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
@@ -33,7 +32,6 @@ internal sealed class ProxyPipelineInitializerMiddleware
             ?? throw new InvalidOperationException($"Routing Endpoint is missing {typeof(RouteModel).FullName} metadata.");
 
         var cluster = route.Cluster;
-        var clusters = route.Config.WeightCluster;
         // TODO: Validate on load https://github.com/microsoft/reverse-proxy/issues/797
         if (cluster is null)
         {

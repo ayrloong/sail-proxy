@@ -12,19 +12,6 @@ namespace Yarp.ReverseProxy.Configuration;
 /// </summary>
 public sealed record RouteMatch
 {
-    public RouteMatch()
-    {
-    }
-
-    public RouteMatch(IReadOnlyList<string>? methods, IReadOnlyList<string>? hosts, string? path, IReadOnlyList<RouteHeader>? headers, IReadOnlyList<RouteQueryParameter>? queryParameters)
-    {
-        Methods = methods;
-        Hosts = hosts;
-        Path = path;
-        Headers = headers;
-        QueryParameters = queryParameters;
-    }
-
     /// <summary>
     /// Only match requests that use these optional HTTP methods. E.g. GET, POST.
     /// </summary>

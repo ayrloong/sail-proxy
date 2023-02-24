@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System.Net.Http;
+using System.Threading;
 using Microsoft.AspNetCore.Http;
 
 namespace Yarp.ReverseProxy.Transforms;
@@ -38,14 +39,25 @@ public class RequestTransformContext
     /// </remarks>
     public PathString Path { get; set; }
 
+    internal QueryTransformContext? MaybeQuery { get; private set; }
+
     /// <summary>
     /// The query used for the proxy request.
     /// </summary>
-    public QueryTransformContext Query { get; set; } = default!;
+    public QueryTransformContext Query
+    {
+        get => MaybeQuery ??= new QueryTransformContext(HttpContext.Request);
+        set => MaybeQuery = value;
+    }
 
     /// <summary>
     /// The URI prefix for the proxy request. This includes the scheme and host and can optionally include a
     /// port and path base. The 'Path' and 'Query' properties will be appended to this after the transforms have run.
     /// </summary>
     public string DestinationPrefix { get; init; } = default!;
+
+    /// <summary>
+    /// A <see cref="CancellationToken"/> indicating that the request is being aborted.
+    /// </summary>
+    public CancellationToken CancellationToken { get; set; }
 }

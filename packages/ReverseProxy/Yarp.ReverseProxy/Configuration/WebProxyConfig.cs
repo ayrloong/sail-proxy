@@ -8,7 +8,7 @@ namespace Yarp.ReverseProxy.Configuration;
 /// <summary>
 /// Config used to construct <seealso cref="System.Net.WebProxy"/> instance.
 /// </summary>
-public sealed class WebProxyConfig : IEquatable<WebProxyConfig>
+public sealed record WebProxyConfig : IEquatable<WebProxyConfig>
 {
     /// <summary>
     /// The URI of the proxy server.

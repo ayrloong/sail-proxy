@@ -144,30 +144,20 @@ internal sealed class ConfigurationConfigProvider : IProxyConfigProvider, IDispo
         {
             RouteId = section.Key,
             Order = section.ReadInt32(nameof(RouteConfig.Order)),
+            MaxRequestBodySize = section.ReadInt64(nameof(RouteConfig.MaxRequestBodySize)),
             ClusterId = section[nameof(RouteConfig.ClusterId)],
             AuthorizationPolicy = section[nameof(RouteConfig.AuthorizationPolicy)],
+            Clusters = CreateClusters(section.GetSection(nameof(RouteConfig.Clusters))),
+#if NET7_0_OR_GREATER
+            RateLimiterPolicy = section[nameof(RouteConfig.RateLimiterPolicy)],
+#endif
             CorsPolicy = section[nameof(RouteConfig.CorsPolicy)],
             Metadata = section.GetSection(nameof(RouteConfig.Metadata)).ReadStringDictionary(),
             Transforms = CreateTransforms(section.GetSection(nameof(RouteConfig.Transforms))),
-            WeightCluster = CreateWeightClusters(section.GetSection(nameof(RouteConfig.WeightCluster))),
             Match = CreateRouteMatch(section.GetSection(nameof(RouteConfig.Match))),
-            
         };
     }
 
-    private static WeightClusterConfig? CreateWeightClusters(IConfigurationSection section)
-    {
-        if (!section.Exists())
-        {
-            return null;
-        }
-
-        return new WeightClusterConfig
-        {
-            Clusters = CreateClusters(section.GetSection(nameof(WeightClusterConfig.Clusters))),
-        };
-    }
-    
     private static List<WeightCluster> CreateClusters(IConfigurationSection section)
     {
         if (!section.Exists())
@@ -175,7 +165,7 @@ internal sealed class ConfigurationConfigProvider : IProxyConfigProvider, IDispo
             return null;
         }
 
-        return section.GetChildren().Select(data => CreateWeightCluster(data)).ToList();
+        return section.GetChildren().Select(CreateWeightCluster).ToList();
     }
     
     private static WeightCluster CreateWeightCluster(IConfigurationSection section)
@@ -186,6 +176,7 @@ internal sealed class ConfigurationConfigProvider : IProxyConfigProvider, IDispo
             Weight = section.ReadInt32(nameof(WeightCluster.Weight))
         };
     }
+    
     private static IReadOnlyList<IReadOnlyDictionary<string, string>>? CreateTransforms(IConfigurationSection section)
     {
         if (section.GetChildren() is var children && !children.Any())

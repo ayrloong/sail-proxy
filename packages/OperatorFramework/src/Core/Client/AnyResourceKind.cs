@@ -12,8 +12,6 @@ using k8s.Models;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading;
@@ -408,7 +406,7 @@ public class AnyResourceKind : IAnyResourceKind
         cancellationToken.ThrowIfCancellationRequested();
         var httpResponse = await Client.HttpClient
             .SendAsync(httpRequest, HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-        HttpStatusCode statusCode = httpResponse.StatusCode;
+        var statusCode = httpResponse.StatusCode;
         cancellationToken.ThrowIfCancellationRequested();
 
         if (!httpResponse.IsSuccessStatusCode)
@@ -417,7 +415,7 @@ public class AnyResourceKind : IAnyResourceKind
             var ex = new HttpOperationException($"Operation returned an invalid status code '{statusCode}'");
             if (httpResponse.Content != null)
             {
-                responseContent = await httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
+                responseContent = await httpResponse.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
             }
 
             ex.Request = new HttpRequestMessageWrapper(httpRequest, requestContent);
@@ -456,12 +454,9 @@ public class AnyResourceKind : IAnyResourceKind
 
         try
         {
-
-            using (Stream stream =
-                   await httpResponse.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false))
-            {
-                result.Body = KubernetesJson.Deserialize<T>(stream);
-            }
+            await using var stream =
+                await httpResponse.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
+            result.Body = KubernetesJson.Deserialize<T>(stream);
         }
         catch (JsonException)
         {
@@ -505,6 +500,7 @@ public class AnyResourceKind : IAnyResourceKind
                 return MediaTypeHeaderValue.Parse("application/strategic-merge-patch+json; charset=utf-8");
             case V1Patch.PatchType.ApplyPatch:
                 return MediaTypeHeaderValue.Parse("application/apply-patch+yaml; charset=utf-8");
+            case V1Patch.PatchType.Unknown:
             default:
                 throw new ArgumentOutOfRangeException(nameof(body.Type), "");
         }

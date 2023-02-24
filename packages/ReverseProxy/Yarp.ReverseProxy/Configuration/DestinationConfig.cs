@@ -22,7 +22,7 @@ public sealed record DestinationConfig
     /// Endpoint accepting active health check probes. E.g. <c>http://127.0.0.1:1234/</c>.
     /// </summary>
     public string? Health { get; init; }
-   
+
     /// <summary>
     /// Arbitrary key-value pairs that further describe this destination.
     /// </summary>
