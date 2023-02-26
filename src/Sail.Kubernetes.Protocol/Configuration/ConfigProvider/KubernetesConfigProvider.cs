@@ -6,21 +6,23 @@ namespace Sail.Kubernetes.Protocol.Configuration;
 public class KubernetesConfigProvider : IProxyConfigProvider, IUpdateConfig
 {
     private volatile MessageConfig _config;
-    public KubernetesConfigProvider()
+    private readonly IMiddlewareUpdater _updater;
+    public KubernetesConfigProvider(IMiddlewareUpdater updater)
     {
         _config = new MessageConfig(null, null);
-
+        _updater = updater;
     }
 
     public IProxyConfig GetConfig() => _config;
 
-    public Task UpdateAsync(IReadOnlyList<RouteConfig> routes, IReadOnlyList<ClusterConfig> clusters)
+    public async Task UpdateAsync(IReadOnlyList<RouteConfig> routes, IReadOnlyList<ClusterConfig> clusters,
+        IReadOnlyList<MiddlewareConfig> middlewares)
     {
+
+        await _updater.UpdateAsync(middlewares);
         var newConfig = new MessageConfig(routes, clusters);
         var oldConfig = Interlocked.Exchange(ref _config, newConfig);
         oldConfig.SignalChange();
-
-        return Task.CompletedTask;
     }
 
     private class MessageConfig : IProxyConfig

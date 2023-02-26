@@ -1,4 +1,5 @@
-﻿using Yarp.ReverseProxy.Configuration;
+﻿using Sail.Kubernetes.Protocol.Configuration;
+using Yarp.ReverseProxy.Configuration;
 
 namespace Sail.Kubernetes.Controller.Converters;
 
@@ -18,5 +19,10 @@ internal class SailConfigContext
             SessionAffinity = c.SessionAffinity,
             HttpClient = c.HttpClientConfig
         }).ToList();
+    }
+
+    public List<MiddlewareConfig> BuildMiddlewareConfig()
+    {
+        return new List<MiddlewareConfig>();
     }
 }

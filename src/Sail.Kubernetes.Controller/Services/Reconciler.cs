@@ -54,7 +54,7 @@ public class Reconciler : IReconciler
 
             message.Cluster = configContext.BuildClusterConfig();
             message.Routes = configContext.Routes;
-            message.Middlewares = new List<MiddlewareConfig>();
+            message.Middlewares = configContext.BuildMiddlewareConfig();
             var bytes = JsonSerializer.SerializeToUtf8Bytes(message);
 
             _logger.LogInformation(JsonSerializer.Serialize(message));

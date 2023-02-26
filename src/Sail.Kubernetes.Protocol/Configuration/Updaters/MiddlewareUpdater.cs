@@ -14,7 +14,7 @@ public class MiddlewareUpdater : IMiddlewareUpdater
         _rateLimiterOptionsUpdater = rateLimiterOptionsUpdater;
     }
 
-    public async Task UpdateAsync(List<MiddlewareConfig> middlewares)
+    public async Task UpdateAsync(IReadOnlyList<MiddlewareConfig> middlewares)
     {
         foreach (var middleware in middlewares)
         {
