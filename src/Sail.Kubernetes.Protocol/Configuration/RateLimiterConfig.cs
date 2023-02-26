@@ -2,5 +2,5 @@
 
 public class RateLimiterConfig
 {
-    
+    public string Name { get; set; }
 }

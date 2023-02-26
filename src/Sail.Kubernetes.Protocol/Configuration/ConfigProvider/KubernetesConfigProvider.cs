@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Primitives;
+using Sail.Kubernetes.Protocol.Options;
 using Yarp.ReverseProxy.Configuration;
 
 namespace Sail.Kubernetes.Protocol.Configuration;
@@ -6,7 +7,6 @@ namespace Sail.Kubernetes.Protocol.Configuration;
 public class KubernetesConfigProvider : IProxyConfigProvider, IUpdateConfig
 {
     private volatile MessageConfig _config;
-
     public KubernetesConfigProvider()
     {
         _config = new MessageConfig(null, null);

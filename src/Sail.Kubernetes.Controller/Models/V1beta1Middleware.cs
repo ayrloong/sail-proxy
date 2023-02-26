@@ -2,7 +2,6 @@
 using k8s;
 using k8s.Models;
 
-
 namespace Sail.Kubernetes.Controller.Models;
 
 [KubernetesEntity(ApiVersion = KubeApiVersion, Group = KubeGroup, Kind = KubeKind, PluralName = "middlewares")]
@@ -41,6 +40,8 @@ public class AddPrefix
 public class JwtBearer
 {
     [JsonPropertyName("secret")] public string Secret { get; set; }
+    [JsonPropertyName("issuer")] public string Issuer { get; set; }
+    [JsonPropertyName("audience")] public string Audience { get; set; }
 }
 
 public class Cors

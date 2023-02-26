@@ -2,5 +2,5 @@
 
 public class MiddlewareConfig
 {
-    
+    public CorsConfig Cors { get; set; }   
 }
