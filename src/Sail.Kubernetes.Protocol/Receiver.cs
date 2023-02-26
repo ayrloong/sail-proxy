@@ -14,11 +14,13 @@ public class Receiver : BackgroundHostedService
     private readonly ReceiverOptions _options;
     private readonly Limiter _limiter;
     private readonly IUpdateConfig _proxyConfigProvider;
+    private readonly IMiddlewareUpdater _middlewareUpdater;
 
     public Receiver(
         IOptions<ReceiverOptions> options,
         IHostApplicationLifetime hostApplicationLifetime, ILogger logger,
-        IUpdateConfig proxyConfigProvider) : base(hostApplicationLifetime, logger)
+        IUpdateConfig proxyConfigProvider,
+        IMiddlewareUpdater middlewareUpdater) : base(hostApplicationLifetime, logger)
     {
         if (options is null )
         {
@@ -28,6 +30,7 @@ public class Receiver : BackgroundHostedService
         _options = options.Value;
         _limiter = new Limiter(new Limit(2), 3);
         _proxyConfigProvider = proxyConfigProvider;
+        _middlewareUpdater = middlewareUpdater;
     }
 
     public override async Task RunAsync(CancellationToken cancellationToken)
@@ -56,9 +59,10 @@ public class Receiver : BackgroundHostedService
 
                    Logger.LogInformation(json);
                    Logger.LogInformation(message.MessageType.ToString());
-                   
+
                    if (message.MessageType == MessageType.Update)
                    {
+                       await _middlewareUpdater.UpdateAsync(message.Middlewares);
                        await _proxyConfigProvider.UpdateAsync(message.Routes, message.Cluster).ConfigureAwait(false);
                    }
                }

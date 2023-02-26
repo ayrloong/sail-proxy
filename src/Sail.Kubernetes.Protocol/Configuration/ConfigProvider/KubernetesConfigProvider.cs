@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Primitives;
-using Sail.Kubernetes.Protocol.Options;
 using Yarp.ReverseProxy.Configuration;
 
 namespace Sail.Kubernetes.Protocol.Configuration;

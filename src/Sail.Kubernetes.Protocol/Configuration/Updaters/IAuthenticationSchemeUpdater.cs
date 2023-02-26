@@ -1,4 +1,4 @@
-namespace Sail.Kubernetes.Protocol.Authentication;
+namespace Sail.Kubernetes.Protocol.Configuration;
 
 public interface IAuthenticationSchemeUpdater
 {

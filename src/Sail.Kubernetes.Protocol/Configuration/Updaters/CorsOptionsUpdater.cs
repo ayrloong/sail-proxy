@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.Extensions.Options;
 
-namespace Sail.Kubernetes.Protocol.Options;
+namespace Sail.Kubernetes.Protocol.Configuration;
 
 public class CorsOptionsUpdater : ICorsOptionsUpdater
 {

@@ -2,5 +2,7 @@
 
 public class MiddlewareConfig
 {
-    public CorsConfig Cors { get; set; }   
+    public JwtBearerConfig JwtBearer { get; set; }
+    public CorsConfig Cors { get; set; }
+    public RateLimiterConfig RateLimiter { get; set; }
 }

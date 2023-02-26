@@ -2,7 +2,7 @@ using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Extensions.Options;
 
-namespace Sail.Kubernetes.Protocol.Options;
+namespace Sail.Kubernetes.Protocol.Configuration;
 
 public class RateLimiterOptionsUpdater : IRateLimiterOptionsUpdater
 {
