@@ -20,17 +20,17 @@ public class AuthenticationSchemeUpdater : IAuthenticationSchemeUpdater
         _authorizationOptions = authorizationOptions.Value;
     }
 
-    public Task UpdateAsync(string name)
+    public Task UpdateAsync(JwtBearerConfig jwtBearer)
     {
-        var scheme = new AuthenticationScheme(name, displayName: null, typeof(JwtBearerHandler));
+        var scheme = new AuthenticationScheme(jwtBearer.Name, displayName: null, typeof(JwtBearerHandler));
         _provider.AddScheme(scheme);
-        _options.TryAdd(name, new JwtBearerOptions
+        _options.TryAdd(jwtBearer.Name, new JwtBearerOptions
         {
-
-            RequireHttpsMetadata = false,
-            SaveToken = true,
+            Audience = jwtBearer.Audience,
+            Authority = jwtBearer.Issuer,
+            RequireHttpsMetadata = false
         });
-        _authorizationOptions.AddPolicy(name, policy => { policy.RequireAuthenticatedUser(); });
+        _authorizationOptions.AddPolicy(jwtBearer.Name, policy => { policy.RequireAuthenticatedUser(); });
         return Task.CompletedTask;
     }
 }

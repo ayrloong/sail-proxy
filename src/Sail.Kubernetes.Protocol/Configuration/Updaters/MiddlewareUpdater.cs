@@ -21,20 +21,19 @@ public class MiddlewareUpdater : IMiddlewareUpdater
             if (middleware.JwtBearer is not null)
             {
                 var jwtBearer = middleware.JwtBearer;
-                await _authenticationSchemeUpdater.UpdateAsync(jwtBearer.Name);
+                await _authenticationSchemeUpdater.UpdateAsync(jwtBearer);
             }
 
             if (middleware.Cors is not null)
             {
                 var cors = middleware.Cors;
-                await _corsOptionsUpdater.UpdateAsync(cors.Name, cors.AllowOrigins, cors.AllowMethods,
-                    cors.AllowHeaders);
+                await _corsOptionsUpdater.UpdateAsync(cors);
             }
 
             if (middleware.RateLimiter is not null)
             {
                 var rateLimiter = middleware.RateLimiter;
-                await _rateLimiterOptionsUpdater.UpdateAsync(rateLimiter.Name);
+                await _rateLimiterOptionsUpdater.UpdateAsync(rateLimiter);
             }
         }
     }

@@ -12,15 +12,13 @@ public class CorsOptionsUpdater : ICorsOptionsUpdater
         _options = options.Value;
     }
 
-    public Task UpdateAsync(string name, List<string> allowOrigins, List<string> allowMethods,
-        List<string> allowHeaders)
+    public Task UpdateAsync(CorsConfig cors)
     {
-        _options.AddPolicy(name, policy =>
+        _options.AddPolicy(cors.Name, policy =>
         {
-            policy.WithOrigins(allowOrigins.ToArray());
-            policy.WithMethods(allowMethods.ToArray());
-            policy.WithHeaders(allowHeaders.ToArray());
-
+            policy.WithOrigins(cors.AllowOrigins.ToArray());
+            policy.WithMethods(cors.AllowMethods.ToArray());
+            policy.WithHeaders(cors.AllowHeaders.ToArray());
         });
         return Task.CompletedTask;
     }

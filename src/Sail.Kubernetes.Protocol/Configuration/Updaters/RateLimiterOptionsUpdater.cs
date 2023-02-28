@@ -13,9 +13,9 @@ public class RateLimiterOptionsUpdater : IRateLimiterOptionsUpdater
         _options = options.Value;
     }
 
-    public Task UpdateAsync(string name)
+    public Task UpdateAsync(RateLimiterConfig rateLimiter)
     {
-        _options.AddFixedWindowLimiter(name, options =>
+        _options.AddFixedWindowLimiter(rateLimiter.Name, options =>
         {
             options.PermitLimit = 4;
             options.Window = TimeSpan.FromSeconds(12);
