@@ -1,7 +1,0 @@
-apiVersion: "configuration.inendless.io/v1beta1"
-kind: Middleware
-metadata:
-  name: limits
-spec:
-  limits:
-    maxRequestBodySize: 2000000

@@ -4,7 +4,6 @@ using Sail.Kubernetes.Controller.Caching;
 using Sail.Kubernetes.Controller.Converters;
 using Sail.Kubernetes.Controller.Dispatching;
 using Sail.Kubernetes.Protocol;
-using Sail.Kubernetes.Protocol.Configuration;
 
 namespace Sail.Kubernetes.Controller.Services;
 

@@ -12,7 +12,7 @@ public static class MessageConfigProviderExtensions
         {
             throw new ArgumentNullException(nameof(builder));
         }
-
+        
         var provider = new KubernetesConfigProvider();
         builder.Services.AddSingleton<IProxyConfigProvider>(provider);
         builder.Services.AddSingleton<IUpdateConfig>(provider);

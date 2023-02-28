@@ -22,8 +22,11 @@ public class Startup
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
         app.UseRouting();
+        app.UseCors();
+        app.UseRateLimiter();
         app.UseAuthentication();
         app.UseAuthorization();
+        
         app.UseEndpoints(endpoints => { endpoints.MapReverseProxy(); });
     }
 }

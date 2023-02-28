@@ -1,7 +1,0 @@
-apiVersion: "configuration.inendless.io/v1beta1"
-kind: Middleware
-metadata:
-  name: add-foo
-spec:
-  addPrefix:
-    prefix: /foo1

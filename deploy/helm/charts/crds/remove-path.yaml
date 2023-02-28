@@ -1,9 +1,0 @@
-apiVersion: "configuration.inendless.io/v1beta1"
-kind: Middleware
-metadata:
-  name: remove-foo
-spec:
-  removePrefix:
-    prefixes:
-     - /foo1
-     - /foo2
