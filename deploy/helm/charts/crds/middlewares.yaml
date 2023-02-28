@@ -38,3 +38,12 @@ spec:
                   prefix:
                     type: string
                 type: object
+              jwtBearer:
+                properties:
+                  audience:
+                    type: string
+                  secret:
+                    type: string
+                  issuer:
+                    type: string
+                type: object

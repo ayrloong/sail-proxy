@@ -1,8 +1,9 @@
-﻿namespace Sail.Proxy;
+﻿using Sail.Kubernetes.Protocol;
+
+namespace Sail.Proxy;
 
 public class Startup
 {
-
     public Startup(IConfiguration configuration)
     {
         Configuration = configuration;
@@ -12,13 +13,17 @@ public class Startup
 
     public void ConfigureServices(IServiceCollection services)
     {
-        services.AddReverseProxy().LoadFromConfig(Configuration.GetSection("ReverseProxy"));
+        services.Configure<ReceiverOptions>(Configuration.Bind);
+        services.AddUpdater();
+        services.AddHostedService<Receiver>();
+        services.AddReverseProxy().LoadFromMessages();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
         app.UseRouting();
-
+        app.UseAuthentication();
+        app.UseAuthorization();
         app.UseEndpoints(endpoints => { endpoints.MapReverseProxy(); });
     }
 }

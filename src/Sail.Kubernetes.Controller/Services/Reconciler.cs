@@ -43,6 +43,11 @@ public class Reconciler : IReconciler
             var configContext = new SailConfigContext();
             foreach (var ingress in ingresses)
             {
+                if (!_cache.IsSailIngress(ingress))
+                {
+                    continue;
+                }
+
                 if (_cache.TryGetReconcileData(
                         new NamespacedName(ingress.Metadata.NamespaceProperty, ingress.Metadata.Name), out var data))
                 {
@@ -54,10 +59,10 @@ public class Reconciler : IReconciler
 
             message.Cluster = configContext.BuildClusterConfig();
             message.Routes = configContext.Routes;
-            message.Middlewares = configContext.BuildMiddlewareConfig();
+            message.Middlewares = configContext.BuildMiddlewareConfig(middlewares);
             var bytes = JsonSerializer.SerializeToUtf8Bytes(message);
-
             _logger.LogInformation(JsonSerializer.Serialize(message));
+            await _dispatcher.SendAsync(null, bytes, cancellationToken).ConfigureAwait(false);
         }
         catch (Exception ex)
         {

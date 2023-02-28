@@ -26,6 +26,7 @@ public class AuthenticationSchemeUpdater : IAuthenticationSchemeUpdater
         _provider.AddScheme(scheme);
         _options.TryAdd(name, new JwtBearerOptions
         {
+
             RequireHttpsMetadata = false,
             SaveToken = true,
         });

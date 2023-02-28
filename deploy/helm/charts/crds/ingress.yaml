@@ -4,13 +4,11 @@ metadata:
   name: ingress
   annotations:
     sail.ingress.kubernetes.io/middlewares: |
-      - add-foo
-      - remove-foo
-      - limits
+      - jwt
 spec:
   ingressClassName: sail
   rules:
-  - host: test.zero.com
+  - host: zero.dev
     http:
       paths:
       - path: /

@@ -1,4 +1,6 @@
-﻿using Sail.Kubernetes.Protocol.Configuration;
+﻿using Sail.Kubernetes.Controller.Caching;
+using Sail.Kubernetes.Controller.Models;
+using Sail.Kubernetes.Protocol.Configuration;
 using Yarp.ReverseProxy.Configuration;
 
 namespace Sail.Kubernetes.Controller.Converters;
@@ -21,8 +23,61 @@ internal class SailConfigContext
         }).ToList();
     }
 
-    public List<MiddlewareConfig> BuildMiddlewareConfig()
+    public List<MiddlewareConfig> BuildMiddlewareConfig(List<MiddlewareData> middlewares)
     {
-        return new List<MiddlewareConfig>();
+
+        return middlewares
+            .Where(x => x.Spec.Cors is not null || x.Spec.JwtBearer is not null || x.Spec.RateLimiter is not null)
+            .Select(m => new MiddlewareConfig
+            {
+                JwtBearer = BuildJwtBearer(m.Spec.JwtBearer, m.Metadata.Name),
+                Cors = BuildCors(m.Spec.Cors, m.Metadata.Name),
+                RateLimiter = BuildRateLimiter(m.Spec.RateLimiter, m.Metadata.Name)
+            }).ToList();
+    }
+
+    private JwtBearerConfig BuildJwtBearer(JwtBearer jwtBearer, string name)
+    {
+        if (jwtBearer is null)
+        {
+            return null;
+        }
+
+        return new JwtBearerConfig
+        {
+            Name = name,
+            Audience = jwtBearer.Audience,
+            Secret = jwtBearer.Secret,
+            Issuer = jwtBearer.Issuer,
+        };
+    }
+
+    private CorsConfig BuildCors(Cors cors, string name)
+    {
+        if (cors is null)
+        {
+            return null;
+        }
+
+        return new CorsConfig
+        {
+            Name = name,
+            AllowOrigins = cors.AllowOrigins,
+            AllowMethods = cors.AllowMethods,
+            AllowHeaders = cors.AllowHeaders
+        };
+    }
+
+    private RateLimiterConfig BuildRateLimiter(RateLimiter rateLimiter, string name)
+    {
+        if (rateLimiter is null)
+        {
+            return null;
+        }
+
+        return new RateLimiterConfig
+        {
+            Name = name,
+        };
     }
 }

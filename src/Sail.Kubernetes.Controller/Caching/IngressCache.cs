@@ -25,6 +25,13 @@ public class IngressCache : ICache
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
+    public bool IsSailIngress(IngressData ingress)
+    { 
+        return ingress.Spec.IngressClassName is not null
+            ? _ingressClassData.ContainsKey(ingress.Spec.IngressClassName)
+            : _isDefaultController;
+    }
+
     public void Update(WatchEventType eventType, V1beta1Middleware middleware)
     {
         Namespace(middleware.Namespace()).Update(eventType, middleware);
@@ -71,21 +78,8 @@ public class IngressCache : ICache
             throw new ArgumentNullException(nameof(ingress));
         }
 
-        if (IsSailIngress(ingress.Spec))
-        {
-            Namespace(ingress.Namespace()).Update(eventType, ingress);
-            return true;
-        }
-
-        if (eventType is WatchEventType.Modified && Namespace(ingress.Namespace()).IngressExists(ingress))
-        {
-            _logger.LogInformation("Removing ingress {IngressNamespace}/{IngressName} because of unknown ingress class",
-                ingress.Metadata.NamespaceProperty, ingress.Metadata.Name);
-            Namespace(ingress.Namespace()).Update(WatchEventType.Deleted, ingress);
-            return true;
-        }
-
-        return false;
+        Namespace(ingress.Namespace()).Update(eventType, ingress);
+        return true;
     }
 
     public ImmutableList<string> Update(WatchEventType eventType, V1Service service)
@@ -147,12 +141,7 @@ public class IngressCache : ICache
         return middlewares;
     }
 
-    private bool IsSailIngress(V1IngressSpec spec)
-    {
-        return spec.IngressClassName is not null
-            ? _ingressClassData.ContainsKey(spec.IngressClassName)
-            : _isDefaultController;
-    }
+ 
 
     private NamespaceCache Namespace(string key)
     {

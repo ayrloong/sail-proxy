@@ -7,7 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\packages\ReverseProxy\Yarp.ReverseProxy\Yarp.ReverseProxy.csproj" />
+    <ProjectReference Include="..\Sail.Kubernetes.Protocol\Sail.Kubernetes.Protocol.csproj" />
   </ItemGroup>
+
+  
 
 </Project>
