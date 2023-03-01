@@ -1,6 +1,7 @@
 ﻿using System.Text.Json.Serialization;
 using k8s;
 using k8s.Models;
+using Serilog;
 
 namespace Sail.Kubernetes.Controller.Models;
 
@@ -53,7 +54,9 @@ public class Cors
 
 public class RateLimiter
 {
-    
+    [JsonPropertyName("permitLimit")] public int PermitLimit { get; set; }
+    [JsonPropertyName("window")] public int Window { get; set; }
+    [JsonPropertyName("queueLimit")] public int QueueLimit { get; set; }
 }
 
 public class Limits

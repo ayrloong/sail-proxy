@@ -78,6 +78,9 @@ internal class SailConfigContext
         return new RateLimiterConfig
         {
             Name = name,
+            PermitLimit = rateLimiter.PermitLimit,
+            Window = rateLimiter.Window,
+            QueueLimit = rateLimiter.QueueLimit
         };
     }
 }

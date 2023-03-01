@@ -17,10 +17,10 @@ public class RateLimiterOptionsUpdater : IRateLimiterOptionsUpdater
     {
         _options.AddFixedWindowLimiter(rateLimiter.Name, options =>
         {
-            options.PermitLimit = 4;
-            options.Window = TimeSpan.FromSeconds(12);
+            options.PermitLimit = rateLimiter.PermitLimit;
+            options.Window = TimeSpan.FromSeconds(rateLimiter.Window);
             options.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
-            options.QueueLimit = 2;
+            options.QueueLimit = rateLimiter.QueueLimit;
         });
         return Task.CompletedTask;
     }

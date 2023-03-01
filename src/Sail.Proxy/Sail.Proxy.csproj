@@ -5,11 +5,9 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
-
+  
   <ItemGroup>
     <ProjectReference Include="..\Sail.Kubernetes.Protocol\Sail.Kubernetes.Protocol.csproj" />
   </ItemGroup>
-
   
-
 </Project>
