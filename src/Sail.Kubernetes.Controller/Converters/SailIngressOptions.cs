@@ -6,7 +6,7 @@ internal sealed class SailIngressOptions
 {
     public bool Https { get; set; }
     public List<Dictionary<string, string>> Transforms { get; set; } = new();
-    public long MaxRequestBodySize { get; set; }
+    public long? MaxRequestBodySize { get; set; }
     public string AuthorizationPolicy { get; set; }
     public string RateLimiterPolicy { get; set; }
     public SessionAffinityConfig SessionAffinity { get; set; }

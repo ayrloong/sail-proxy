@@ -92,7 +92,7 @@ internal static class SailParser
                     RouteId =
                         $"{ingressContext.Ingress.Metadata.Name}.{ingressContext.Ingress.Metadata.NamespaceProperty}:{path.Path}",
                     Transforms = ingressContext.Options.Transforms,
-                    MaxRequestBodySize = ingressContext.Options.MaxRequestBodySize,
+                    MaxRequestBodySize = ingressContext.Options.MaxRequestBodySize ?? -1,
                     AuthorizationPolicy = ingressContext.Options.AuthorizationPolicy,
                     CorsPolicy = ingressContext.Options.CorsPolicy,
                     Metadata = ingressContext.Options.RouteMetadata
