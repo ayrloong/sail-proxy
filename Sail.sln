@@ -21,6 +21,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Kubernetes.Core",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Kubernetes.Controller", "packages\OperatorFramework\src\Controller\Microsoft.Kubernetes.Controller.csproj", "{BB3FEA61-DB41-440F-AC24-4F0B3EEF5DBA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Kubernetes.CustomResources", "packages\OperatorFramework\src\CustomResource\Microsoft.Kubernetes.CustomResources.csproj", "{BEC78E7C-23B6-4D26-8DBE-35CF1D5A511E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Kubernetes.Operator", "packages\OperatorFramework\src\Operator\Microsoft.Kubernetes.Operator.csproj", "{9007B1A7-CDE6-4607-BB9D-E9A0AFD675A5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Kubernetes.Testing", "packages\OperatorFramework\src\Testing\Microsoft.Kubernetes.Testing.csproj", "{C08FFAD9-F198-482A-83C0-547806845E93}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -37,6 +43,9 @@ Global
 		{2DD730DD-AE0C-4ADA-932B-90928291EB0D} = {4187CFEE-A94A-4B55-926E-5BABA10E0593}
 		{39292B35-834C-4629-B6EA-50B71C8BE349} = {2DD730DD-AE0C-4ADA-932B-90928291EB0D}
 		{BB3FEA61-DB41-440F-AC24-4F0B3EEF5DBA} = {2DD730DD-AE0C-4ADA-932B-90928291EB0D}
+		{BEC78E7C-23B6-4D26-8DBE-35CF1D5A511E} = {2DD730DD-AE0C-4ADA-932B-90928291EB0D}
+		{9007B1A7-CDE6-4607-BB9D-E9A0AFD675A5} = {2DD730DD-AE0C-4ADA-932B-90928291EB0D}
+		{C08FFAD9-F198-482A-83C0-547806845E93} = {2DD730DD-AE0C-4ADA-932B-90928291EB0D}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{941D1D71-2D76-4DDE-9CBA-2F8F9C652582}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -59,5 +68,17 @@ Global
 		{BB3FEA61-DB41-440F-AC24-4F0B3EEF5DBA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BB3FEA61-DB41-440F-AC24-4F0B3EEF5DBA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BB3FEA61-DB41-440F-AC24-4F0B3EEF5DBA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BEC78E7C-23B6-4D26-8DBE-35CF1D5A511E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BEC78E7C-23B6-4D26-8DBE-35CF1D5A511E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BEC78E7C-23B6-4D26-8DBE-35CF1D5A511E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BEC78E7C-23B6-4D26-8DBE-35CF1D5A511E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9007B1A7-CDE6-4607-BB9D-E9A0AFD675A5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9007B1A7-CDE6-4607-BB9D-E9A0AFD675A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9007B1A7-CDE6-4607-BB9D-E9A0AFD675A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9007B1A7-CDE6-4607-BB9D-E9A0AFD675A5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C08FFAD9-F198-482A-83C0-547806845E93}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C08FFAD9-F198-482A-83C0-547806845E93}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C08FFAD9-F198-482A-83C0-547806845E93}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C08FFAD9-F198-482A-83C0-547806845E93}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

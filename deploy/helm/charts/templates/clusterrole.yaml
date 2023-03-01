@@ -99,3 +99,11 @@ rules:
       - tlsroutes/status
     verbs:
       - update
+  - apiGroups:
+      - configuration.inendless.io
+    resources:
+      - middlewares
+    verbs:
+      - get
+      - list
+      - watch
