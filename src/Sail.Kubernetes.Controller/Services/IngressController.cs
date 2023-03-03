@@ -131,7 +131,10 @@ public class IngressController : BackgroundHostedService
 
     private void Notification(WatchEventType eventType,V1beta1Middleware resource)
     {
-        _cache.Update(eventType, resource);
+        if (_cache.Update(eventType, resource))
+        {
+            NotificationIngressChanged();
+        }
     }
     private void Notification(WatchEventType eventType, V1IngressClass resource)
     {

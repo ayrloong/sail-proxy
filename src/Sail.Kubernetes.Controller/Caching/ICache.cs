@@ -10,7 +10,7 @@ namespace Sail.Kubernetes.Controller.Caching;
 public interface ICache
 {
     bool IsSailIngress(IngressData ingress);
-    void Update(WatchEventType eventType,V1beta1Middleware middleware);
+    bool Update(WatchEventType eventType,V1beta1Middleware middleware);
     void Update(WatchEventType eventType, V1IngressClass ingressClass);
     bool Update(WatchEventType eventType, V1Ingress ingress);
     ImmutableList<string> Update(WatchEventType eventType, V1Service service);

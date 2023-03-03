@@ -3,7 +3,7 @@ controller:
   image:
     registry: docker.io
     image: inendless/sail-kubernetes-controller
-    tag: "1.0.6"
+    tag: "1.0.7"
     pullPolicy: IfNotPresent
   containerName: controller  
   containerPort:
@@ -49,7 +49,7 @@ controller:
   autoscaling:
     enabled: false   
   
-  replicaCount: 1 
+  replicaCount: 1
 
   service:
    enabled: true
@@ -69,7 +69,7 @@ proxy:
   image:
     registry: docker.io
     image: inendless/sail-proxy
-    tag: "2.0.2"
+    tag: "2.0.3"
     pullPolicy: IfNotPresent  
 
   containerPort:
@@ -85,7 +85,7 @@ proxy:
   autoscaling:
     enabled: false    
 
-  replicaCount: 1 
+  replicaCount: 2
 
   service:
    enabled: true

@@ -94,6 +94,7 @@ internal static class SailParser
                     Transforms = ingressContext.Options.Transforms,
                     MaxRequestBodySize = ingressContext.Options.MaxRequestBodySize ?? -1,
                     AuthorizationPolicy = ingressContext.Options.AuthorizationPolicy,
+                    RateLimiterPolicy = ingressContext.Options.RateLimiterPolicy,
                     CorsPolicy = ingressContext.Options.CorsPolicy,
                     Metadata = ingressContext.Options.RouteMetadata
                 });

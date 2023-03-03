@@ -47,3 +47,27 @@ spec:
                   issuer:
                     type: string
                 type: object
+              rateLimiter:
+                properties:
+                  permitLimit:
+                    type: number
+                  window:
+                    type: number
+                  queueLimit:
+                    type: number
+                type: object
+              cors:
+                properties:
+                  allowOrigins:
+                    items:
+                      type: string
+                    type: array
+                  allowMethods:
+                    items:
+                      type: string
+                    type: array
+                  allowOrigins:
+                    items:
+                      type: string
+                    type: array
+                type: object

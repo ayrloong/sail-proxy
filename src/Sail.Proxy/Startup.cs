@@ -13,20 +13,18 @@ public class Startup
 
     public void ConfigureServices(IServiceCollection services)
     {
+        services.AddAuthentication();
         services.Configure<ReceiverOptions>(Configuration.Bind);
-        services.AddUpdater();
         services.AddHostedService<Receiver>();
-        services.AddReverseProxy().LoadFromMessages();
+        services.AddKubernetesMiddleware().AddReverseProxy().LoadFromMessages();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
         app.UseRouting();
         app.UseCors();
-        app.UseRateLimiter();
         app.UseAuthentication();
         app.UseAuthorization();
-        
         app.UseEndpoints(endpoints => { endpoints.MapReverseProxy(); });
     }
 }

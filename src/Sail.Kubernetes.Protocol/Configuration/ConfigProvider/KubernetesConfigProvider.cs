@@ -14,11 +14,12 @@ public class KubernetesConfigProvider : IProxyConfigProvider, IUpdateConfig
 
     public IProxyConfig GetConfig() => _config;
 
-    public async Task UpdateAsync(IReadOnlyList<RouteConfig> routes, IReadOnlyList<ClusterConfig> clusters)
+    public Task UpdateAsync(IReadOnlyList<RouteConfig> routes, IReadOnlyList<ClusterConfig> clusters)
     {
-        var oldConfig = _config;
-        _config = new MessageConfig(routes, clusters);
+        var newConfig = new MessageConfig(routes, clusters);
+        var oldConfig = Interlocked.Exchange(ref _config, newConfig);
         oldConfig.SignalChange();
+        return Task.CompletedTask;
     }
 
     private class MessageConfig : IProxyConfig

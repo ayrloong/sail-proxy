@@ -32,9 +32,10 @@ public class IngressCache : ICache
             : _isDefaultController;
     }
 
-    public void Update(WatchEventType eventType, V1beta1Middleware middleware)
+    public bool Update(WatchEventType eventType, V1beta1Middleware middleware)
     {
         Namespace(middleware.Namespace()).Update(eventType, middleware);
+        return true;
     }
 
     public void Update(WatchEventType eventType, V1IngressClass ingressClass)
