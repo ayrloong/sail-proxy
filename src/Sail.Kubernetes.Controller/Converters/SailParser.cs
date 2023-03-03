@@ -137,8 +137,8 @@ internal static class SailParser
         var middleware = ingressContext.Middlewares.SingleOrDefault(s => s.Metadata.Name == middlewareName);
 
         var spec = middleware.Spec;
-
-        if (spec.AddPrefix is not null)
+        
+        if (spec?.AddPrefix is not null)
         {
             var addPrefix = spec.AddPrefix;
             ingressContext.Options.Transforms.Add(new Dictionary<string, string>
@@ -149,7 +149,7 @@ internal static class SailParser
             });
         }
 
-        if (spec.RemovePrefix is not null)
+        if (spec?.RemovePrefix is not null)
         {
             var removePrefix = spec.RemovePrefix;
             foreach (var prefix in removePrefix.Prefixes)
@@ -163,27 +163,27 @@ internal static class SailParser
             }
         }
 
-        if (spec.Limits is not null)
+        if (spec?.Limits is not null)
         {
             var limits = spec.Limits;
             ingressContext.Options.MaxRequestBodySize = limits.MaxRequestBodySize;
         }
 
-        if (spec.JwtBearer is not null)
+        if (spec?.JwtBearer is not null)
         {
             ingressContext.Options.AuthorizationPolicy = middleware.Metadata.Name;
         }
 
-        if (spec.Cors is not null)
+        if (spec?.Cors is not null)
         {
             ingressContext.Options.CorsPolicy = middleware.Metadata.Name;
         }
 
-        if (spec.RateLimiter is not null)
+        if (spec?.RateLimiter is not null)
         {
             ingressContext.Options.RateLimiterPolicy = middleware.Metadata.Name;
+
         }
-        
     }
 
     private static string UpstreamName(string namespaceName, V1IngressServiceBackend ingressServiceBackend)
