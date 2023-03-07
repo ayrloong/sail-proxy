@@ -49,6 +49,7 @@ internal class SailConfigContext
             Audience = jwtBearer.Audience,
             Secret = jwtBearer.Secret,
             Issuer = jwtBearer.Issuer,
+            OpenIdConfiguration = jwtBearer.OpenIdConfiguration
         };
     }
 

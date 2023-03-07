@@ -5,11 +5,12 @@ metadata:
   annotations:
     sail.ingress.kubernetes.io/middlewares: |
       - remove-foo  
-      - microsoft
+      - azuread
+      - cors
 spec:
   ingressClassName: sail
   rules:
-  - host: zero.dev
+  - host: localhost
     http:
       paths:
       - path: /foo1

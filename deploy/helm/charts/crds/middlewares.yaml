@@ -46,6 +46,8 @@ spec:
                     type: string
                   issuer:
                     type: string
+                  openIdConfiguration:
+                    type: string 
                 type: object
               rateLimiter:
                 properties:
@@ -66,7 +68,7 @@ spec:
                     items:
                       type: string
                     type: array
-                  allowOrigins:
+                  allowHeaders:
                     items:
                       type: string
                     type: array

@@ -43,6 +43,9 @@ public class JwtBearer
     [JsonPropertyName("secret")] public string Secret { get; set; }
     [JsonPropertyName("issuer")] public string Issuer { get; set; }
     [JsonPropertyName("audience")] public string Audience { get; set; }
+
+    [JsonPropertyName("openIdConfiguration")]
+    public string OpenIdConfiguration { get; set; }
 }
 
 public class Cors

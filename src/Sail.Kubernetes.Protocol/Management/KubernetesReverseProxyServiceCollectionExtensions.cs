@@ -11,7 +11,7 @@ public static class KubernetesReverseProxyServiceCollectionExtensions
         services.TryAddEnumerable(new[]
         {
             ServiceDescriptor.Singleton<IMiddleware, CorsMiddleware>(),
-            ServiceDescriptor.Singleton<IMiddleware, AuthenticationMiddleware>(),
+            ServiceDescriptor.Singleton<IMiddleware, JwtBearerMiddleware>(),
         });
         return services;
     }
