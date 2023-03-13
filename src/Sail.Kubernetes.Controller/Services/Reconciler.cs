@@ -66,7 +66,6 @@ public class Reconciler : IReconciler
         catch (Exception ex)
         {
             _logger.LogWarning(ex.Message);
-            throw;
         }
     }
 
