@@ -188,7 +188,7 @@ public class IngressController : BackgroundHostedService
 
             _queue.Dispose();
         }
-
+        
         base.Dispose(disposing);
     }
 }

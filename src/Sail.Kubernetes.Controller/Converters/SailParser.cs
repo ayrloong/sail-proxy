@@ -137,7 +137,7 @@ internal static class SailParser
         var middleware = ingressContext.Middlewares.SingleOrDefault(s => s.Metadata.Name == middlewareName);
 
         var spec = middleware.Spec;
-        
+
         if (spec?.AddPrefix is not null)
         {
             var addPrefix = spec.AddPrefix;
@@ -182,7 +182,6 @@ internal static class SailParser
         if (spec?.RateLimiter is not null)
         {
             ingressContext.Options.RateLimiterPolicy = middleware.Metadata.Name;
-
         }
     }
 
@@ -190,7 +189,7 @@ internal static class SailParser
     {
         if (ingressServiceBackend is not null)
         {
-            if (ingressServiceBackend.Port.Number.HasValue && ingressServiceBackend.Port.Number.Value > 0)
+            if (ingressServiceBackend.Port.Number is > 0)
             {
                 return $"{ingressServiceBackend.Name}.{namespaceName}:{ingressServiceBackend.Port.Number}";
             }
