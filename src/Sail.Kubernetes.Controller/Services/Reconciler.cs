@@ -42,17 +42,27 @@ public class Reconciler : IReconciler
             var configContext = new SailConfigContext();
             foreach (var ingress in ingresses)
             {
-                if (!_cache.IsSailIngress(ingress))
+                try
                 {
-                    continue;
-                }
+                    if (!_cache.IsSailIngress(ingress))
+                    {
+                        continue;
+                    }
 
-                if (_cache.TryGetReconcileData(
-                        new NamespacedName(ingress.Metadata.NamespaceProperty, ingress.Metadata.Name), out var data))
+                    if (_cache.TryGetReconcileData(
+                            new NamespacedName(ingress.Metadata.NamespaceProperty, ingress.Metadata.Name),
+                            out var data))
+                    {
+                        var ingressContext =
+                            new SailIngressContext(ingress, data.Services, data.EndpointsList, middlewares);
+                        SailParser.ConvertFromKubernetesIngress(ingressContext, configContext);
+                    }
+                }
+                catch (Exception ex)
                 {
-                    var ingressContext =
-                        new SailIngressContext(ingress, data.Services, data.EndpointsList, middlewares);
-                    SailParser.ConvertFromKubernetesIngress(ingressContext, configContext);
+                    _logger.LogWarning(ex,
+                        "Uncaught exception occured while reconciling ingress {IngressNamespace}/{IngressName}",
+                        ingress.Metadata.NamespaceProperty, ingress.Metadata.Name);
                 }
             }
 
@@ -65,7 +75,8 @@ public class Reconciler : IReconciler
         }
         catch (Exception ex)
         {
-            _logger.LogWarning(ex.Message);
+            _logger.LogWarning(ex, "Uncaught exception occured while reconciling");
+            throw;
         }
     }
 
