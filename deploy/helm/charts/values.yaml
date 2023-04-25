@@ -2,8 +2,8 @@ controller:
   name: controller
   image:
     registry: docker.io
-    image: inendless/sail-controller
-    tag: "1.0.1"
+    image: inendless/sail-kubernetes-controller
+    tag: "1.0.8"
     pullPolicy: IfNotPresent
   containerName: controller  
   containerPort:
@@ -22,17 +22,10 @@ controller:
       https: 443
 
   ingressClassResource:
-    name: sail-controller
+    name: sail
     ingressClass: sail
-    enabled: false
-    controllerValue: inendless.com/ingress-sail
-    parameters: {}
-
-  gatewayClassResource:
-    name: sail-controller
-    gatewayClass: sail
     enabled: true
-    controllerValue: inendless.com/gateway-sail
+    controllerValue: inendless.io/ingress-controller
     parameters: {}
 
   livenessProbe: {}
@@ -55,7 +48,7 @@ controller:
   autoscaling:
     enabled: false   
   
-  replicaCount: 1 
+  replicaCount: 1
 
   service:
    enabled: true
@@ -65,9 +58,8 @@ controller:
    targetPorts:
       http: http
       https: https
-   type: LoadBalancer
+   type: ClusterIP
 
- 
 proxy:
   enabled: true
   kind: Deployment
@@ -76,7 +68,7 @@ proxy:
   image:
     registry: docker.io
     image: inendless/sail-proxy
-    tag: "1.0.5"
+    tag: "2.0.6"
     pullPolicy: IfNotPresent  
 
   containerPort:
@@ -92,7 +84,7 @@ proxy:
   autoscaling:
     enabled: false    
 
-  replicaCount: 1 
+  replicaCount: 1
 
   service:
    enabled: true
@@ -103,8 +95,6 @@ proxy:
       http: http
       https: https
    type: LoadBalancer
-   externalIPs:
-    - 172.31.109.17
 
   livenessProbe: {}
 

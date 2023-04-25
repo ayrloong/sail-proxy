@@ -14,7 +14,7 @@ public static class KubernetesControllerExtensions
     {
         services = services.AddKubernetesCore();
 
-        if (!services.Any(serviceDescriptor => serviceDescriptor.ServiceType == typeof(IResourceInformer<>)))
+        if (services.All(serviceDescriptor => serviceDescriptor.ServiceType != typeof(IResourceInformer<>)))
         {
             services = services.AddSingleton(typeof(IResourceInformer<>), typeof(ResourceInformer<>));
         }

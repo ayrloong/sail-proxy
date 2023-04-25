@@ -98,4 +98,12 @@ rules:
       - tcproutes/status
       - tlsroutes/status
     verbs:
-      - update      
+      - update
+  - apiGroups:
+      - configuration.inendless.io
+    resources:
+      - middlewares
+    verbs:
+      - get
+      - list
+      - watch

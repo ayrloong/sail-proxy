@@ -1,9 +1,9 @@
 ﻿// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Kubernetes.Testing.Models;
-using System.Threading.Tasks;
 
 namespace Microsoft.Kubernetes.Testing;
 

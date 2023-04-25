@@ -16,7 +16,7 @@ namespace Microsoft.Kubernetes;
 /// <seealso cref="IEquatable{T}" />
 public struct NamespacedName : IEquatable<NamespacedName>
 {
-    public NamespacedName(string @namespace, string name,string kind)
+    public NamespacedName(string @namespace, string name, string kind)
     {
         Namespace = @namespace;
         Name = name;
@@ -50,7 +50,7 @@ public struct NamespacedName : IEquatable<NamespacedName>
     ///  Gets the kind.
     /// </summary>
     public string Kind { get; }
-    
+
     /// <summary>
     /// Gets the namespace.
     /// </summary>

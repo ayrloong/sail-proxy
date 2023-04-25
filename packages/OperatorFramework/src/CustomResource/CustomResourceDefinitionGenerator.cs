@@ -190,17 +190,11 @@ public class CustomResourceDefinitionGenerator : ICustomResourceDefinitionGenera
 
     private JToken RewriteToken(JToken sourceToken)
     {
-        if (sourceToken is JObject sourceObject)
+        return sourceToken switch
         {
-            return RewriteObject(sourceObject);
-        }
-        else if (sourceToken is JArray sourceArray)
-        {
-            return new JArray(sourceArray.Select(RewriteToken));
-        }
-        else
-        {
-            return sourceToken;
-        }
+            JObject sourceObject => RewriteObject(sourceObject),
+            JArray sourceArray => new JArray(sourceArray.Select(RewriteToken)),
+            _ => sourceToken
+        };
     }
 }

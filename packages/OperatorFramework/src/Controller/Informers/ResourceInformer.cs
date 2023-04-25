@@ -105,7 +105,7 @@ namespace Microsoft.Kubernetes.Controller.Informers
         {
             await _ready.WaitAsync(cancellationToken).ConfigureAwait(false);
 
-            // Release is called  after each WaitAync because
+            // Release is called  after each WaitAsync because
             // the semaphore is being used as a manual reset event
             _ready.Release();
         }
@@ -274,7 +274,7 @@ namespace Microsoft.Kubernetes.Controller.Informers
             var watcherCompletionSource = new TaskCompletionSource<int>();
 
             // begin watching where list left off
-            var watchWithHttpMessage =  _client.ListClusterAnyResourceKindWithHttpMessagesAsync<TResource>(
+            var watchWithHttpMessage = _client.ListClusterAnyResourceKindWithHttpMessagesAsync<TResource>(
                 _names.Group,
                 _names.ApiVersion,
                 _names.PluralName,
@@ -362,16 +362,15 @@ namespace Microsoft.Kubernetes.Controller.Informers
                     item.ResourceVersion());
             }
 
-            if (watchEventType == WatchEventType.Added ||
-                watchEventType == WatchEventType.Modified)
+            switch (watchEventType)
             {
-                // BUGBUG: log warning if cache was not in expected state
-                _cache[NamespacedName.From(item)] = item.Metadata?.OwnerReferences;
-            }
-
-            if (watchEventType == WatchEventType.Deleted)
-            {
-                _cache.Remove(NamespacedName.From(item));
+                case WatchEventType.Added or WatchEventType.Modified:
+                    // BUG: log warning if cache was not in expected state
+                    _cache[NamespacedName.From(item)] = item.Metadata?.OwnerReferences;
+                    break;
+                case WatchEventType.Deleted:
+                    _cache.Remove(NamespacedName.From(item));
+                    break;
             }
 
             if (watchEventType is WatchEventType.Added or WatchEventType.Modified or WatchEventType.Deleted or WatchEventType.Bookmark)

@@ -2,16 +2,21 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: sail-ingress
+  annotations:
+    sail.ingress.kubernetes.io/middlewares: |
+      - remove-foo  
+      - azuread
+      - cors
 spec:
-  ingressClassName: sail-controller
+  ingressClassName: sail
   rules:
-  - host: "foo.bar.com"
+  - host: localhost
     http:
       paths:
-      - path: /
+      - path: /foo1
         pathType: Prefix
         backend:
           service:
-            name: backend
+            name: backend-sail
             port:
-              number: 80
+              number: 8097

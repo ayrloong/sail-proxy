@@ -10,7 +10,6 @@ using Microsoft.Kubernetes.Client;
 using Microsoft.Kubernetes.ResourceKinds;
 using Microsoft.Kubernetes.Resources;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -29,14 +28,11 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <returns>IServiceCollection.</returns>
         public static IServiceCollection AddKubernetesCore(this IServiceCollection services)
         {
-            if (!services.Any(serviceDescriptor => serviceDescriptor.ServiceType == typeof(IKubernetes)))
+            if (services.All(serviceDescriptor => serviceDescriptor.ServiceType != typeof(IKubernetes)))
             {
                 services = services.Configure<KubernetesClientOptions>(options =>
                 {
-                    if (options.Configuration is null)
-                    {
-                        options.Configuration = KubernetesClientConfiguration.BuildDefaultConfig();
-                    }
+                    options.Configuration ??= KubernetesClientConfiguration.BuildDefaultConfig();
                 });
 
                 services = services.AddSingleton<IKubernetes>(sp =>
@@ -47,17 +43,17 @@ namespace Microsoft.Extensions.DependencyInjection
                 });
             }
 
-            if (!services.Any(serviceDescriptor => serviceDescriptor.ServiceType == typeof(IResourceSerializers)))
+            if (services.All(serviceDescriptor => serviceDescriptor.ServiceType != typeof(IResourceSerializers)))
             {
                 services = services.AddTransient<IResourceSerializers, ResourceSerializers>();
             }
 
-            if (!services.Any(serviceDescriptor => serviceDescriptor.ServiceType == typeof(IResourcePatcher)))
+            if (services.All(serviceDescriptor => serviceDescriptor.ServiceType != typeof(IResourcePatcher)))
             {
                 services = services.AddTransient<IResourcePatcher, ResourcePatcher>();
             }
 
-            if (!services.Any(serviceDescriptor => serviceDescriptor.ServiceType == typeof(IResourceKindManager)))
+            if (services.All(serviceDescriptor => serviceDescriptor.ServiceType != typeof(IResourceKindManager)))
             {
                 services = services.AddSingleton<IResourceKindManager, ResourceKindManager>();
             }
@@ -80,10 +76,10 @@ namespace k8s
     public static class WatcherExtensions
     {
         public static Watcher<T> WatchResource<T, L>(
-         this Task<HttpOperationResponse<L>> responseTask,
-         Action<WatchEventType, T> onEvent,
-         Action<Exception> onError = null,
-         Action onClosed = null)
+            this Task<HttpOperationResponse<L>> responseTask,
+            Action<WatchEventType, T> onEvent,
+            Action<Exception> onError = null,
+            Action onClosed = null)
         {
             return new Watcher<T>(MakeStreamReaderCreator<T, L>(responseTask), onEvent, onError, onClosed);
         }
@@ -94,7 +90,7 @@ namespace k8s
             {
                 var response = await responseTask.ConfigureAwait(false);
 
-                if (!(response.Response.Content is LineSeparatedHttpContent content))
+                if (response.Response.Content is not LineSeparatedHttpContent content)
                 {
                     throw new KubernetesClientException("not a watchable request or failed response");
                 }
@@ -104,10 +100,10 @@ namespace k8s
         }
 
         public static Watcher<T> WatchResource<T, L>(
-          this HttpOperationResponse<L> response,
-          Action<WatchEventType, T> onEvent,
-          Action<Exception> onError = null,
-          Action onClosed = null)
+            this HttpOperationResponse<L> response,
+            Action<WatchEventType, T> onEvent,
+            Action<Exception> onError = null,
+            Action onClosed = null)
         {
             return WatchResource(Task.FromResult(response), onEvent, onError, onClosed);
         }

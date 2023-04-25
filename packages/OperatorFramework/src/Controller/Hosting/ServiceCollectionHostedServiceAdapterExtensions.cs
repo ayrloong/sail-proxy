@@ -21,7 +21,7 @@ public static class ServiceCollectionHostedServiceAdapterExtensions
     public static IServiceCollection RegisterHostedService<TService>(this IServiceCollection services)
         where TService : IHostedService
     {
-        if (!services.Any(serviceDescriptor => serviceDescriptor.ServiceType == typeof(HostedServiceAdapter<TService>)))
+        if (services.All(serviceDescriptor => serviceDescriptor.ServiceType != typeof(HostedServiceAdapter<TService>)))
         {
             services = services.AddHostedService<HostedServiceAdapter<TService>>();
         }
