@@ -123,9 +123,9 @@ internal static class SailParser
 
         if (annotations.TryGetValue("sail.ingress.kubernetes.io/plugins", out var plugins))
         {
-            foreach (var middleware in YamlDeserializer.Deserialize<List<string>>(plugins))
+            foreach (var plugin in YamlDeserializer.Deserialize<List<string>>(plugins))
             {
-                HandlePlugin(ingressContext, middleware);
+                HandlePlugin(ingressContext, plugin);
             }
         }
 
