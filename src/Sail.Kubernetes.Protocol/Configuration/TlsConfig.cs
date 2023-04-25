@@ -4,5 +4,5 @@ public struct TlsConfig
 {
     public string HostName { get; set; }
     public string Cert { get; set; }
-    public string PrivateKey { get; set; }
+    public string Key { get; set; }
 }
