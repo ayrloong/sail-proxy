@@ -28,7 +28,7 @@ public class IngressController : BackgroundHostedService
         IResourceInformer<V1Service> serviceInformer,
         IResourceInformer<V1Endpoints> endpointsInformer,
         IResourceInformer<V1IngressClass> ingressClassInformer,
-        IResourceInformer<V1beta1Middleware> middlewareInformer,
+        IResourceInformer<V1beta1Plugin> pluginInformer,
         IHostApplicationLifetime hostApplicationLifetime,
         ILogger<IngressController> logger)
         : base(hostApplicationLifetime, logger)
@@ -53,9 +53,9 @@ public class IngressController : BackgroundHostedService
             throw new ArgumentNullException(nameof(ingressClassInformer));
         }
 
-        if (middlewareInformer is null)
+        if (pluginInformer is null)
         {
-            throw new ArgumentNullException(nameof(middlewareInformer));
+            throw new ArgumentNullException(nameof(pluginInformer));
         }
 
         if (logger is null)
@@ -69,14 +69,14 @@ public class IngressController : BackgroundHostedService
             endpointsInformer.Register(Notification),
             ingressClassInformer.Register(Notification),
             ingressInformer.Register(Notification),
-            middlewareInformer.Register(Notification)
+            pluginInformer.Register(Notification)
         };
         _registrationsReady = false;
         serviceInformer.StartWatching();
         endpointsInformer.StartWatching();
         ingressClassInformer.StartWatching();
         ingressInformer.StartWatching();
-        middlewareInformer.StartWatching();
+        pluginInformer.StartWatching();
 
         _queue = new ProcessingRateLimitedQueue<QueueItem>(perSecond: 0.5, burst: 1);
 
@@ -129,7 +129,7 @@ public class IngressController : BackgroundHostedService
         }
     }
 
-    private void Notification(WatchEventType eventType,V1beta1Middleware resource)
+    private void Notification(WatchEventType eventType,V1beta1Plugin resource)
     {
         if (_cache.Update(eventType, resource))
         {

@@ -1,24 +1,23 @@
 ﻿using System.Text.Json.Serialization;
 using k8s;
 using k8s.Models;
-using Serilog;
 
 namespace Sail.Kubernetes.Controller.Models;
 
-[KubernetesEntity(ApiVersion = KubeApiVersion, Group = KubeGroup, Kind = KubeKind, PluralName = "middlewares")]
-public class V1beta1Middleware: IKubernetesObject<V1ObjectMeta>, ISpec<V1beta1MiddlewareSpec>
+[KubernetesEntity(ApiVersion = KubeApiVersion, Group = KubeGroup, Kind = KubeKind, PluralName = "plugins")]
+public class V1beta1Plugin: IKubernetesObject<V1ObjectMeta>, ISpec<V1beta1PluginSpec>
 {
     public const string KubeApiVersion = "v1beta1";
     public const string KubeGroup = "configuration.inendless.io";
-    public const string KubeKind = "Middleware";
+    public const string KubeKind = "Plugin";
     
     [JsonPropertyName("apiVersion")] public string ApiVersion { get; set; }
     [JsonPropertyName("kind")] public string Kind { get; set; }
     [JsonPropertyName("metadata")] public V1ObjectMeta Metadata { get; set; }
-    [JsonPropertyName("spec")] public V1beta1MiddlewareSpec Spec { get; set; }
+    [JsonPropertyName("spec")] public V1beta1PluginSpec Spec { get; set; }
 }
 
-public class V1beta1MiddlewareSpec
+public class V1beta1PluginSpec
 {
     [JsonPropertyName("removePrefix")] public RemovePrefix RemovePrefix { get; set; }
     [JsonPropertyName("addPrefix")] public AddPrefix AddPrefix { get; set; }

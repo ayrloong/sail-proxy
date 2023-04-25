@@ -20,5 +20,5 @@ public struct Message
     public List<RouteConfig> Routes { get; set; }
     public List<ClusterConfig> Cluster { get; set; }
     public List<TlsConfig> Tls { get; set; }
-    public List<MiddlewareConfig> Middlewares { get; set; }
+    public List<PluginConfig> Plugins { get; set; }
 }

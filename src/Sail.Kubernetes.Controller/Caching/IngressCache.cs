@@ -32,9 +32,9 @@ public class IngressCache : ICache
             : _isDefaultController;
     }
 
-    public bool Update(WatchEventType eventType, V1beta1Middleware middleware)
+    public bool Update(WatchEventType eventType, V1beta1Plugin plugin)
     {
-        Namespace(middleware.Namespace()).Update(eventType, middleware);
+        Namespace(plugin.Namespace()).Update(eventType, plugin);
         return true;
     }
 
@@ -128,18 +128,18 @@ public class IngressCache : ICache
         return ingresses;
     }
 
-    public IEnumerable<MiddlewareData> GetMiddlewares()
+    public IEnumerable<PluginData> GetPlugins()
     {
-        var middlewares = new List<MiddlewareData>();
+        var plugins = new List<PluginData>();
         lock (_sync)
         {
             foreach (var ns in _namespaceCaches)
             {
-                middlewares.AddRange(ns.Value.GetMiddlewares());
+                plugins.AddRange(ns.Value.GetPlugins());
             }
         }
 
-        return middlewares;
+        return plugins;
     }
 
  

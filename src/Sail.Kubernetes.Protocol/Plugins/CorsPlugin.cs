@@ -2,20 +2,20 @@
 using Microsoft.Extensions.Options;
 using Sail.Kubernetes.Protocol.Configuration;
 
-namespace Sail.Kubernetes.Protocol.Middlewares;
+namespace Sail.Kubernetes.Protocol.Plugins;
 
-public class CorsMiddleware : IMiddleware
+public class CorsPlugin : IPlugin
 {
     private readonly CorsOptions _options;
 
-    public CorsMiddleware(IOptions<CorsOptions> options)
+    public CorsPlugin(IOptions<CorsOptions> options)
     {
         _options = options.Value;
     }
 
-    public Task ApplyAsync(IEnumerable<MiddlewareConfig> middlewares)
+    public Task ApplyAsync(IEnumerable<PluginConfig> plugins)
     {
-        var corsPolicies = middlewares.Where(x => x.Cors is not null).Select(x => x.Cors);
+        var corsPolicies = plugins.Where(x => x.Cors is not null).Select(x => x.Cors);
 
         foreach (var cors in corsPolicies)
         {

@@ -121,22 +121,22 @@ internal static class SailParser
             return options;
         }
 
-        if (annotations.TryGetValue("sail.ingress.kubernetes.io/middlewares", out var middlewares))
+        if (annotations.TryGetValue("sail.ingress.kubernetes.io/plugins", out var plugins))
         {
-            foreach (var middleware in YamlDeserializer.Deserialize<List<string>>(middlewares))
+            foreach (var middleware in YamlDeserializer.Deserialize<List<string>>(plugins))
             {
-                HandleMiddleware(ingressContext, middleware);
+                HandlePlugin(ingressContext, middleware);
             }
         }
 
         return options;
     }
 
-    private static void HandleMiddleware(SailIngressContext ingressContext, string middlewareName)
+    private static void HandlePlugin(SailIngressContext ingressContext, string pluginName)
     {
-        var middleware = ingressContext.Middlewares.SingleOrDefault(s => s.Metadata.Name == middlewareName);
+        var plugin = ingressContext.Plugins.SingleOrDefault(s => s.Metadata.Name == pluginName);
 
-        var spec = middleware.Spec;
+        var spec = plugin.Spec;
 
         if (spec?.AddPrefix is not null)
         {
@@ -171,17 +171,17 @@ internal static class SailParser
 
         if (spec?.JwtBearer is not null)
         {
-            ingressContext.Options.AuthorizationPolicy = middleware.Metadata.Name;
+            ingressContext.Options.AuthorizationPolicy = plugin.Metadata.Name;
         }
 
         if (spec?.Cors is not null)
         {
-            ingressContext.Options.CorsPolicy = middleware.Metadata.Name;
+            ingressContext.Options.CorsPolicy = plugin.Metadata.Name;
         }
 
         if (spec?.RateLimiter is not null)
         {
-            ingressContext.Options.RateLimiterPolicy = middleware.Metadata.Name;
+            ingressContext.Options.RateLimiterPolicy = plugin.Metadata.Name;
         }
     }
 

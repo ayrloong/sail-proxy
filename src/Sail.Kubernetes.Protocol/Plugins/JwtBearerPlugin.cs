@@ -8,15 +8,15 @@ using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
 using Sail.Kubernetes.Protocol.Configuration;
 
-namespace Sail.Kubernetes.Protocol.Middlewares;
+namespace Sail.Kubernetes.Protocol.Plugins;
 
-public class JwtBearerMiddleware : IMiddleware
+public class JwtBearerPlugin : IPlugin
 {
     private readonly IAuthenticationSchemeProvider _provider;
     private readonly IOptionsMonitorCache<JwtBearerOptions> _options;
     private readonly AuthorizationOptions _authorizationOptions;
 
-    public JwtBearerMiddleware(
+    public JwtBearerPlugin(
         IAuthenticationSchemeProvider provider,
         IOptionsMonitorCache<JwtBearerOptions> options,
         IOptions<AuthorizationOptions> authorizationOptions)
@@ -26,12 +26,13 @@ public class JwtBearerMiddleware : IMiddleware
         _authorizationOptions = authorizationOptions.Value;
     }
 
-    public async Task ApplyAsync(IEnumerable<MiddlewareConfig> middlewares)
+    public Task ApplyAsync(IEnumerable<PluginConfig> plugins)
     {
         _options.Clear();
-        var jwtBearers = middlewares.Where(x => x.JwtBearer is not null).Select(x => x.JwtBearer);
+        var jwtBearers = plugins.Where(x => x.JwtBearer is not null).Select(x => x.JwtBearer);
         foreach (var jwtBearer in jwtBearers)
         {
+
             var scheme =
                 new AuthenticationScheme(jwtBearer.Name, displayName: null, typeof(JwtBearerHandler));
             _provider.TryAddScheme(scheme);
@@ -67,5 +68,7 @@ public class JwtBearerMiddleware : IMiddleware
             _authorizationOptions.AddPolicy(jwtBearer.Name,
                 policy => { policy.RequireAuthenticatedUser().AddAuthenticationSchemes(jwtBearer.Name); });
         }
+
+        return Task.CompletedTask;
     }
 }

@@ -23,12 +23,12 @@ internal class SailConfigContext
         }).ToList();
     }
 
-    public List<MiddlewareConfig> BuildMiddlewareConfig(List<MiddlewareData> middlewares)
+    public List<PluginConfig> BuildPluginConfig(List<PluginData> plugins)
     {
 
-        return middlewares
+        return plugins
             .Where(x => x.Spec.Cors is not null || x.Spec.JwtBearer is not null || x.Spec.RateLimiter is not null)
-            .Select(m => new MiddlewareConfig
+            .Select(m => new PluginConfig
             {
                 JwtBearer = BuildJwtBearer(m.Spec.JwtBearer, m.Metadata.Name),
                 Cors = BuildCors(m.Spec.Cors, m.Metadata.Name),

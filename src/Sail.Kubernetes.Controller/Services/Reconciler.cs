@@ -32,7 +32,7 @@ public class Reconciler : IReconciler
         try
         {
             var ingresses = _cache.GetIngresses().ToArray();
-            var middlewares = _cache.GetMiddlewares().ToList();
+            var plugins = _cache.GetPlugins().ToList();
             var message = new Message
             {
                 MessageType = MessageType.Update,
@@ -54,7 +54,7 @@ public class Reconciler : IReconciler
                             out var data))
                     {
                         var ingressContext =
-                            new SailIngressContext(ingress, data.Services, data.EndpointsList, middlewares);
+                            new SailIngressContext(ingress, data.Services, data.EndpointsList, plugins);
                         SailParser.ConvertFromKubernetesIngress(ingressContext, configContext);
                     }
                 }
@@ -68,7 +68,7 @@ public class Reconciler : IReconciler
 
             message.Cluster = configContext.BuildClusterConfig();
             message.Routes = configContext.Routes;
-            message.Middlewares = configContext.BuildMiddlewareConfig(middlewares);
+            message.Plugins = configContext.BuildPluginConfig(plugins);
             var bytes = JsonSerializer.SerializeToUtf8Bytes(message);
             _logger.LogInformation(JsonSerializer.Serialize(message));
             await _dispatcher.SendAsync(null, bytes, cancellationToken).ConfigureAwait(false);

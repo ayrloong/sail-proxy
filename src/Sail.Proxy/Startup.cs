@@ -19,7 +19,7 @@ public class Startup
         services.AddCors();
         services.Configure<ReceiverOptions>(Configuration.Bind);
         services.AddHostedService<Receiver>();
-        services.AddKubernetesMiddleware().AddReverseProxy().LoadFromMessages();
+        services.AddKubernetesPlugin().AddReverseProxy().LoadFromMessages();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

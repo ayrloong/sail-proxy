@@ -15,25 +15,25 @@ public class NamespaceCache
     private readonly Dictionary<string, IngressData> _ingressData = new();
     private readonly Dictionary<string, ServiceData> _serviceData = new();
     private readonly Dictionary<string, Endpoints> _endpointsData = new();
-    private readonly Dictionary<string, MiddlewareData> _middlewareData = new();
+    private readonly Dictionary<string, PluginData> _pluginData = new();
 
-    public void Update(WatchEventType eventType, V1beta1Middleware middleware)
+    public void Update(WatchEventType eventType, V1beta1Plugin plugin)
     {
-        if (middleware is null)
+        if (plugin is null)
         {
-            throw new ArgumentNullException(nameof(middleware));
+            throw new ArgumentNullException(nameof(plugin));
         }
 
-        var middlewareName = middleware.Name();
+        var pluginName = plugin.Name();
         lock (_sync)
         {
             switch (eventType)
             {
                 case WatchEventType.Added or WatchEventType.Modified:
-                    _middlewareData[middlewareName] = new MiddlewareData(middleware);
+                    _pluginData[pluginName] = new PluginData(plugin);
                     break;
                 case WatchEventType.Deleted:
-                    _middlewareData.Remove(middlewareName);
+                    _pluginData.Remove(pluginName);
                     break;
             }
         }
@@ -200,9 +200,9 @@ public class NamespaceCache
         }
     }
 
-    public IEnumerable<MiddlewareData> GetMiddlewares()
+    public IEnumerable<PluginData> GetPlugins()
     {
-        return _middlewareData.Values;
+        return _pluginData.Values;
     }
     public IEnumerable<IngressData> GetIngresses()
     {

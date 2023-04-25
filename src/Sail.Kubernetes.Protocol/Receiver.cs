@@ -6,7 +6,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.Kubernetes.Controller.Hosting;
 using Microsoft.Kubernetes.Controller.Rate;
 using Sail.Kubernetes.Protocol.Configuration;
-using Sail.Kubernetes.Protocol.Middlewares;
+using Sail.Kubernetes.Protocol.Plugins;
 
 namespace Sail.Kubernetes.Protocol;
 
@@ -15,14 +15,14 @@ public class Receiver : BackgroundHostedService
     private readonly ReceiverOptions _options;
     private readonly Limiter _limiter;
     private readonly IUpdateConfig _proxyConfigProvider;
-    private readonly IMiddlewareUpdater _middlewareUpdater;
+    private readonly IPluginUpdater _pluginUpdater;
 
     public Receiver(
         IOptions<ReceiverOptions> options,
         IHostApplicationLifetime hostApplicationLifetime,
         ILogger<Receiver> logger,
         IUpdateConfig proxyConfigProvider,
-        IMiddlewareUpdater middlewareUpdater) : base(hostApplicationLifetime, logger)
+        IPluginUpdater pluginUpdater) : base(hostApplicationLifetime, logger)
     {
         if (options is null)
         {
@@ -32,7 +32,7 @@ public class Receiver : BackgroundHostedService
         _options = options.Value;
         _limiter = new Limiter(new Limit(2), 3);
         _proxyConfigProvider = proxyConfigProvider;
-        _middlewareUpdater = middlewareUpdater;
+        _pluginUpdater = pluginUpdater;
     }
 
     public override async Task RunAsync(CancellationToken cancellationToken)
@@ -62,7 +62,7 @@ public class Receiver : BackgroundHostedService
 
                     if (message.MessageType == MessageType.Update)
                     {
-                        await _middlewareUpdater.UpdateAsync(message.Middlewares);
+                        await _pluginUpdater.UpdateAsync(message.Plugins);
                         await _proxyConfigProvider.UpdateAsync(message.Routes, message.Cluster).ConfigureAwait(false);
                     }
                 }

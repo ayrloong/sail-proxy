@@ -1,6 +1,6 @@
 ﻿namespace Sail.Kubernetes.Protocol.Configuration;
 
-public class MiddlewareConfig
+public class PluginConfig
 {
     public JwtBearerConfig JwtBearer { get; set; }
     public CorsConfig Cors { get; set; }
