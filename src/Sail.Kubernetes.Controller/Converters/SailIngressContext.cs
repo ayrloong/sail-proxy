@@ -13,9 +13,9 @@ internal sealed class SailIngressContext
         Plugins = plugins;
     }
 
-    public SailIngressOptions Options { get; set; } = new();
+    public SailIngressOptions Options { get; } = new();
     public IngressData Ingress { get; }
-    public List<PluginData> Plugins { get; set; }
+    public List<PluginData> Plugins { get; }
     public List<ServiceData> Services { get; }
     public List<Endpoints> Endpoints { get; }
 }

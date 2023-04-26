@@ -2,6 +2,7 @@
 using Sail.Kubernetes.Controller.Caching;
 using YamlDotNet.Serialization;
 using Yarp.ReverseProxy.Configuration;
+using Yarp.ReverseProxy.Forwarder;
 
 namespace Sail.Kubernetes.Controller.Converters;
 
@@ -65,6 +66,7 @@ internal static class SailParser
 
         var cluster = clusters[key];
         cluster.ClusterId = key;
+        cluster.RequestConfig = ingressContext.Options.RequestConfig;
         cluster.LoadBalancingPolicy = ingressContext.Options.LoadBalancingPolicy;
         cluster.SessionAffinity = ingressContext.Options.SessionAffinity;
         cluster.HealthCheck = ingressContext.Options.HealthCheck;
@@ -105,6 +107,7 @@ internal static class SailParser
                     var uri = $"{protocol}://{address.Ip}:{port.Port}";
                     cluster.Destinations[uri] = new DestinationConfig
                     {
+
                         Address = uri
                     };
                 }
@@ -123,9 +126,9 @@ internal static class SailParser
 
         if (annotations.TryGetValue("sail.ingress.kubernetes.io/plugins", out var plugins))
         {
-            foreach (var middleware in YamlDeserializer.Deserialize<List<string>>(plugins))
+            foreach (var plugin in YamlDeserializer.Deserialize<List<string>>(plugins))
             {
-                HandlePlugin(ingressContext, middleware);
+                HandlePlugin(ingressContext, plugin);
             }
         }
 
@@ -182,6 +185,22 @@ internal static class SailParser
         if (spec?.RateLimiter is not null)
         {
             ingressContext.Options.RateLimiterPolicy = plugin.Metadata.Name;
+        }
+
+        if (spec?.Protocol is not null)
+        {
+            var version = spec.Protocol.Policy switch
+            {
+                "Grpc" => new Version(2, 0),
+                "WebSocket" => new Version(1, 1),
+                _ => new Version(1, 0)
+            };
+
+            ingressContext.Options.RequestConfig = new ForwarderRequestConfig
+            {
+                Version = version,
+                VersionPolicy = HttpVersionPolicy.RequestVersionExact
+            };
         }
     }
 

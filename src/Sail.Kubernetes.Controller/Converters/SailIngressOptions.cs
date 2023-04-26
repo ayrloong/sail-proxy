@@ -1,4 +1,5 @@
 ﻿using Yarp.ReverseProxy.Configuration;
+using Yarp.ReverseProxy.Forwarder;
 
 namespace Sail.Kubernetes.Controller.Converters;
 
@@ -15,4 +16,5 @@ internal sealed class SailIngressOptions
     public string CorsPolicy { get; set; }
     public HealthCheckConfig HealthCheck { get; set; }
     public Dictionary<string, string> RouteMetadata { get; set; }
+    public ForwarderRequestConfig RequestConfig { get; set; }
 }

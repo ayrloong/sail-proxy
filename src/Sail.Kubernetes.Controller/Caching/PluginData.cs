@@ -16,6 +16,6 @@ public struct PluginData
         Metadata = plugin.Metadata;
     }
 
-    public V1beta1PluginSpec Spec { get; set; }
-    public V1ObjectMeta Metadata { get; set; }
+    public V1beta1PluginSpec Spec { get; }
+    public V1ObjectMeta Metadata { get; }
 }
