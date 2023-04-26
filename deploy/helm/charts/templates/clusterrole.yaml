@@ -102,7 +102,7 @@ rules:
   - apiGroups:
       - configuration.inendless.io
     resources:
-      - middlewares
+      - plugins
     verbs:
       - get
       - list

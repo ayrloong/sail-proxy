@@ -25,6 +25,7 @@ public class V1beta1PluginSpec
     [JsonPropertyName("cors")] public Cors Cors { get; set; }
     [JsonPropertyName("rateLimiter")] public RateLimiter RateLimiter { get; set; }
     [JsonPropertyName("limits")] public Limits Limits { get; set; }
+    [JsonPropertyName("protocol")] public Protocol Protocol { get; set; }
 }
 
 public class RemovePrefix
@@ -65,4 +66,10 @@ public class Limits
 {
     [JsonPropertyName("maxRequestBodySize")]
     public long MaxRequestBodySize { get; set; }
+}
+
+public class Protocol
+{
+    [JsonPropertyName("policy")]
+    public string Policy { get; set; }
 }
