@@ -1,0 +1,71 @@
+syntax = "proto3";
+
+service ClusterService {
+  rpc Create(Cluster) returns (CreateClusterResponse);
+  
+}
+
+message CreateClusterResponse {
+
+}
+
+message Cluster {
+  string cluster_id = 1;
+  string load_balancing_policy = 2;
+  ClusterSessionAffinity session_affinity = 3;
+  ClusterHealthCheck health_check = 4;
+  repeated  ClusterDestination destinations = 5;
+}
+
+message ClusterSessionAffinity {
+  bool enabled = 1;
+  string  policy = 2;
+  string  failure_policy = 3;
+  string  affinity_key_name = 4;
+  SessionAffinityCookie cookie = 5;
+
+  message SessionAffinityCookie {
+    string  path = 1;
+    string  domain = 2;
+    bool http_only = 3;
+
+    enum CookieSecurePolicy {
+      SAME_AS_REQUEST = 0;
+      ALWAYS = 1;
+      NONE = 2;
+    }
+  }
+}
+
+enum SameSiteMode {
+  NONE = 0;
+  LAX = 1;
+  STRICT = 2;
+}
+
+message ClusterDestination {
+  string cluster_id = 1;
+  string address = 2;
+  string health = 3;
+  string host = 4;
+}
+
+message ClusterHealthCheck {
+  PassiveHealthCheck passive = 1;
+  ActiveHealthCheck active = 2;
+  string  available_destinations_policy = 3;
+
+  message PassiveHealthCheck {
+    bool enabled = 1;
+    string policy = 2;
+    int32 reactivation_period = 3;
+  }
+
+  message ActiveHealthCheck {
+    bool enabled = 1;
+    int32 interval = 2;
+    int32 timeout = 3;
+    string policy = 4;
+    string path = 5;
+  }
+}

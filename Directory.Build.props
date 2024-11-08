@@ -1,0 +1,33 @@
+<Project>
+  <PropertyGroup>
+    <MicrosoftAspNetCorePackageVersion>8.0.0</MicrosoftAspNetCorePackageVersion>
+    <MicrosoftEntityFrameworkCorePackageVersion>8.0.0</MicrosoftEntityFrameworkCorePackageVersion>
+    <MicrosoftExtensionsPackageVersion>8.0.0</MicrosoftExtensionsPackageVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- ASP.NET Core -->
+    <PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="8.0.0"/>
+    <PackageVersion Include="Microsoft.Extensions.Options" Version="8.0.2" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.ServiceDiscovery" Version="8.0.0-preview.7.24251.11" />
+    <PackageVersion Include="Microsoft.Extensions.Http.Resilience" Version="8.0.0" />
+    
+    <!-- EntityFrameworkCore -->
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="$(MicrosoftEntityFrameworkCorePackageVersion)" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="$(MicrosoftEntityFrameworkCorePackageVersion)" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="$(MicrosoftEntityFrameworkCorePackageVersion)" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="$(MicrosoftEntityFrameworkCorePackageVersion)" />
+    <!-- Extensions -->
+    
+    <!-- GRPC -->
+    <PackageReference Include="Grpc.AspNetCore" Version="2.60.0" />
+    
+    <!-- Other -->
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="Polly" Version="8.4.0" />
+    <PackageReference Include="KubernetesClient" Version="14.0.2"/>
+    <PackageReference Include="ErrorOr" Version="2.0.1"/>
+  </ItemGroup>
+</Project>

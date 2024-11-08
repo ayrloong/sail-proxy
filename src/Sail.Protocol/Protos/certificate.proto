@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+service CertificateService {
+  rpc Create(Certificate) returns (CreateCertificateResponse);
+}
+
+message Certificate {
+  repeated string hosts = 1;
+  string certificate_id = 2;
+  string key = 3;
+  string value = 4;
+}
+
+message CreateCertificateResponse {
+
+}
