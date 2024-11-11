@@ -3,15 +3,11 @@
     <MicrosoftAspNetCorePackageVersion>8.0.0</MicrosoftAspNetCorePackageVersion>
     <MicrosoftEntityFrameworkCorePackageVersion>8.0.0</MicrosoftEntityFrameworkCorePackageVersion>
     <MicrosoftExtensionsPackageVersion>8.0.0</MicrosoftExtensionsPackageVersion>
+    <ApiVersioningVersion>8.1.0</ApiVersioningVersion>
   </PropertyGroup>
 
   <ItemGroup>
     <!-- ASP.NET Core -->
-    <PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="8.0.0"/>
-    <PackageVersion Include="Microsoft.Extensions.Options" Version="8.0.2" />
-    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
-    <PackageVersion Include="Microsoft.Extensions.ServiceDiscovery" Version="8.0.0-preview.7.24251.11" />
-    <PackageVersion Include="Microsoft.Extensions.Http.Resilience" Version="8.0.0" />
     
     <!-- EntityFrameworkCore -->
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="$(MicrosoftEntityFrameworkCorePackageVersion)" />
@@ -19,7 +15,13 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="$(MicrosoftEntityFrameworkCorePackageVersion)" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="$(MicrosoftEntityFrameworkCorePackageVersion)" />
     <!-- Extensions -->
-    
+    <PackageVersion Include="Asp.Versioning.Http" Version="$(MicrosoftExtensionsPackageVersion)"/>
+    <PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="$(MicrosoftExtensionsPackageVersion)"/>
+    <PackageVersion Include="Microsoft.Extensions.Options" Version="$(MicrosoftExtensionsPackageVersion)" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="$(MicrosoftExtensionsPackageVersion)" />
+    <PackageVersion Include="Microsoft.Extensions.ServiceDiscovery" Version="$(MicrosoftExtensionsPackageVersion)" />
+    <PackageVersion Include="Microsoft.Extensions.Http.Resilience" Version="$(MicrosoftExtensionsPackageVersion)" />
+
     <!-- GRPC -->
     <PackageReference Include="Grpc.AspNetCore" Version="2.60.0" />
     
@@ -29,5 +31,6 @@
     <PackageReference Include="Polly" Version="8.4.0" />
     <PackageReference Include="KubernetesClient" Version="14.0.2"/>
     <PackageReference Include="ErrorOr" Version="2.0.1"/>
+    <PackageReference Include="FluentValidation" Version="11.10.0"/>
   </ItemGroup>
 </Project>

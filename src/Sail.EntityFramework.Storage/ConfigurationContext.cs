@@ -13,12 +13,14 @@ public class ConfigurationContext : DbContext
 
     public DbSet<Cluster> Clusters { get; set; }
     public DbSet<Route> Routes { get; set; }
+    public DbSet<Certificate> Certificates  { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
         builder.ConfigureRouteContext();
         builder.ConfigureClusterContext();
- 
+        builder.ConfigureCertificateContext();
+        
         base.OnModelCreating(builder);
     }
 }
@@ -57,5 +59,9 @@ public static class ModelBuilderExtensions
     public static void ConfigureClusterContext(this ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Cluster>(cluster => { cluster.HasKey(x => x.Id); });
+    }
+    public static void ConfigureCertificateContext(this ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Certificate>(certificate => { certificate.HasKey(x => x.Id); });
     }
 }

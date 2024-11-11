@@ -17,15 +17,14 @@ public static class SailWebHostBuilderExtensions
                 var selector = kestrelOptions.ApplicationServices.GetService<IServerCertificateSelector>();
                 if (selector is null)
                 {
-                    throw new InvalidOperationException(
-                        "Missing required services. Did you call '.AddKubernetesReverseProxy()' when configuring services?");
+                    throw new InvalidOperationException();
                 }
 
                 httpsOptions.ServerCertificateSelector = (connectionContext, domainName) =>
                     selector.GetCertificate(connectionContext, domainName);
             });
         });
-        
+
         return builder;
     }
 }

@@ -2,39 +2,62 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Routing;
+using Sail.Protocol.Extensions;
 using Sail.Protocol.Services;
+using Route = Sail.Core.Entities.Route;
 
 namespace Sail.Protocol.Apis;
 
 public static class RouteApi
 {
-    public static IEndpointRouteBuilder MapRouteApiV1(this IEndpointRouteBuilder app)
+    public static RouteGroupBuilder MapRouteApiV1(this IEndpointRouteBuilder app)
     {
-        app.MapGet("/", GetItems);
-        app.MapPost("/", Create);
-        return app;
+        var api = app.MapGroup("api/routes");
+        
+        api.MapGet("/", GetItems);
+        api.MapPost("/", Create);
+        api.MapPatch("/", Update);
+        api.MapDelete("/{id:guid}", Delete);
+        return api;
     }
 
-    private static async Task<Results<Ok<IEnumerable<Core.Entities.Route>>, NotFound>> GetItems(IRouteService service,
+    private static async Task<Results<Ok<IEnumerable<Route>>, NotFound>> GetItems(IRouteService service,
         CancellationToken cancellationToken)
     {
         var items = await service.GetAsync();
         return TypedResults.Ok(items);
     }
 
-    private static async Task<Created> Create()
+    private static async Task<Results<Created, ProblemHttpResult>> Create(IRouteService service)
     {
-        return TypedResults.Created("");
-    }
-    
-    private static async Task<Created> Update()
-    {
+        var result = await service.CreateAsync();
 
-        return TypedResults.Created("");
+        return result.Match<Results<Created, ProblemHttpResult>>(
+            created => TypedResults.Created(string.Empty),
+            errors => errors.HandleErrors()
+        );
     }
 
-    private static async Task<Results<NoContent, NotFound>> Delete()
+    private static async Task<Results<Ok, ProblemHttpResult>> Update(IRouteService service)
     {
-        return TypedResults.NoContent();
+        var result = await service.UpdateAsync();
+
+        return result.Match<Results<Ok, ProblemHttpResult>>(
+            created => TypedResults.Ok(),
+            errors => errors.HandleErrors()
+        );
+    }
+
+    private static async Task<Results<Ok, ProblemHttpResult>> Delete(IRouteService service,Guid id)
+    {
+        var result = await service.DeleteAsync(id);
+
+        return result.Match<Results<Ok, ProblemHttpResult>>(
+            created => TypedResults.Ok(),
+            errors => errors.HandleErrors()
+        );
     }
 }
+
+public abstract record CreateRouteRequest(Guid ClusterId, string Name, RouteMatchRequest Match);
+public abstract record RouteMatchRequest(string Path,List<string> Methods, List<string> Hosts);

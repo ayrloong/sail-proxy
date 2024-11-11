@@ -5,16 +5,13 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
     </PropertyGroup>
-
+    
     <ItemGroup>
-        <Protobuf Include="Protos\certificate.proto" GrpcServices="Server" />
-        <Protobuf Include="Protos\cluster.proto" GrpcServices="Server" />
-        <Protobuf Include="Protos\route.proto" GrpcServices="Server" />
-        <Protobuf Include="Protos\middleware.proto" GrpcServices="Server" />
+        <PackageReference Include="ErrorOr" />
+        <PackageReference Include="FluentValidation" />
     </ItemGroup>
-
+    
     <ItemGroup>
-      
         <ProjectReference Include="..\Sail.EntityFramework.Storage\Sail.EntityFramework.Storage.csproj" />
     </ItemGroup>
     
