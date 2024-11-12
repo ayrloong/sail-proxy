@@ -6,6 +6,7 @@ public class Sni
     public string Name { get; set; }
     public string HostName { get; set; }
     public Guid CertificateId { get; set; }
+    public Certificate Certificate { get; set; }
     public DateTimeOffset CreatedAt { get; set; }
     public DateTimeOffset UpdatedAt { get; set; }
 }

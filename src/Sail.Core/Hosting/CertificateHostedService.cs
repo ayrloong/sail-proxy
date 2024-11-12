@@ -1,21 +1,27 @@
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using Sail.Core.Certificates;
 using Sail.Core.Converters;
+using Sail.Core.Options;
 using Sail.Core.Stores;
 
 namespace Sail.Core.Hosting;
 
 public class CertificateHostedService(
     IServerCertificateSelector serverCertificateSelector,
-    ICertificateStore certificateStore) : IHostedService, IDisposable
+    ICertificateStore certificateStore,
+    IOptions<DefaultOptions> options) : BackgroundService
 {
-    private readonly PeriodicTimer? _timer = new(TimeSpan.FromSeconds(5));
 
-    public async Task StartAsync(CancellationToken cancellationToken)
+    private readonly DefaultOptions _options = options.Value ?? throw new ArgumentNullException(nameof(options));
+
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        while (await _timer!.WaitForNextTickAsync(cancellationToken) && !cancellationToken.IsCancellationRequested)
+        using PeriodicTimer timer = new(TimeSpan.FromSeconds(_options.InitializePeriodTime));
+
+        while (await timer.WaitForNextTickAsync(stoppingToken))
         {
-            await UpdateAsync(cancellationToken);
+            await UpdateAsync(stoppingToken);
         }
     }
 
@@ -33,15 +39,5 @@ public class CertificateHostedService(
         {
             // ignored
         }
-    }
-
-    public async Task StopAsync(CancellationToken cancellationToken)
-    {
-        await _timer!.WaitForNextTickAsync(cancellationToken);
-    }
-
-    public void Dispose()
-    {
-        _timer?.Dispose();
     }
 }

@@ -37,9 +37,12 @@ internal static class Parser
         {
             ClusterId = cluster.Id.ToString(),
             LoadBalancingPolicy = cluster.LoadBalancingPolicy,
-            Destinations = cluster.Destinations.ToDictionary(x => x.Id.ToString(), x => new DestinationConfig
+            Destinations = cluster.Destinations?.ToDictionary(x => x.Id.ToString(), x => new DestinationConfig
             {
+                Host = x.Host,
+                Health = x.Health,
                 Address = x.Address
+
             })
         });
     }
@@ -57,14 +60,9 @@ internal static class Parser
                 Hosts = route.Match.Hosts,
                 Path = route.Match.Path,
                 Methods = route.Match.Methods,
-                Headers = route.Match.Headers?.Select(x => x.ToRouteHeader()).ToList(),
-                QueryParameters = route.Match.QueryParameters?.Select(x => x.ToRouteQueryParameter()).ToList()
+                Headers = route.Match.Headers.Select(x => x.ToRouteHeader()).ToList(),
+                QueryParameters = route.Match.QueryParameters.Select(x => x.ToRouteQueryParameter()).ToList()
             },
-            WeightedClusters = route.WeightedClusters?.Select(w => new WeightedClusterConfig
-            {
-                ClusterId = w.ClusterId,
-                Weight = w.Weight
-            }).ToList(),
             AuthorizationPolicy = route.AuthorizationPolicy,
             RateLimiterPolicy = route.RateLimiterPolicy,
             TimeoutPolicy = route.TimeoutPolicy,

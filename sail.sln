@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sail.Protocol", "src\Sail.P
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sail.Core", "src\Sail.Core\Sail.Core.csproj", "{A4C33BAD-4244-46B1-B501-04B04D1797FD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sail.Proxy", "src\Sail.Proxy\Sail.Proxy.csproj", "{90B7578F-C1BD-4DE7-BD29-8112DBBC5B65}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sail", "src\Sail\Sail.csproj", "{90B7578F-C1BD-4DE7-BD29-8112DBBC5B65}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{9B911130-4997-45D6-9EA4-9B86F1D76AC2}"
 EndProject

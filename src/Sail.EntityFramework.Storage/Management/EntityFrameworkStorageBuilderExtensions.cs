@@ -17,6 +17,7 @@ public static class EntityFrameworkStorageBuilderExtensions
         
         services.AddTransient<IRouteStore, RouteStore>();
         services.AddTransient<IClusterStore, ClusterStore>();
+        services.AddTransient<ICertificateStore, CertificateStore>();
         
         services.AddDbContext<ConfigurationContext>((sp, options) =>
         {

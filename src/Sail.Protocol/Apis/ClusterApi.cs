@@ -16,7 +16,7 @@ public static class ClusterApi
 
         api.MapGet("/", GetItems);
         api.MapPost("/", Create);
-        api.MapPatch("/", Update);
+        api.MapPatch("/{id:guid}", Update);
         api.MapDelete("/{id:guid}", Delete);
         return api;
     }
@@ -28,9 +28,10 @@ public static class ClusterApi
         return TypedResults.Ok(items);
     }
 
-    private static async Task<Results<Created, ProblemHttpResult>> Create(IClusterService service)
+    private static async Task<Results<Created, ProblemHttpResult>> Create(IClusterService service,
+        ClusterRequest request)
     {
-        var result = await service.CreateAsync();
+        var result = await service.CreateAsync(request);
 
         return result.Match<Results<Created, ProblemHttpResult>>(
             created => TypedResults.Created(string.Empty),
@@ -38,9 +39,10 @@ public static class ClusterApi
         );
     }
 
-    private static async Task<Results<Ok, ProblemHttpResult>> Update(IClusterService service)
+    private static async Task<Results<Ok, ProblemHttpResult>> Update(IClusterService service, Guid id,
+        ClusterRequest request)
     {
-        var result = await service.UpdateAsync();
+        var result = await service.UpdateAsync(id, request);
 
         return result.Match<Results<Ok, ProblemHttpResult>>(
             created => TypedResults.Ok(),
@@ -48,7 +50,7 @@ public static class ClusterApi
         );
     }
 
-    private static async Task<Results<Ok, ProblemHttpResult>> Delete(IRouteService service, Guid id)
+    private static async Task<Results<Ok, ProblemHttpResult>> Delete(IClusterService service, Guid id)
     {
         var result = await service.DeleteAsync(id);
 
@@ -58,3 +60,6 @@ public static class ClusterApi
         );
     }
 }
+
+public record ClusterRequest(string Name, string LoadBalancingPolicy, List<DestinationRequest> Destinations);
+public  record DestinationRequest(string Host,string Address,string Health);

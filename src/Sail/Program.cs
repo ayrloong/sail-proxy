@@ -10,11 +10,11 @@ builder.AddApplicationServices();
 builder.Services.AddSailCore()
     .AddDatabaseStore();
 
-
 var app = builder.Build();
 
 app.MapSailApiService();
 app.UseDefaultOpenApi();
 app.MapReverseProxy();
+
 app.Run();
 

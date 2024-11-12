@@ -5,7 +5,6 @@ namespace Microsoft.AspNetCore.Hosting;
 
 public static class SailWebHostBuilderExtensions
 {
-
     public static IWebHostBuilder UseCertificateSelector(this IWebHostBuilder builder)
     {
         ArgumentNullException.ThrowIfNull(builder, nameof(builder));
