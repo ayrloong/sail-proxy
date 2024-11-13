@@ -21,7 +21,7 @@ public static class RouteApi
         return api;
     }
 
-    private static async Task<Results<Ok<IEnumerable<Route>>, NotFound>> GetItems(IRouteService service,
+    private static async Task<Results<Ok<IEnumerable<RouteVm>>, NotFound>> GetItems(IRouteService service,
         CancellationToken cancellationToken)
     {
         var items = await service.GetAsync();

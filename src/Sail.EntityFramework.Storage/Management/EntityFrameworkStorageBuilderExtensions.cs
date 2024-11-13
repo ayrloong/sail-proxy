@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 using Sail.Core;
 using Sail.Core.Options;
@@ -15,15 +16,15 @@ public static class EntityFrameworkStorageBuilderExtensions
     {
         var services = application.Services;
         
-        services.AddTransient<IRouteStore, RouteStore>();
-        services.AddTransient<IClusterStore, ClusterStore>();
-        services.AddTransient<ICertificateStore, CertificateStore>();
+        services.TryAddTransient<IRouteStore, RouteStore>();
+        services.TryAddTransient<IClusterStore, ClusterStore>();
+        services.TryAddTransient<ICertificateStore, CertificateStore>();
         
         services.AddDbContext<ConfigurationContext>((sp, options) =>
         {
             var database = sp.GetRequiredService<IOptions<DatabaseOptions>>().Value;
             options.UseNpgsql(database.ConnectionString);
-        }, ServiceLifetime.Singleton);
+        });
         return application;
     }
 }

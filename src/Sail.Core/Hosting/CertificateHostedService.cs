@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore.Design;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Sail.Core.Certificates;
@@ -9,7 +11,7 @@ namespace Sail.Core.Hosting;
 
 public class CertificateHostedService(
     IServerCertificateSelector serverCertificateSelector,
-    ICertificateStore certificateStore,
+    IServiceScopeFactory serviceScopeFactory,
     IOptions<DefaultOptions> options) : BackgroundService
 {
 
@@ -29,6 +31,10 @@ public class CertificateHostedService(
     {
         try
         {
+            await using var scope = serviceScopeFactory.CreateAsyncScope();
+            var certificateStore =
+                scope.ServiceProvider.GetService<ICertificateStore>() ?? throw new OperationException();
+
             var certificates = await certificateStore.GetAsync(cancellationToken);
             var config = Parser.ConvertCertificates(certificates);
 
