@@ -4,6 +4,7 @@ public class Route
 {
     public Guid Id { get; set; }
     public Guid ClusterId { get; set; }
+    public Cluster Cluster { get; set; }
     public string Name { get; set; }
     public Guid MatchId { get; set; }
     public RouteMatch Match { get; set; }
