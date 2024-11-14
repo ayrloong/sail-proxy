@@ -11,7 +11,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\ReverseProxy\Yarp.ReverseProxy.csproj" />
+        <PackageReference Include="Yarp.ReverseProxy" />
+        <PackageReference Include="Polly" />
     </ItemGroup>
-
 </Project>

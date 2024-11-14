@@ -23,9 +23,11 @@ public static class SailApplicationBuilderExtensions
         var configuration = app.Configuration;
         var host = configuration["Protocol:Api"] ?? string.Empty;
 
-        app.MapRouteApiV1().WithTags("Routes API").RequireHost(host);
-        app.MapClusterApiV1().WithTags("Clusters API").RequireHost(host);
-        app.MapCertificateApiV1().WithTags("Certificates API").RequireHost(host);
+        var endpoint = app.NewVersionedApi();
+
+        endpoint.MapRouteApiV1().WithTags("Routes API").RequireHost(host);
+        endpoint.MapClusterApiV1().WithTags("Clusters API").RequireHost(host);
+        endpoint.MapCertificateApiV1().WithTags("Certificates API").RequireHost(host);
         
         return app;
     }

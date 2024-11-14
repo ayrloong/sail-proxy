@@ -1,4 +1,3 @@
-using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
@@ -33,7 +32,7 @@ public class CertificateHostedService(
         {
             await using var scope = serviceScopeFactory.CreateAsyncScope();
             var certificateStore =
-                scope.ServiceProvider.GetService<ICertificateStore>() ?? throw new OperationException();
+                scope.ServiceProvider.GetService<ICertificateStore>() ?? throw new NullReferenceException();
 
             var certificates = await certificateStore.GetAsync(cancellationToken);
             var config = Parser.ConvertCertificates(certificates);

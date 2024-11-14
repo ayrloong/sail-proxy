@@ -9,7 +9,7 @@ builder.Services.AddHttpContextAccessor(); // 注册 IHttpContextAccessor
 builder.Services.AddTransient<CustomDelegatingHandler>();
 builder.Services.AddSingleton<IForwarderHttpClientFactory, CustomForwarderHttpClientFactory>();
 builder.Services.AddReverseProxy()
-    .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"), [typeof(UserModel), typeof(ABTest)]);
+    .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));
 
 
 var app = builder.Build();
@@ -25,11 +25,11 @@ app.UseEndpoints(endpoints =>
         proxyPipeline.Use((context, next) =>
         {
             var proxyFeature = context.Features.Get<IReverseProxyFeature>();
-            var user = proxyFeature.Route.Config.Extensions[typeof(UserModel)] as UserModel;
+           // var user = proxyFeature.Route.Config.Extensions[typeof(UserModel)] as UserModel;
             
-            var abTest = proxyFeature.Route.Config.Extensions[typeof(ABTest)] as ABTest;
+            //var abTest = proxyFeature.Route.Config.Extensions[typeof(ABTest)] as ABTest;
 
-            Console.WriteLine(abTest.CE);
+           // Console.WriteLine(abTest.CE);
             return next();
         });
         proxyPipeline.UseSessionAffinity();

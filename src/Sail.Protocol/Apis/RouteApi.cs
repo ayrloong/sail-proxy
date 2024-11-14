@@ -12,7 +12,7 @@ public static class RouteApi
 {
     public static RouteGroupBuilder MapRouteApiV1(this IEndpointRouteBuilder app)
     {
-        var api = app.MapGroup("api/routes");
+        var api = app.MapGroup("api/routes").HasApiVersion(1.0);
         
         api.MapGet("/", GetItems);
         api.MapPost("/", Create);
