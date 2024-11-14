@@ -4,8 +4,11 @@ using ServiceDefaults;
 
 var builder = WebApplication.CreateBuilder(args);
 
+var apiVersioning = builder.Services.AddApiVersioning();
+
 builder.AddServiceDefaults();
-builder.AddDefaultOpenApi();
+
+builder.AddDefaultOpenApi(apiVersioning);
 builder.AddApplicationServices();
 builder.Services.AddSailCore()
     .AddDatabaseStore();

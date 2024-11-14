@@ -5,10 +5,10 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
     </PropertyGroup>
+    
     <ItemGroup>
+        <PackageReference Include="Yarp.ReverseProxy"/>
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
-    </ItemGroup>
-    <ItemGroup>
-      <ProjectReference Include="..\..\shared\ReverseProxy\Yarp.ReverseProxy.csproj" />
+        <PackageReference Include="Microsoft.Extensions.Options" />
     </ItemGroup>
 </Project>

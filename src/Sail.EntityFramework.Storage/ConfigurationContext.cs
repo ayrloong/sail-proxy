@@ -64,8 +64,10 @@ public static class ModelBuilderExtensions
             match.HasKey(x => x.Id);
 
             match.Property(x => x.Path).HasMaxLength(200);
-            match.Property(x => x.Hosts).HasConversion(StringArrayToJsonConverter.Instance).IsRequired(false);
-            match.Property(x => x.Methods).HasConversion(StringArrayToJsonConverter.Instance).IsRequired(false);
+            match.Property(x => x.Hosts).HasConversion(StringArrayToJsonConverter.Instance).Metadata
+                .SetValueComparer(StringArrayComparer.Instance);
+            match.Property(x => x.Methods).HasConversion(StringArrayToJsonConverter.Instance).Metadata
+                .SetValueComparer(StringArrayComparer.Instance);
 
             match.HasMany(x => x.Headers).WithOne(x => x.Match).HasForeignKey(x => x.MatchId);
             match.HasMany(x => x.QueryParameters).WithOne(x => x.Match).HasForeignKey(x => x.MatchId);
@@ -78,7 +80,8 @@ public static class ModelBuilderExtensions
             header.Property(x => x.Name).HasMaxLength(200);
             header.Property(x => x.Mode).HasMaxLength(20);
             header.Property(x => x.IsCaseSensitive).HasMaxLength(10);
-            header.Property(x => x.Values).HasConversion(StringArrayToJsonConverter.Instance).IsRequired(false);
+            header.Property(x => x.Values).HasConversion(StringArrayToJsonConverter.Instance).Metadata
+                .SetValueComparer(StringArrayComparer.Instance);
         });
 
         modelBuilder.Entity<RouteQueryParameter>(query =>
@@ -88,7 +91,8 @@ public static class ModelBuilderExtensions
             query.Property(x => x.Name).HasMaxLength(200);
             query.Property(x => x.Mode).HasMaxLength(20);
             query.Property(x => x.IsCaseSensitive).HasMaxLength(10);
-            query.Property(x => x.Values).HasConversion(StringArrayToJsonConverter.Instance).IsRequired(false);
+            query.Property(x => x.Values).HasConversion(StringArrayToJsonConverter.Instance).Metadata
+                .SetValueComparer(StringArrayComparer.Instance);
         });
     }
 

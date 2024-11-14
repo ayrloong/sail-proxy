@@ -19,11 +19,13 @@ public static class EntityFrameworkStorageBuilderExtensions
         services.TryAddTransient<IRouteStore, RouteStore>();
         services.TryAddTransient<IClusterStore, ClusterStore>();
         services.TryAddTransient<ICertificateStore, CertificateStore>();
-        
+
         services.AddDbContext<ConfigurationContext>((sp, options) =>
         {
             var database = sp.GetRequiredService<IOptions<DatabaseOptions>>().Value;
-            options.UseNpgsql(database.ConnectionString);
+            options.UseNpgsql(database.ConnectionString,
+                o => o.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery));
+            options.UseAsyncSeeding((_, _, _) => Task.CompletedTask);
         });
         return application;
     }

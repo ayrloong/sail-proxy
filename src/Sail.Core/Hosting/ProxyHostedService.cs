@@ -1,4 +1,3 @@
-using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
@@ -32,8 +31,8 @@ public class ProxyHostedService(
         try
         {
             await using var scope = serviceScopeFactory.CreateAsyncScope();
-            var clusterStore = scope.ServiceProvider.GetService<IClusterStore>() ?? throw new OperationException();
-            var routeStore = scope.ServiceProvider.GetService<IRouteStore>() ?? throw new OperationException();
+            var clusterStore = scope.ServiceProvider.GetService<IClusterStore>() ?? throw new  NullReferenceException();
+            var routeStore = scope.ServiceProvider.GetService<IRouteStore>() ?? throw new NullReferenceException();
             
             var configContext = new YarpConfigContext();
             var clusters = await clusterStore.GetAsync();

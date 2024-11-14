@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Routing;
-using Sail.Core.Entities;
 using Sail.Protocol.Extensions;
 using Sail.Protocol.Services;
 
@@ -12,7 +11,7 @@ public static class ClusterApi
 {
     public static RouteGroupBuilder MapClusterApiV1(this IEndpointRouteBuilder app)
     {
-        var api = app.MapGroup("api/clusters");
+        var api = app.MapGroup("api/clusters").HasApiVersion(1.0);
 
         api.MapGet("/", GetItems);
         api.MapPost("/", Create);

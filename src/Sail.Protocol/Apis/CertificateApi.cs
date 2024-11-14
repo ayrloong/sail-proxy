@@ -12,7 +12,7 @@ public static class CertificateApi
 {
     public static RouteGroupBuilder MapCertificateApiV1(this IEndpointRouteBuilder app)
     {
-        var api = app.MapGroup("api/certificates");
+        var api = app.MapGroup("api/certificates").HasApiVersion(1.0);
 
         api.MapGet("/", GetItems);
         api.MapPost("/", Create);

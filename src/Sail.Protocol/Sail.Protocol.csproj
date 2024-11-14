@@ -9,6 +9,7 @@
     <ItemGroup>
         <PackageReference Include="ErrorOr" />
         <PackageReference Include="FluentValidation" />
+        <PackageReference Include="Asp.Versioning.Http"/>
     </ItemGroup>
     
     <ItemGroup>
