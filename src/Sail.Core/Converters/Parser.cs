@@ -10,9 +10,12 @@ internal static class Parser
 {
     internal static IReadOnlyList<CertificateConfig> ConvertCertificates(IEnumerable<Certificate> certificates)
     {
-        return certificates.Select(x => new CertificateConfig
+        var snis = certificates.SelectMany(x => x.SNIs);
+        return snis.Select(x => new CertificateConfig
         {
-            Cert = x.Cert
+            Cert = x.Certificate.Cert,
+            Key = x.Certificate.Key,
+            HostName = x.HostName
         }).ToImmutableList();
     }
 

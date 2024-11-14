@@ -6,3 +6,5 @@ public class CertificateConfig
     public string Cert { get; set; }
     public string Key { get; set; }
 }
+
+ 

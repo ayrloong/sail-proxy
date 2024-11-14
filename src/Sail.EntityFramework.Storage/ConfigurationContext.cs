@@ -15,7 +15,7 @@ public class ConfigurationContext : DbContext
     public DbSet<Cluster> Clusters { get; set; }
     public DbSet<Route> Routes { get; set; }
     public DbSet<Certificate> Certificates  { get; set; }
-
+    
     protected override void OnModelCreating(ModelBuilder builder)
     {
         builder.ConfigureRouteContext();
@@ -54,12 +54,9 @@ public static class ModelBuilderExtensions
             route.Property(x => x.TimeoutPolicy).HasMaxLength(100).IsRequired(false);
             route.Property(x => x.Timeout).IsRequired(false);
             route.Property(x => x.MaxRequestBodySize).IsRequired(false);
-            route.Property(x => x.CreatedAt).HasDefaultValue(DateTimeOffset.Now);
-            route.Property(x => x.UpdatedAt).HasDefaultValue(DateTimeOffset.Now);
 
-            route.HasOne(x => x.Match)
-                .WithMany()
-                .HasForeignKey(t => t.MatchId);
+            route.HasOne(x => x.Cluster).WithMany().HasForeignKey(r => r.ClusterId);
+            route.HasOne(x => x.Match).WithMany().HasForeignKey(r => r.MatchId);
         });
 
         modelBuilder.Entity<RouteMatch>(match =>
@@ -103,8 +100,6 @@ public static class ModelBuilderExtensions
 
             cluster.Property(x => x.Name).HasMaxLength(200);
             cluster.Property(x => x.LoadBalancingPolicy).HasMaxLength(100).IsRequired(false);
-            cluster.Property(x => x.CreatedAt).HasDefaultValue(DateTimeOffset.Now);
-            cluster.Property(x => x.UpdatedAt).HasDefaultValue(DateTimeOffset.Now);
 
             cluster.HasMany(x => x.Destinations).WithOne(x => x.Cluster).HasForeignKey(x => x.ClusterId);
         });
@@ -127,22 +122,16 @@ public static class ModelBuilderExtensions
 
             certificate.Property(x => x.Cert).HasMaxLength(4000);
             certificate.Property(x => x.Key).HasMaxLength(4000);
-            certificate.Property(x => x.CreatedAt).HasDefaultValue(DateTimeOffset.Now);
-            certificate.Property(x => x.UpdatedAt).HasDefaultValue(DateTimeOffset.Now);
+
+            certificate.HasMany(x => x.SNIs).WithOne(x => x.Certificate).HasForeignKey(x => x.CertificateId);
 
         });
-        modelBuilder.Entity<Sni>(sni =>
+        modelBuilder.Entity<SNI>(sni =>
         {
             sni.HasKey(x => x.Id);
 
             sni.Property(x => x.Name).HasMaxLength(200);
             sni.Property(x => x.HostName).HasMaxLength(200);
-            sni.Property(x => x.CreatedAt).HasDefaultValue(DateTimeOffset.Now);
-            sni.Property(x => x.UpdatedAt).HasDefaultValue(DateTimeOffset.Now);
-
-            sni.HasOne(x => x.Certificate)
-                .WithMany()
-                .HasForeignKey(t => t.CertificateId);
         });
     }
 }

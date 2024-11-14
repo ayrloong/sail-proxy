@@ -8,6 +8,6 @@ public class CertificateStore(ConfigurationContext context) : ICertificateStore
 {
     public Task<List<Certificate>> GetAsync(CancellationToken cancellationToken)
     {
-        return context.Certificates.ToListAsync(cancellationToken: cancellationToken);
+        return context.Certificates.Include(x => x.SNIs).ToListAsync(cancellationToken: cancellationToken);
     }
 }

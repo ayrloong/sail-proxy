@@ -26,8 +26,7 @@ public class ProxyHostedService(
             await UpdateAsync(stoppingToken);
         }
     }
-
-
+    
     private async Task UpdateAsync(CancellationToken cancellationToken)
     {
         try
