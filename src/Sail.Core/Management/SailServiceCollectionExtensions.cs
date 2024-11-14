@@ -17,7 +17,7 @@ public static class SailServiceCollectionExtensions
 
     public static IServiceCollection AddServerCertificateSelector(this IServiceCollection services)
     {
-        services.TryAddTransient<IServerCertificateSelector, ServerCertificateSelector>();
+        services.TryAddSingleton<IServerCertificateSelector, ServerCertificateSelector>();
         return services;
     }
 }

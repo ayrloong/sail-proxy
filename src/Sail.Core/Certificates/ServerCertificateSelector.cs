@@ -3,10 +3,12 @@ using System.Security.Cryptography.X509Certificates;
 using Microsoft.AspNetCore.Connections;
 using Microsoft.Extensions.Options;
 using Sail.Core.Options;
+using Yarp.ReverseProxy.Configuration;
 
 namespace Sail.Core.Certificates;
 
-public class ServerCertificateSelector(IOptions<CertificateOptions> options) : IServerCertificateSelector
+public class ServerCertificateSelector(IOptions<CertificateOptions> options, IProxyConfigProvider provider)
+    : IServerCertificateSelector
 {
     private volatile IReadOnlyList<CertificateConfig> _certificates = new List<CertificateConfig>();
     private readonly CertificateOptions _options = options.Value;

@@ -10,6 +10,8 @@ builder.AddApplicationServices();
 builder.Services.AddSailCore()
     .AddDatabaseStore();
 
+builder.WebHost.UseCertificateSelector();
+
 var app = builder.Build();
 
 app.MapSailApiService();
