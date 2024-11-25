@@ -2,9 +2,10 @@ using ErrorOr;
 using Microsoft.EntityFrameworkCore;
 using Sail.Core.Entities;
 using Sail.EntityFramework.Storage;
-using Sail.Protocol.Apis;
+using Sail.Apis;
+using Route = Sail.Core.Entities.Route;
 
-namespace Sail.Protocol.Services;
+namespace Sail.Services;
 
 public class RouteService(ConfigurationContext context) : IRouteService
 {

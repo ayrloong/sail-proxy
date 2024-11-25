@@ -103,6 +103,9 @@ public static class ModelBuilderExtensions
             cluster.HasKey(x => x.Id);
 
             cluster.Property(x => x.Name).HasMaxLength(200);
+            cluster.Property(x => x.ServiceName).HasMaxLength(200).IsRequired(false);
+            cluster.Property(x => x.ServiceName).HasMaxLength(200).IsRequired(false);
+            cluster.Property(x => x.DiscoveryType).HasMaxLength(100).IsRequired(false);
             cluster.Property(x => x.LoadBalancingPolicy).HasMaxLength(100).IsRequired(false);
 
             cluster.HasMany(x => x.Destinations).WithOne(x => x.Cluster).HasForeignKey(x => x.ClusterId);

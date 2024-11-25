@@ -1,11 +1,8 @@
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Routing;
-using Sail.Protocol.Extensions;
-using Sail.Protocol.Services;
+using Sail.Extensions;
+using Sail.Services;
 
-namespace Sail.Protocol.Apis;
+namespace Sail.Apis;
 
 public static class ClusterApi
 {

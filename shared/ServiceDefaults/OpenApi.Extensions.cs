@@ -15,14 +15,13 @@ public static partial class Extensions
     {
         var configuration = app.Configuration;
         var openApiSection = configuration.GetSection("OpenApi");
-        var host = configuration["Protocol:Api"] ?? string.Empty;
-
+   
         if (!openApiSection.Exists())
         {
             return app;
         }
 
-        app.MapOpenApi().RequireHost(host);
+        app.MapOpenApi();
 
         if (app.Environment.IsDevelopment())
         {
@@ -30,8 +29,8 @@ public static partial class Extensions
             {
                 // Disable default fonts to avoid download unnecessary fonts
                 options.DefaultFonts = false;
-            }).RequireHost(host);
-            app.MapGet("/", () => Results.Redirect("/scalar/v1")).ExcludeFromDescription().RequireHost(host);
+            });
+            app.MapGet("/", () => Results.Redirect("/scalar/v1")).ExcludeFromDescription();
         }
 
         return app;

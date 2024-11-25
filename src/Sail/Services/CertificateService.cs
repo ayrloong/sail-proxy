@@ -1,10 +1,11 @@
 using ErrorOr;
 using Microsoft.EntityFrameworkCore;
+using Sail.Apis;
 using Sail.Core.Entities;
 using Sail.EntityFramework.Storage;
-using Sail.Protocol.Apis;
+using Sail.Services;
 
-namespace Sail.Protocol.Services;
+namespace Sail.Services;
 
 public class CertificateService(ConfigurationContext context) : ICertificateService
 {

@@ -2,7 +2,7 @@ using ErrorOr;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 
-namespace Sail.Protocol.Extensions;
+namespace Sail.Extensions;
 
 public static class ErrorOrExtensions
 {

@@ -7,7 +7,7 @@ using Yarp.ReverseProxy.Configuration;
 
 namespace Sail.Core.Certificates;
 
-public class ServerCertificateSelector(IOptions<CertificateOptions> options, IProxyConfigProvider provider)
+public class ServerCertificateSelector(IOptions<CertificateOptions> options)
     : IServerCertificateSelector
 {
     private volatile IReadOnlyList<CertificateConfig> _certificates = new List<CertificateConfig>();
@@ -24,7 +24,7 @@ public class ServerCertificateSelector(IOptions<CertificateOptions> options, IPr
             {
                 using var convertedCertificate =
                     X509Certificate2.CreateFromPemFile(_options.DefaultPath, _options.DefaultKeyPath);
-                return new X509Certificate2(convertedCertificate.Export(X509ContentType.Pkcs12));
+                return X509CertificateLoader.LoadCertificate(convertedCertificate.Export(X509ContentType.Pkcs12));
             }
         }
 
@@ -32,7 +32,7 @@ public class ServerCertificateSelector(IOptions<CertificateOptions> options, IPr
             return X509Certificate2.CreateFromPem(certificate.Cert, certificate.Key);
         {
             using var convertedCertificate = X509Certificate2.CreateFromPem(certificate.Cert, certificate.Key);
-            return new X509Certificate2(convertedCertificate.Export(X509ContentType.Pkcs12));
+            return X509CertificateLoader.LoadCertificate(convertedCertificate.Export(X509ContentType.Pkcs12));
         }
     }
 

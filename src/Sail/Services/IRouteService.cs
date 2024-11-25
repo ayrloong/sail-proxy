@@ -1,8 +1,8 @@
 using ErrorOr;
 using Sail.Core.Entities;
-using Sail.Protocol.Apis;
+using Sail.Apis;
 
-namespace Sail.Protocol.Services;
+namespace Sail.Services;
 
 public interface IRouteService
 {

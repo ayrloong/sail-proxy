@@ -1,7 +1,7 @@
 using ErrorOr;
-using Sail.Protocol.Apis;
+using Sail.Apis;
 
-namespace Sail.Protocol.Services;
+namespace Sail.Services;
 
 public interface IClusterService
 {
