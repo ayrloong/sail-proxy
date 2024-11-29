@@ -31,18 +31,7 @@ public class ClusterService(ConfigurationContext context) : IClusterService
 
     public async Task<ErrorOr<Created>> CreateAsync(ClusterRequest request)
     {
-        var cluster = new Cluster
-        {
-            Name = request.Name,
-            LoadBalancingPolicy = request.LoadBalancingPolicy,
-            Destinations = request.Destinations.Select(item => new Destination
-            {
-                Host = item.Host,
-                Address = item.Address,
-                Health = item.Health
-            }).ToList()
-        };
-        await context.Clusters.AddAsync(cluster);
+       
         await context.SaveChangesAsync();
         return Result.Created;
     }
@@ -57,12 +46,7 @@ public class ClusterService(ConfigurationContext context) : IClusterService
 
         cluster.Name = request.Name;
         cluster.LoadBalancingPolicy = request.LoadBalancingPolicy;
-        cluster.Destinations = request.Destinations.Select(item => new Destination
-        {
-            Host = item.Host,
-            Address = item.Address,
-            Health = item.Health
-        }).ToList();
+   
         cluster.UpdatedAt = DateTimeOffset.Now;
         
         context.Clusters.Update(cluster);

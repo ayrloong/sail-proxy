@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Sail.Core.Entities;
 using Sail.EntityFramework.Storage;
 using Sail.Apis;
-using Route = Sail.Core.Entities.Route;
+
 
 namespace Sail.Services;
 
@@ -59,18 +59,7 @@ public class RouteService(ConfigurationContext context) : IRouteService
 
     public async Task<ErrorOr<Created>> CreateAsync(RouteRequest request)
     {
-        var route = new Route
-        {
-            Name = request.Name,
-            ClusterId = request.ClusterId,
-            Match = new RouteMatch
-            {
-                Path = request.Match.Path,
-                Hosts = request.Match.Hosts,
-                Methods = request.Match.Methods
-            }
-        };
-        await context.Routes.AddAsync(route);
+      
         await context.SaveChangesAsync();
         return Result.Created;
     }

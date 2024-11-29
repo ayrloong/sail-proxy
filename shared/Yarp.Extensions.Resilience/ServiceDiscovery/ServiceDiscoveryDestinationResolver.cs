@@ -3,7 +3,7 @@ using Microsoft.Extensions.ServiceDiscovery;
 using Yarp.ReverseProxy.Configuration;
 using Yarp.ReverseProxy.ServiceDiscovery;
 
-namespace Sail.Core.ServiceDiscovery;
+namespace Yarp.Extensions.Resilience.ServiceDiscovery;
 
 public class ServiceDiscoveryDestinationResolver(ServiceEndpointResolver resolver)
     : IServiceDiscoveryDestinationResolver

@@ -1,20 +1,11 @@
 syntax = "proto3";
 
-service ClusterService {
-  rpc Create(Cluster) returns (CreateClusterResponse);
-  
-}
-
-message CreateClusterResponse {
-
-}
-
 message Cluster {
   string cluster_id = 1;
   string load_balancing_policy = 2;
   ClusterSessionAffinity session_affinity = 3;
   ClusterHealthCheck health_check = 4;
-  repeated  ClusterDestination destinations = 5;
+  //repeated Destination destinations = 5;
 }
 
 message ClusterSessionAffinity {
@@ -43,12 +34,6 @@ enum SameSiteMode {
   STRICT = 2;
 }
 
-message ClusterDestination {
-  string cluster_id = 1;
-  string address = 2;
-  string health = 3;
-  string host = 4;
-}
 
 message ClusterHealthCheck {
   PassiveHealthCheck passive = 1;

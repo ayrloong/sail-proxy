@@ -10,11 +10,24 @@
         <PackageReference Include="ErrorOr" />
         <PackageReference Include="FluentValidation" />
         <PackageReference Include="Asp.Versioning.Http"/>
+        <PackageReference Include="Grpc.AspNetCore" />
+        <PackageReference Include="Google.Protobuf"/>
     </ItemGroup>
-   
+    
     <ItemGroup>
         <ProjectReference Include="..\..\shared\ServiceDefaults\ServiceDefaults.csproj" />
         <ProjectReference Include="..\Sail.EntityFramework.Storage\Sail.EntityFramework.Storage.csproj" />
+    </ItemGroup>
+    
+    <ItemGroup>
+        <Protobuf Include="../../shared/protos/route/route.proto"  Link="Protos/route.proto" />
+        <Protobuf Include="../../shared/protos/cluster/cluster.proto" Link="Protos/cluster.proto" />
+        <Protobuf Include="../../shared/protos/destination/destination.proto" Link="Protos/destination.proto" />
+        <Protobuf Include="../../shared/protos/discovery.proto" Link="Protos/discovery.proto" />
+        <Protobuf Include="../../shared/protos/route_service.proto" Link="Protos/route_service.proto" />
+        <Protobuf Include="../../shared/protos/certificate_service.proto" Link="Protos/certificate_service.proto" />
+        <Protobuf Include="../../shared/protos/cluster_service.proto" Link="Protos/cluster_service.proto" />
+        <Protobuf Include="../../shared/protos/destination_service.proto" Link="Protos/destination_service.proto" />
     </ItemGroup>
 
 </Project>

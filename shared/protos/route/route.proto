@@ -1,13 +1,5 @@
 syntax = "proto3";
 
-service RouteService {
-  rpc Create(Route) returns (CreateRouteResponse);
-}
-
-message CreateRouteResponse {
-  
-}
-
 message Route {
   string cluster_id = 1;
   RouteMatch match = 2;

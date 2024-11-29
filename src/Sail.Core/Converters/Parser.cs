@@ -63,8 +63,8 @@ internal static class Parser
                 Hosts = route.Match.Hosts,
                 Path = route.Match.Path,
                 Methods = route.Match.Methods,
-                Headers = route.Match.Headers.Select(x => x.ToRouteHeader()).ToList(),
-                QueryParameters = route.Match.QueryParameters.Select(x => x.ToRouteQueryParameter()).ToList()
+               // Headers = route.Match.Headers.Select(x => x.ToRouteHeader()).ToList(),
+               // QueryParameters = route.Match.QueryParameters.Select(x => x.ToRouteQueryParameter()).ToList()
             },
             AuthorizationPolicy = route.AuthorizationPolicy,
             RateLimiterPolicy = route.RateLimiterPolicy,

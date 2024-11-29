@@ -1,13 +1,5 @@
 syntax = "proto3";
 
-service MiddlewareService {
-  rpc Create(Middleware) returns (CreateMiddlewareResponse);
-}
-
-message CreateMiddlewareResponse {
-  
-}
-
 message Middleware {
   Cors cors = 1;
   RateLimiter rate_limiter = 2;

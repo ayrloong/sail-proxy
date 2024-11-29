@@ -1,6 +1,6 @@
 using Yarp.ReverseProxy.ServiceDiscovery;
 
-namespace Sail.Core.ServiceDiscovery;
+namespace Yarp.Extensions.Resilience.ServiceDiscovery;
 
 public interface IServiceDiscoveryDestinationResolver
 {
