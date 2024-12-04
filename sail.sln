@@ -5,52 +5,40 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{CDDF10FC-E577-47D2-9A59-A0B18E01F9FF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sail.Core", "src\Sail.Core\Sail.Core.csproj", "{A4C33BAD-4244-46B1-B501-04B04D1797FD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sail.Core", "src\Sail.Core\Sail.Core.csproj", "{A4C33BAD-4244-46B1-B501-04B04D1797FD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sail", "src\Sail\Sail.csproj", "{90B7578F-C1BD-4DE7-BD29-8112DBBC5B65}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sail", "src\Sail\Sail.csproj", "{90B7578F-C1BD-4DE7-BD29-8112DBBC5B65}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{9B911130-4997-45D6-9EA4-9B86F1D76AC2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApiSample", "samples\ApiSample\ApiSample.csproj", "{D5D9A66C-7528-4141-A924-76F95FD61F2D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApiSample", "samples\ApiSample\ApiSample.csproj", "{D5D9A66C-7528-4141-A924-76F95FD61F2D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "shared", "shared", "{CA36FAC8-6312-46D1-93E9-53F40A56AD56}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{BAC0F5D0-E20E-4620-AA39-47026E1390E6}"
 	ProjectSection(SolutionItems) = preProject
+		Directory.Build.props = Directory.Build.props
+		Directory.Build.targets = Directory.Build.targets
 		Directory.Packages.props = Directory.Packages.props
 		NuGet.config = NuGet.config
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceDefaults", "shared\ServiceDefaults\ServiceDefaults.csproj", "{5CE0F49D-5731-454A-98D2-FC34BE1EE2B9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServiceDefaults", "shared\ServiceDefaults\ServiceDefaults.csproj", "{5CE0F49D-5731-454A-98D2-FC34BE1EE2B9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yarp.Extensions.Resilience", "shared\Yarp.Extensions.Resilience\Yarp.Extensions.Resilience.csproj", "{F5C41DA3-4FAB-4739-A15D-90F44DA8545A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yarp.Extensions.Resilience", "shared\Yarp.Extensions.Resilience\Yarp.Extensions.Resilience.csproj", "{F5C41DA3-4FAB-4739-A15D-90F44DA8545A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YarpSample", "samples\YarpSample\YarpSample.csproj", "{86FCFAE7-167E-477D-BB05-709740AE9160}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YarpSample", "samples\YarpSample\YarpSample.csproj", "{86FCFAE7-167E-477D-BB05-709740AE9160}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sail.EntityFramework.Storage", "src\Sail.EntityFramework.Storage\Sail.EntityFramework.Storage.csproj", "{D2F925CA-15BF-467E-B36A-D547CDF45C6B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sail.EntityFramework.Storage", "src\Sail.EntityFramework.Storage\Sail.EntityFramework.Storage.csproj", "{D2F925CA-15BF-467E-B36A-D547CDF45C6B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sail.ServiceDiscovery.Consul", "src\Sail.ServiceDiscovery.Consul\Sail.ServiceDiscovery.Consul.csproj", "{BBF52B15-1417-426F-95C4-AECFF67D6E18}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sail.ServiceDiscovery.Consul", "src\Sail.ServiceDiscovery.Consul\Sail.ServiceDiscovery.Consul.csproj", "{BBF52B15-1417-426F-95C4-AECFF67D6E18}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sail.Proxy", "src\Sail.Proxy\Sail.Proxy.csproj", "{2EAA7B1C-6D00-4BE0-A16D-CD50BB7BD87E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sail.Proxy", "src\Sail.Proxy\Sail.Proxy.csproj", "{2EAA7B1C-6D00-4BE0-A16D-CD50BB7BD87E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{A4C33BAD-4244-46B1-B501-04B04D1797FD} = {CDDF10FC-E577-47D2-9A59-A0B18E01F9FF}
-		{90B7578F-C1BD-4DE7-BD29-8112DBBC5B65} = {CDDF10FC-E577-47D2-9A59-A0B18E01F9FF}
-		{D5D9A66C-7528-4141-A924-76F95FD61F2D} = {9B911130-4997-45D6-9EA4-9B86F1D76AC2}
-		{5CE0F49D-5731-454A-98D2-FC34BE1EE2B9} = {CA36FAC8-6312-46D1-93E9-53F40A56AD56}
-		{F5C41DA3-4FAB-4739-A15D-90F44DA8545A} = {CA36FAC8-6312-46D1-93E9-53F40A56AD56}
-		{86FCFAE7-167E-477D-BB05-709740AE9160} = {9B911130-4997-45D6-9EA4-9B86F1D76AC2}
-		{D2F925CA-15BF-467E-B36A-D547CDF45C6B} = {CDDF10FC-E577-47D2-9A59-A0B18E01F9FF}
-		{BBF52B15-1417-426F-95C4-AECFF67D6E18} = {CDDF10FC-E577-47D2-9A59-A0B18E01F9FF}
-		{2EAA7B1C-6D00-4BE0-A16D-CD50BB7BD87E} = {CDDF10FC-E577-47D2-9A59-A0B18E01F9FF}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{A4C33BAD-4244-46B1-B501-04B04D1797FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -89,5 +77,22 @@ Global
 		{2EAA7B1C-6D00-4BE0-A16D-CD50BB7BD87E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2EAA7B1C-6D00-4BE0-A16D-CD50BB7BD87E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2EAA7B1C-6D00-4BE0-A16D-CD50BB7BD87E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{A4C33BAD-4244-46B1-B501-04B04D1797FD} = {CDDF10FC-E577-47D2-9A59-A0B18E01F9FF}
+		{90B7578F-C1BD-4DE7-BD29-8112DBBC5B65} = {CDDF10FC-E577-47D2-9A59-A0B18E01F9FF}
+		{D5D9A66C-7528-4141-A924-76F95FD61F2D} = {9B911130-4997-45D6-9EA4-9B86F1D76AC2}
+		{5CE0F49D-5731-454A-98D2-FC34BE1EE2B9} = {CA36FAC8-6312-46D1-93E9-53F40A56AD56}
+		{F5C41DA3-4FAB-4739-A15D-90F44DA8545A} = {CA36FAC8-6312-46D1-93E9-53F40A56AD56}
+		{86FCFAE7-167E-477D-BB05-709740AE9160} = {9B911130-4997-45D6-9EA4-9B86F1D76AC2}
+		{D2F925CA-15BF-467E-B36A-D547CDF45C6B} = {CDDF10FC-E577-47D2-9A59-A0B18E01F9FF}
+		{BBF52B15-1417-426F-95C4-AECFF67D6E18} = {CDDF10FC-E577-47D2-9A59-A0B18E01F9FF}
+		{2EAA7B1C-6D00-4BE0-A16D-CD50BB7BD87E} = {CDDF10FC-E577-47D2-9A59-A0B18E01F9FF}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B8FD862F-ECB7-4985-B57A-654327D103C7}
 	EndGlobalSection
 EndGlobal
