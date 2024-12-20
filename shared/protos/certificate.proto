@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package sail.api.v1;
+
+service CertificateService {
+  rpc StreamCertificates(CertificateRequest) returns (stream CertificateItems) {
+  }
+  
+}
+message CertificateItems{
+  repeated Certificate items = 1;
+}
+message CertificateRequest{}
+ 
+message Certificate {
+  repeated string hosts = 1;
+  string certificate_id = 2;
+  string key = 3;
+  string value = 4;
+}

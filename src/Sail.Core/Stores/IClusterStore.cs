@@ -4,5 +4,5 @@ namespace Sail.Core.Stores;
 
 public interface IClusterStore
 {
-    Task<List<Cluster>> GetAsync();
+    Task<List<Cluster>> GetAsync(CancellationToken cancellationToken = default);
 }

@@ -1,8 +1,0 @@
-syntax = "proto3";
-
-message Certificate {
-  repeated string hosts = 1;
-  string certificate_id = 2;
-  string key = 3;
-  string value = 4;
-}

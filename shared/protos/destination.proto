@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package sail.api.v1;
+
+
+service DestinationService {
+  rpc StreamDestinations(DestinationRequest) returns (stream DestinationItems) {
+  }
+}
+
+message DestinationRequest {}
+
+message DestinationItems {
+  repeated  Destination items = 1;
+}
+
+message Destination {
+  string destination_id = 1;
+  string address = 2;
+  string health = 3;
+  string host = 4;
+}

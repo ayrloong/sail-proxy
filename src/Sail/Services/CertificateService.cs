@@ -25,12 +25,8 @@ public class CertificateService(ConfigurationContext context) : ICertificateServ
 
     public async Task<ErrorOr<Created>> CreateAsync(CertificateRequest request)
     {
-        var certificate = new Certificate
-        {
-            Cert = request.Cert,
-            Key = request.Key
-        };
-        await context.Certificates.AddAsync(certificate);
+   
+       // await context.Certificates.AddAsync(certificate);
         await context.SaveChangesAsync();
         return Result.Created;
     }

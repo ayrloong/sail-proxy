@@ -6,10 +6,10 @@ namespace Sail.EntityFramework.Storage.Stores;
 
 public class RouteStore(ConfigurationContext context) : IRouteStore
 {
-    public Task<List<Route>> GetAsync()
+    public Task<List<Route>> GetAsync(CancellationToken cancellationToken = default)
     {
         return context.Routes.Include(x => x.Match).ThenInclude(routeMatch => routeMatch.Headers)
             .Include(route => route.Match).ThenInclude(routeMatch => routeMatch.QueryParameters)
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
     }
 }
