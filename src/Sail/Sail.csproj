@@ -5,11 +5,23 @@
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
     </PropertyGroup>
-
-   
+    
+    <ItemGroup>
+        <PackageReference Include="ErrorOr" />
+        <PackageReference Include="FluentValidation" />
+        <PackageReference Include="Asp.Versioning.Http"/>
+        <PackageReference Include="Grpc.AspNetCore" />
+    </ItemGroup>
+    
     <ItemGroup>
         <ProjectReference Include="..\..\shared\ServiceDefaults\ServiceDefaults.csproj" />
-        <ProjectReference Include="..\Sail.Protocol\Sail.Protocol.csproj" />
+        <ProjectReference Include="..\Sail.EntityFramework.Storage\Sail.EntityFramework.Storage.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+        <Protobuf Include="$(RepoRoot)\shared\protos\*.proto" Link="Protos\%(RecursiveDir)%(Filename)%(Extension)">
+            <ProtoRoot>$(RepoRoot)\shared\protos</ProtoRoot>
+        </Protobuf>
+    </ItemGroup>
 </Project>
+

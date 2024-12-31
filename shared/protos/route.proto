@@ -1,0 +1,70 @@
+syntax = "proto3";
+import "cluster.proto";
+
+package sail.api.v1;
+
+service RouteService {
+  rpc StreamRoutes(RouteRequest) returns (stream RouteItems) {
+  }
+}
+message RouteRequest {
+  
+}
+message RouteItems {
+  repeated Route items=1;
+}
+
+
+message Route {
+  string route_id = 1;
+  string cluster_id = 2;
+  RouteMatch match = 3;
+  int32 order = 4;
+  string authorization_policy = 5;
+  string rate_limiter_policy = 6;
+  string cors_policy = 7;
+  string timeout_policy = 8;
+  int32 timeout = 9;
+  int64 max_request_body_size = 10;
+}
+
+message RouteMatch {
+  repeated string  methods = 1;
+  repeated string  hosts = 2;
+  string path = 3;
+  repeated RouteQueryParameter query_parameters = 4;
+  repeated RouteHeader headers = 5;
+
+  message RouteQueryParameter {
+    string  name = 1;
+    repeated string values = 2;
+    QueryParameterMatchMode mode = 3;
+    bool is_case_sensitive = 4;
+
+    enum QueryParameterMatchMode{
+      EXACT = 0;
+      CONTAINS = 1;
+      NOT_CONTAINS = 2;
+      PREFIX = 3;
+      EXISTS = 4;
+    }
+  }
+
+  message RouteHeader {
+    string  name = 1;
+    repeated string values = 2;
+    HeaderMatchMode mode = 3;
+    bool is_case_sensitive = 4;
+
+    enum HeaderMatchMode {
+      EXACT_HEADER = 0;
+      HEADER_PREFIX = 1;
+      CONTAINS = 2;
+      NOT_CONTAINS = 3;
+      EXISTS = 4;
+      NOT_EXISTS = 5;
+    }
+  }
+}
+
+

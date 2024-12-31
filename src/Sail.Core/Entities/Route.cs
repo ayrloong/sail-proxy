@@ -17,4 +17,4 @@ public class Route
     public long? MaxRequestBodySize { get; set; }
     public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
     public DateTimeOffset UpdatedAt { get; set; } = DateTimeOffset.UtcNow;
-}
+} 

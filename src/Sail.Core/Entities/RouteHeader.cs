@@ -1,6 +1,3 @@
-using RouteHeaderConfig = Yarp.ReverseProxy.Configuration.RouteHeader;
-using HeaderMatchModeConfig = Yarp.ReverseProxy.Configuration.HeaderMatchMode;
-
 namespace Sail.Core.Entities;
 
 public class RouteHeader
@@ -12,15 +9,5 @@ public class RouteHeader
     public List<string> Values { get; set; }
     public HeaderMatchMode Mode { get; set; }
     public bool IsCaseSensitive { get; set; }
-
-    public RouteHeaderConfig ToRouteHeader()
-    {
-        return new RouteHeaderConfig
-        {
-            Name = Name,
-            Values = Values,
-            Mode = (HeaderMatchModeConfig)Mode,
-            IsCaseSensitive = IsCaseSensitive
-        };
-    }
+    
 }

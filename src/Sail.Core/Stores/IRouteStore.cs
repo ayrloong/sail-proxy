@@ -4,5 +4,5 @@ namespace Sail.Core.Stores;
 
 public interface IRouteStore
 {
-    Task<List<Route>> GetAsync();
+    Task<List<Route>> GetAsync(CancellationToken cancellationToken = default);
 }

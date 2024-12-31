@@ -12,7 +12,6 @@ public class ResilienceDelegatingHandler(
 
         var httpContext = httpContextAccessor.HttpContext;
         var feature = httpContext?.GetReverseProxyFeature();
-        
         var pipeline = pipelineProvider.GetResiliencePipeline("");
 
         if (pipeline is null)
@@ -23,3 +22,4 @@ public class ResilienceDelegatingHandler(
         return await pipeline.ExecuteAsync(async token => await base.SendAsync(request, token), cancellationToken);
     }
 }
+ 
