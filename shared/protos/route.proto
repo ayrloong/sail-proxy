@@ -1,4 +1,5 @@
 syntax = "proto3";
+import "cluster.proto";
 
 package sail.api.v1;
 
@@ -16,14 +17,15 @@ message RouteItems {
 
 message Route {
   string route_id = 1;
-  RouteMatch match = 2;
-  int32 order = 3;
-  string authorization_policy = 4;
-  string rate_limiter_policy = 5;
-  string cors_policy = 6;
-  string timeout_policy = 7;
-  int32 timeout = 8;
-  int64 max_request_body_size = 9;
+  string cluster_id = 2;
+  RouteMatch match = 3;
+  int32 order = 4;
+  string authorization_policy = 5;
+  string rate_limiter_policy = 6;
+  string cors_policy = 7;
+  string timeout_policy = 8;
+  int32 timeout = 9;
+  int64 max_request_body_size = 10;
 }
 
 message RouteMatch {

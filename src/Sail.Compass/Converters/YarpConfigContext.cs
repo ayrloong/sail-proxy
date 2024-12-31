@@ -1,6 +1,6 @@
 using Yarp.ReverseProxy.Configuration;
 
-namespace Sail.Core.Converters;
+namespace Sail.Compass.Converters;
 
 internal class YarpConfigContext
 {

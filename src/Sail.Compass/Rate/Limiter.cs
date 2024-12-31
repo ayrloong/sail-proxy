@@ -32,7 +32,7 @@ namespace Sail.Compass.Rate;
 /// </summary>
 public class Limiter
 {
-    private readonly object _sync = new object();
+    private readonly Lock _sync = new Lock();
     private readonly Limit _limit;
     private readonly TimeProvider _timeProvider;
     private readonly int _burst;

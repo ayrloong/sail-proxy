@@ -12,7 +12,7 @@ namespace Sail.Compass.Client;
 public abstract class ResourceInformer<TResource>(IHostApplicationLifetime hostApplicationLifetime, ILogger logger)
     : BackgroundHostedService(hostApplicationLifetime, logger), IResourceInformer<TResource> where TResource : class
 {
-    private readonly object _sync = new();
+    private readonly Lock _sync = new();
     private readonly SemaphoreSlim _ready = new(0);
     private readonly SemaphoreSlim _start = new(0);
     private ImmutableList<Registration> _registrations = ImmutableList<Registration>.Empty;

@@ -8,7 +8,7 @@ namespace Sail.Compass.Queues;
 /// <seealso cref="IWorkQueue{TItem}" />
 public class WorkQueue<TItem> : IWorkQueue<TItem>
 {
-    private readonly object _sync = new object();
+    private readonly Lock _sync = new Lock();
     private readonly Dictionary<TItem, object> _dirty = new Dictionary<TItem, object>();
     private readonly Dictionary<TItem, object> _processing = new Dictionary<TItem, object>();
     private readonly Queue<TItem> _queue = new Queue<TItem>();

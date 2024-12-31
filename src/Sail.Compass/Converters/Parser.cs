@@ -1,22 +1,16 @@
 using System.Collections.Immutable;
+using Sail.Api.V1;
 using Sail.Core.Certificates;
-using Sail.Core.Entities;
 using Yarp.ReverseProxy.Configuration;
 using RouteMatch = Yarp.ReverseProxy.Configuration.RouteMatch;
 
-namespace Sail.Core.Converters;
+namespace Sail.Compass.Converters;
 
 internal static class Parser
 {
     internal static IReadOnlyList<CertificateConfig> ConvertCertificates(IEnumerable<Certificate> certificates)
     {
-        var snis = certificates.SelectMany(x => x.SNIs);
-        return snis.Select(x => new CertificateConfig
-        {
-            Cert = x.Certificate.Cert,
-            Key = x.Certificate.Key,
-            HostName = x.HostName
-        }).ToImmutableList();
+        throw new NotImplementedException();
     }
 
     internal static void ConvertFromDataSource(DataSourceContext dataSourceContext, YarpConfigContext configContext)
@@ -38,14 +32,13 @@ internal static class Parser
 
         clusters.Add(new ClusterConfig
         {
-            ClusterId = cluster.Id.ToString(),
+            ClusterId = cluster.ClusterId,
             LoadBalancingPolicy = cluster.LoadBalancingPolicy,
-            Destinations = cluster.Destinations?.ToDictionary(x => x.Id.ToString(), x => new DestinationConfig
+            Destinations = cluster.Destinations?.ToDictionary(x => x.DestinationId, x => new DestinationConfig
             {
                 Host = x.Host,
                 Health = x.Health,
                 Address = x.Address
-
             })
         });
     }
@@ -56,21 +49,21 @@ internal static class Parser
 
         routes.Add(new RouteConfig
         {
-            RouteId = route.Id.ToString(),
-            ClusterId = route.ClusterId.ToString(),
+            RouteId = route.RouteId,
+            ClusterId = route.ClusterId,
             Match = new RouteMatch
             {
                 Hosts = route.Match.Hosts,
                 Path = route.Match.Path,
                 Methods = route.Match.Methods,
-               // Headers = route.Match.Headers.Select(x => x.ToRouteHeader()).ToList(),
-               // QueryParameters = route.Match.QueryParameters.Select(x => x.ToRouteQueryParameter()).ToList()
+                // Headers = route.Match.Headers.Select(x => x.ToRouteHeader()).ToList(),
+                // QueryParameters = route.Match.QueryParameters.Select(x => x.ToRouteQueryParameter()).ToList()
             },
             AuthorizationPolicy = route.AuthorizationPolicy,
             RateLimiterPolicy = route.RateLimiterPolicy,
             TimeoutPolicy = route.TimeoutPolicy,
             CorsPolicy = route.CorsPolicy,
-            Timeout = route.Timeout,
+            //Timeout = TimeSpan.FromSeconds(route.Timeout),
             MaxRequestBodySize = route.MaxRequestBodySize,
             Order = route.Order
         });

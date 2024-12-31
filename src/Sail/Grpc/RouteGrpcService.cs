@@ -1,4 +1,3 @@
-using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using Sail.Api.V1;
 using Sail.Core.Stores;
@@ -23,11 +22,12 @@ public class RouteGrpcService(IRouteStore routeStore) : RouteService.RouteServic
             await Task.Delay(TimeSpan.FromSeconds(20));
         }
     }
-    
+
     private static RouteItems MapToDiscoveryResponse(List<Route> routes)
     {
+
         var items = routes.Select(MapToRouteResponse);
-        
+
         var response = new RouteItems
         {
             Items = { items }
@@ -41,6 +41,7 @@ public class RouteGrpcService(IRouteStore routeStore) : RouteService.RouteServic
         return new RouteResponse
         {
             RouteId = route.Id.ToString(),
+            ClusterId = route.ClusterId.ToString(),
             Match = new RouteMatch
             {
                 Path = match.Path,
@@ -64,16 +65,15 @@ public class RouteGrpcService(IRouteStore routeStore) : RouteService.RouteServic
                         IsCaseSensitive = parameter.IsCaseSensitive,
                     })
                 }
-
             },
-           /**
-            Order = route.Order,
-            CorsPolicy = route.CorsPolicy,
-            TimeoutPolicy = route.TimeoutPolicy,
-            AuthorizationPolicy = route.AuthorizationPolicy,
-            MaxRequestBodySize = route.MaxRequestBodySize ?? -1,
-            RateLimiterPolicy = route.RateLimiterPolicy,
-            **/
+            /**
+             Order = route.Order,
+             CorsPolicy = route.CorsPolicy,
+             TimeoutPolicy = route.TimeoutPolicy,
+             AuthorizationPolicy = route.AuthorizationPolicy,
+             MaxRequestBodySize = route.MaxRequestBodySize ?? -1,
+             RateLimiterPolicy = route.RateLimiterPolicy,
+             **/
         };
     }
 }

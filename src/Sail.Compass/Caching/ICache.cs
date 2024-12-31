@@ -4,5 +4,8 @@ namespace Sail.Compass.Caching;
 
 public interface ICache
 {
-    ValueTask UpdateAsync(IReadOnlyList<Route> routes, CancellationToken cancellationToken = default);
+    void UpdateRoutes(IReadOnlyList<Route> routes);
+    void UpdateClusters(IReadOnlyList<Cluster> clusters);
+    List<Route> GetRoutes();
+    List<Cluster> GetClusters();
 }

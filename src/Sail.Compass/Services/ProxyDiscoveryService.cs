@@ -1,6 +1,8 @@
+using System.Collections.Immutable;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Sail.Api.V1;
+using Sail.Compass.Caching;
 using Sail.Compass.Client;
 using Sail.Compass.Hosting;
 using Sail.Compass.Queues;
@@ -10,11 +12,16 @@ namespace Sail.Compass.Services;
 public class ProxyDiscoveryService : BackgroundHostedService
 {
     private bool _registrationsReady;
+    private readonly ICache _cache;
+    private readonly IReconciler _reconciler;
     private readonly IWorkQueue<QueueItem> _queue;
     private readonly IReadOnlyList<IResourceInformerRegistration> _registrations;
     private readonly QueueItem _changeQueueItem;
 
-    public ProxyDiscoveryService(IHostApplicationLifetime hostApplicationLifetime,
+    public ProxyDiscoveryService(
+        ICache cache,
+        IReconciler reconciler,
+        IHostApplicationLifetime hostApplicationLifetime,
         IResourceInformer<ClusterItems> clusterInformer,
         IResourceInformer<RouteItems> routeInformer,
         ILogger<ProxyDiscoveryService> logger) : base(hostApplicationLifetime, logger)
@@ -25,14 +32,15 @@ public class ProxyDiscoveryService : BackgroundHostedService
             routeInformer.Register(Notification),
         };
 
+        _cache = cache;
+        _reconciler = reconciler;
         _registrations = registrations;
-
         _registrationsReady = false;
+        
         clusterInformer.StartWatching();
         routeInformer.StartWatching();
-
         _queue = new ProcessingRateLimitedQueue<QueueItem>(perSecond: 0.5, burst: 1);
-        _changeQueueItem = new QueueItem("Ingress Change");
+        _changeQueueItem = new QueueItem("");
     }
 
     public override async Task RunAsync(CancellationToken cancellationToken)
@@ -55,24 +63,31 @@ public class ProxyDiscoveryService : BackgroundHostedService
 
             try
             {
-                Console.WriteLine("q");
-                _queue.Done(item);
+                await _reconciler.ProcessAsync(cancellationToken).ConfigureAwait(false);
             }
             catch
             {
                 Logger.LogInformation("Rescheduling {Change}", item.Change);
                 _queue.Add(item);
             }
+            finally
+            {
+                _queue.Done(item);
+            }
         }
     }
 
     private void Notification(RouteItems resource)
     {
+         _cache.UpdateRoutes(resource.Items);
+        
         NotificationChanged();
     }
 
     private void Notification(ClusterItems resource)
     {
+        _cache.UpdateClusters(resource.Items);
+        
         NotificationChanged();
     }
 

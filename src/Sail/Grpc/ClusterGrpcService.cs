@@ -1,7 +1,6 @@
 using Grpc.Core;
 using Sail.Api.V1;
 using Sail.Core.Stores;
-using Google.Protobuf.WellKnownTypes;
 using Cluster = Sail.Core.Entities.Cluster;
 using ClusterResponse =  Sail.Api.V1.Cluster;
 
@@ -13,7 +12,6 @@ public class ClusterGrpcService(IClusterStore clusterStore)
     public override async Task StreamClusters(ClusterRequest request,
         IServerStreamWriter<ClusterItems> responseStream, ServerCallContext context)
     {
-
         while (!context.CancellationToken.IsCancellationRequested)
         {
             var clusters = await clusterStore.GetAsync(CancellationToken.None);
@@ -41,7 +39,17 @@ public class ClusterGrpcService(IClusterStore clusterStore)
         return new ClusterResponse
         {
             ClusterId = cluster.Id.ToString(),
-            LoadBalancingPolicy = cluster.LoadBalancingPolicy
+            LoadBalancingPolicy = cluster.LoadBalancingPolicy,
+            Destinations =
+            {
+                cluster.Destinations?.Select(d => new Destination
+                {
+                    DestinationId = d.Id.ToString(),
+                    Address = d.Address,
+                    Health = d.Health,
+                    Host = d.Host
+                })
+            }
         };
     }
 }

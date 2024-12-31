@@ -15,14 +15,12 @@ public class CertificateGrpcService(ICertificateStore certificateStore)
     {
         while (!context.CancellationToken.IsCancellationRequested)
         {
-            
+            var certifications = await certificateStore.GetAsync(CancellationToken.None);
+            var response = MapToDiscoveryResponse(certifications);
+
+            await responseStream.WriteAsync(response);
+            await Task.Delay(TimeSpan.FromSeconds(20));
         }
-        var certifications = await certificateStore.GetAsync(CancellationToken.None);
-        var response = MapToDiscoveryResponse(certifications);
-
-        await responseStream.WriteAsync(response);
-        await Task.Delay(TimeSpan.FromSeconds(20));
-
     }
 
     private static CertificateItems MapToDiscoveryResponse(List<Certificate> certificates)

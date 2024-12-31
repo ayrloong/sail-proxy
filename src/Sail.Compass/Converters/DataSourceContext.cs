@@ -1,6 +1,6 @@
-using Sail.Core.Entities;
+using Sail.Api.V1;
 
-namespace Sail.Core.Converters;
+namespace Sail.Compass.Converters;
 
 internal class DataSourceContext(List<Cluster> clusters, List<Route> routes)
 {
