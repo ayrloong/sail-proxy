@@ -5,13 +5,16 @@ namespace Sail.Services;
 
 public interface ICertificateService
 {
-    Task<IEnumerable<CertificateVm>> GetAsync();
-    Task<ErrorOr<Created>> CreateAsync(CertificateRequest request);
-    Task<ErrorOr<Updated>> UpdateAsync(Guid id, CertificateRequest request);
-    Task<ErrorOr<Deleted>> DeleteAsync(Guid id);
+    Task<IEnumerable<CertificateVm>> GetAsync(CancellationToken cancellationToken = default);
+    Task<ErrorOr<Created>> CreateAsync(CertificateRequest request, CancellationToken cancellationToken = default);
+    Task<ErrorOr<Updated>> UpdateAsync(Guid id, CertificateRequest request,
+        CancellationToken cancellationToken = default);
+    Task<ErrorOr<Deleted>> DeleteAsync(Guid id, CancellationToken cancellationToken = default);
+    Task<IEnumerable<SNIVm>> GetSNIsAsync(Guid certificateId, CancellationToken cancellationToken = default);
+    Task<ErrorOr<Created>> CreateSNIAsync(Guid certificateId, SNIRequest request,
+        CancellationToken cancellationToken = default);
+    Task<ErrorOr<Updated>> UpdateSNIAsync(Guid certificateId, Guid id, SNIRequest request,
+        CancellationToken cancellationToken = default);
 
-    Task<IEnumerable<SNIVm>> GetSNIsAsync(Guid certificateId);
-    Task<ErrorOr<Created>> CreateSNIAsync(Guid certificateId, SNIRequest request);
-    Task<ErrorOr<Updated>> UpdateSNIAsync(Guid certificateId, Guid id, SNIRequest request);
-    Task<ErrorOr<Deleted>> DeleteSNIAsync(Guid certificateId, Guid id);
+    Task<ErrorOr<Deleted>> DeleteSNIAsync(Guid certificateId, Guid id, CancellationToken cancellationToken = default);
 }

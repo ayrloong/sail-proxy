@@ -3,10 +3,8 @@ namespace Sail.Core.Entities;
 public class Route
 {
     public Guid Id { get; set; }
-    public Guid ClusterId { get; set; }
-    public Cluster Cluster { get; set; }
+    public Guid? ClusterId { get; set; }
     public string Name { get; set; }
-    public Guid MatchId { get; set; }
     public RouteMatch Match { get; set; }
     public int Order { get; set; }
     public string? AuthorizationPolicy { get; set; }

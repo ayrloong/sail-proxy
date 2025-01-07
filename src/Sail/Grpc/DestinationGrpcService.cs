@@ -20,16 +20,14 @@ public class DestinationGrpcService(IClusterStore clusterStore)
 
             var response = MapToDiscoveryResponse(destinations);
             await responseStream.WriteAsync(response);
-            await Task.Delay(TimeSpan.FromSeconds(20));   
+            await Task.Delay(TimeSpan.FromSeconds(20));
         }
     }
-
-
 
     private static DestinationItems MapToDiscoveryResponse(IEnumerable<Destination> destinations)
     {
         var items = destinations.Select(MapToRouteResponse);
-        
+
         var response = new DestinationItems
         {
             Items = { items }
@@ -41,7 +39,6 @@ public class DestinationGrpcService(IClusterStore clusterStore)
     {
         return new DestinationResponse
         {
-            DestinationId = destination.Id.ToString(),
             Address = destination.Address,
             Health = destination.Health,
             Host = destination.Host

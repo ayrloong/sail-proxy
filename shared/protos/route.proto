@@ -1,19 +1,25 @@
 syntax = "proto3";
 import "cluster.proto";
+import "common.proto";
+import "google/protobuf/empty.proto";
 
 package sail.api.v1;
 
 service RouteService {
-  rpc StreamRoutes(RouteRequest) returns (stream RouteItems) {
-  }
-}
-message RouteRequest {
-  
-}
-message RouteItems {
-  repeated Route items=1;
+  rpc List(google.protobuf.Empty) returns (ListRouteResponse) {}
+  rpc Watch(google.protobuf.Empty) returns (stream WatchRouteResponse) {}
 }
 
+message EmptyRouteRequest {}
+
+message ListRouteResponse {
+  repeated Route items = 1;
+}
+
+message WatchRouteResponse {
+  EventType event_type = 1;
+  Route route = 2;
+}
 
 message Route {
   string route_id = 1;

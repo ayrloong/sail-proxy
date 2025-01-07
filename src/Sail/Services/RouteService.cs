@@ -1,33 +1,69 @@
 using ErrorOr;
-using Microsoft.EntityFrameworkCore;
+using MongoDB.Driver;
 using Sail.Core.Entities;
-using Sail.EntityFramework.Storage;
+using Sail.Storage.MongoDB;
 using Sail.Apis;
+using Route = Sail.Core.Entities.Route;
 
 
 namespace Sail.Services;
 
-public class RouteService(ConfigurationContext context) : IRouteService
+public class RouteService(SailContext context) : IRouteService
 {
-    public async Task<IEnumerable<RouteVm>> GetAsync()
+    public async Task<IEnumerable<RouteVm>> GetAsync(CancellationToken cancellationToken = default)
     {
-        var result = await context.Routes
-            .Include(x => x.Match).ThenInclude(routeMatch => routeMatch.Headers)
-            .Include(route => route.Match).ThenInclude(routeMatch => routeMatch.QueryParameters)
-            .ToListAsync();
+        var filter = Builders<Route>.Filter.Empty;
+        var routes = await context.Routes.FindAsync(filter, cancellationToken: cancellationToken);
+        var items = await routes.ToListAsync(cancellationToken: cancellationToken);
+        return items.Select(MapToRouteVm);
+    }
 
-        return result.Select(x => new RouteVm
+    public async Task<ErrorOr<Created>> CreateAsync(RouteRequest request,CancellationToken cancellationToken = default)
+    {
+        var route = new Route
         {
-            Id = x.Id,
-            ClusterId = x.ClusterId,
-            Name = x.Name,
+            Name = request.Name,
+          
+        };
+        
+        await context.Routes.InsertOneAsync(route, cancellationToken: cancellationToken);
+        return Result.Created;
+    }
+
+    public async Task<ErrorOr<Updated>> UpdateAsync(Guid id, RouteRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        var filter = Builders<Route>.Filter.And(Builders<Route>.Filter.Where(x => x.Id == id));
+        
+        var update = Builders<Route>.Update
+            .Set(x => x.Name,request.Name)
+            .Set(x => x.ClusterId, request.ClusterId)
+            .Set(x => x.UpdatedAt, DateTimeOffset.UtcNow);
+
+        await context.Routes.FindOneAndUpdateAsync(filter, update, cancellationToken: cancellationToken);
+        return Result.Updated;
+    }
+
+    public async Task<ErrorOr<Deleted>> DeleteAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        var filter = Builders<Route>.Filter.And(Builders<Route>.Filter.Where(x => x.Id == id));
+        await context.Routes.DeleteOneAsync(filter, cancellationToken);
+        return Result.Deleted;
+    }
+
+    private RouteVm MapToRouteVm(Route route)
+    {
+        return new RouteVm
+        {
+            Id = route.Id,
+            Name = route.Name,
             Match = new RouteMatchVm
             {
-                Id = x.Match.Id,
-                Path = x.Match.Path,
-                Hosts = x.Match.Hosts,
-                Methods = x.Match.Methods,
-                Headers = x.Match.Headers.Select(h => new RouteHeaderVm
+                Id = route.Match.Id,
+                Path = route.Match.Path,
+                Hosts = route.Match.Hosts,
+                Methods = route.Match.Methods,
+                Headers = route.Match.Headers.Select(h => new RouteHeaderVm
                 {
                     Id = h.Id,
                     Name = h.Name,
@@ -36,7 +72,7 @@ public class RouteService(ConfigurationContext context) : IRouteService
                     IsCaseSensitive = h.IsCaseSensitive
 
                 }),
-                QueryParameters = x.Match.QueryParameters.Select(q => new RouteQueryParameterVm
+                QueryParameters = route.Match.QueryParameters.Select(q => new RouteQueryParameterVm
                 {
                     Id = q.Id,
                     Name = q.Name,
@@ -45,53 +81,16 @@ public class RouteService(ConfigurationContext context) : IRouteService
                     IsCaseSensitive = q.IsCaseSensitive
                 })
             },
-            Order = x.Order,
-            AuthorizationPolicy = x.AuthorizationPolicy,
-            RateLimiterPolicy = x.RateLimiterPolicy,
-            CorsPolicy = x.CorsPolicy,
-            TimeoutPolicy = x.TimeoutPolicy,
-            Timeout = x.Timeout,
-            MaxRequestBodySize = x.MaxRequestBodySize,
-            CreatedAt = x.CreatedAt,
-            UpdatedAt = x.UpdatedAt
-        });
-    }
-
-    public async Task<ErrorOr<Created>> CreateAsync(RouteRequest request)
-    {
-      
-        await context.SaveChangesAsync();
-        return Result.Created;
-    }
-
-    public async Task<ErrorOr<Updated>> UpdateAsync(Guid id, RouteRequest request)
-    {
-        var route = await context.Routes.FindAsync(id);
-        if (route is null)
-        {
-            return Error.NotFound(description: "Route not found");
-        }
-
-        route.Name = request.Name;
-        route.ClusterId = request.ClusterId;
-        route.UpdatedAt = DateTimeOffset.Now;
-        context.Routes.Update(route);
-        await context.SaveChangesAsync();
-        return Result.Updated;
-    }
-
-    public async Task<ErrorOr<Deleted>> DeleteAsync(Guid id)
-    {
-        var route = await context.Routes.FindAsync(id);
-
-        if (route is null)
-        {
-            return Error.NotFound(description: "Route not found");
-        }
-
-        context.Routes.Remove(route);
-        await context.SaveChangesAsync();
-        return Result.Deleted;
+            Order = route.Order,
+            AuthorizationPolicy = route.AuthorizationPolicy,
+            RateLimiterPolicy = route.RateLimiterPolicy,
+            CorsPolicy = route.CorsPolicy,
+            TimeoutPolicy = route.TimeoutPolicy,
+            Timeout = route.Timeout,
+            MaxRequestBodySize = route.MaxRequestBodySize,
+            CreatedAt = route.CreatedAt,
+            UpdatedAt = route.UpdatedAt
+        };
     }
 }
 

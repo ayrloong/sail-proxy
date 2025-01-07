@@ -3,8 +3,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Sail.Api.V1;
 using Sail.Compass.Caching;
-using Sail.Compass.Client;
 using Sail.Compass.Hosting;
+using Sail.Compass.Informers;
 using Sail.Compass.Services;
 using Sail.Core.Certificates;
 using Sail.Core.ConfigProvider;
@@ -19,12 +19,11 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<ICache, DefaultCache>();
         services.AddTransient<IReconciler, Reconciler>();
         services.AddHostedService<ProxyDiscoveryService>();
-        services.RegisterResourceInformer<RouteItems, V1RouteResourceInformer>();
-        services.RegisterResourceInformer<ClusterItems, V1ClusterResourceInformer>();
-        
+        services.RegisterResourceInformer<Route, V1RouteResourceInformer>();
+        services.RegisterResourceInformer<Cluster, V1ClusterResourceInformer>();
+
         return services;
     }
-
     private static IServiceCollection RegisterResourceInformer<TResource, TService>(this IServiceCollection services)
         where TResource : class
         where TService : IResourceInformer<TResource>

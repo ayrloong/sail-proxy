@@ -1,13 +1,16 @@
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
+using MongoDB.Bson;
+using MongoDB.Driver;
 using Sail.Api.V1;
 using Sail.Core.Stores;
+using Sail.Storage.MongoDB;
 using Certificate = Sail.Core.Entities.Certificate;
 using CertificateResponse = Sail.Api.V1.Certificate;
 
 namespace Sail.Grpc;
 
-public class CertificateGrpcService(ICertificateStore certificateStore)
+public class CertificateGrpcService(SailContext dbContext,ICertificateStore certificateStore)
     : CertificateService.CertificateServiceBase
 {
     public override async Task StreamCertificates(CertificateRequest request,
@@ -15,11 +18,12 @@ public class CertificateGrpcService(ICertificateStore certificateStore)
     {
         while (!context.CancellationToken.IsCancellationRequested)
         {
+            
+            
             var certifications = await certificateStore.GetAsync(CancellationToken.None);
             var response = MapToDiscoveryResponse(certifications);
 
             await responseStream.WriteAsync(response);
-            await Task.Delay(TimeSpan.FromSeconds(20));
         }
     }
 

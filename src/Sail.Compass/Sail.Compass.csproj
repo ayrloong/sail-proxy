@@ -15,6 +15,7 @@
         <PackageReference Include="Google.Protobuf"/>
         <PackageReference Include="Grpc.Tools" />
         <PackageReference Include="Grpc.AspNetCore.Server.ClientFactory"/>
+        <PackageReference Include="System.Reactive"/>
     </ItemGroup>
     <ItemGroup>
         <Protobuf Include="$(RepoRoot)\shared\protos\*.proto" Link="Protos\%(RecursiveDir)%(Filename)%(Extension)">
