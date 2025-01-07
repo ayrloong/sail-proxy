@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package sail.api.v1;
+
+enum EventType {
+  UNKNOWN = 0;
+  CREATE = 1;
+  UPDATE = 2;
+  DELETE = 3;
+}

@@ -29,11 +29,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yarp.Extensions.Resilience"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YarpSample", "samples\YarpSample\YarpSample.csproj", "{86FCFAE7-167E-477D-BB05-709740AE9160}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sail.EntityFramework.Storage", "src\Sail.EntityFramework.Storage\Sail.EntityFramework.Storage.csproj", "{D2F925CA-15BF-467E-B36A-D547CDF45C6B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sail.Storage.MongoDB", "src\Sail.Storage.MongoDB\Sail.Storage.MongoDB.csproj", "{D2F925CA-15BF-467E-B36A-D547CDF45C6B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sail.Proxy", "src\Sail.Proxy\Sail.Proxy.csproj", "{2EAA7B1C-6D00-4BE0-A16D-CD50BB7BD87E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sail.Compass", "src\Sail.Compass\Sail.Compass.csproj", "{D4656016-FE39-4999-B7C7-8BD728B9F187}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sail.Compass", "src\Sail.Compass\Sail.Compass.csproj", "{45787AA2-7DB5-475A-ACE6-712EB6A7FADB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -52,7 +52,7 @@ Global
 		{86FCFAE7-167E-477D-BB05-709740AE9160} = {9B911130-4997-45D6-9EA4-9B86F1D76AC2}
 		{D2F925CA-15BF-467E-B36A-D547CDF45C6B} = {CDDF10FC-E577-47D2-9A59-A0B18E01F9FF}
 		{2EAA7B1C-6D00-4BE0-A16D-CD50BB7BD87E} = {CDDF10FC-E577-47D2-9A59-A0B18E01F9FF}
-		{D4656016-FE39-4999-B7C7-8BD728B9F187} = {CDDF10FC-E577-47D2-9A59-A0B18E01F9FF}
+		{45787AA2-7DB5-475A-ACE6-712EB6A7FADB} = {CDDF10FC-E577-47D2-9A59-A0B18E01F9FF}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{A4C33BAD-4244-46B1-B501-04B04D1797FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -87,9 +87,9 @@ Global
 		{2EAA7B1C-6D00-4BE0-A16D-CD50BB7BD87E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2EAA7B1C-6D00-4BE0-A16D-CD50BB7BD87E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2EAA7B1C-6D00-4BE0-A16D-CD50BB7BD87E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D4656016-FE39-4999-B7C7-8BD728B9F187}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D4656016-FE39-4999-B7C7-8BD728B9F187}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D4656016-FE39-4999-B7C7-8BD728B9F187}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D4656016-FE39-4999-B7C7-8BD728B9F187}.Release|Any CPU.Build.0 = Release|Any CPU
+		{45787AA2-7DB5-475A-ACE6-712EB6A7FADB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{45787AA2-7DB5-475A-ACE6-712EB6A7FADB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{45787AA2-7DB5-475A-ACE6-712EB6A7FADB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{45787AA2-7DB5-475A-ACE6-712EB6A7FADB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

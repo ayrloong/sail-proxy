@@ -1,17 +1,14 @@
-using Google.Protobuf.WellKnownTypes;
-using Grpc.Core;
 using Microsoft.Extensions.Hosting;
-using Sail.Api.V1;
 
-namespace Sail.Compass.Client;
+namespace Sail.Compass.Informers;
 
-public delegate void ResourceInformerCallback<TResource>(TResource resource);
+public delegate void ResourceInformerCallback<TResource>(ResourceEvent<TResource> resource);
 
 public interface IResourceInformer<TResource> : IHostedService, IResourceInformer
+    where TResource : class
 {
     IResourceInformerRegistration Register(ResourceInformerCallback<TResource> callback);
 }
-
 public interface IResourceInformer
 {
     void StartWatching();

@@ -1,18 +1,24 @@
 syntax = "proto3";
 import "destination.proto";
+import "common.proto";
+import "google/protobuf/empty.proto";
 
 package sail.api.v1;
 
-
 service ClusterService {
-  rpc StreamClusters(ClusterRequest) returns (stream ClusterItems) {
-  }
+  rpc List(google.protobuf.Empty)  returns (ListClusterResponse) {}
+  rpc Watch(google.protobuf.Empty) returns (stream WatchClusterResponse) {}
 }
 
-message ClusterRequest {}
+message EmptyClusterRequest {}
 
-message ClusterItems {
+message ListClusterResponse {
   repeated Cluster items = 1;
+}
+
+message WatchClusterResponse{
+  EventType event_type = 1;
+  Cluster cluster = 2;
 }
 
 message Cluster {

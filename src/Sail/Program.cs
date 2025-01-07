@@ -1,8 +1,9 @@
 using Sail.Apis;
 using Sail.Core.Management;
-using Sail.EntityFramework.Storage.Management;
+using Sail.Storage.MongoDB.Management;
 using Sail.Extensions;
 using Sail.Grpc;
+using Sail.Storage.MongoDB;
 using ServiceDefaults;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -31,5 +32,10 @@ app.MapGrpcService<ClusterGrpcService>();
 app.MapGrpcService<DestinationGrpcService>();
 app.MapGrpcService<CertificateGrpcService>();
 
-app.Run();
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<SailContext>();
+    await context.InitializeAsync();
+}
 
+await app.RunAsync();

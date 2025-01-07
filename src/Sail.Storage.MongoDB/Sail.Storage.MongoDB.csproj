@@ -11,7 +11,8 @@
   </ItemGroup>
 
   <ItemGroup>
-     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
+     <PackageReference Include="MongoDB.Driver" />
   </ItemGroup>
   
 </Project>
+        

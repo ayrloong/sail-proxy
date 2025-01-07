@@ -1,13 +1,12 @@
 using System.Collections.Immutable;
-using Google.Protobuf.WellKnownTypes;
+using System.Reactive.Linq;
 using Grpc.Core;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Sail.Api.V1;
 using Sail.Compass.Hosting;
 using Sail.Compass.Rate;
 
-namespace Sail.Compass.Client;
+namespace Sail.Compass.Informers;
 
 public abstract class ResourceInformer<TResource>(IHostApplicationLifetime hostApplicationLifetime, ILogger logger)
     : BackgroundHostedService(hostApplicationLifetime, logger), IResourceInformer<TResource> where TResource : class
@@ -16,7 +15,7 @@ public abstract class ResourceInformer<TResource>(IHostApplicationLifetime hostA
     private readonly SemaphoreSlim _ready = new(0);
     private readonly SemaphoreSlim _start = new(0);
     private ImmutableList<Registration> _registrations = ImmutableList<Registration>.Empty;
-    
+
     public override async Task RunAsync(CancellationToken cancellationToken)
     {
         try
@@ -25,27 +24,25 @@ public abstract class ResourceInformer<TResource>(IHostApplicationLifetime hostA
 
             var limiter = new Limiter(new Limit(0.2), 3);
 
-            var response = await RetrieveResourceAsync(cancellationToken);
-            var firstSync = true;
-            while (await response.MoveNext())
-            {
-                if (firstSync)
-                {
-                    _ready.Release();
-                    firstSync = false;
-                }
-                
-                InvokeRegistrationCallbacks(response.Current);
-                await limiter.WaitAsync(cancellationToken).ConfigureAwait(true);
-            }
-        } 
+            var list = GetObservable(false);
+            list.Subscribe(async item => { InvokeRegistrationCallbacks(item); },
+                error => { },
+                () => { _ready.Release(); });
+
+            var watch = GetObservable(true);
+            watch.Subscribe(async item => { InvokeRegistrationCallbacks(item); },
+                error => { });
+
+            await limiter.WaitAsync(cancellationToken).ConfigureAwait(true);
+
+        }
         catch (Exception error)
         {
 
         }
     }
-
-    private void InvokeRegistrationCallbacks(TResource resource)
+    
+    private void InvokeRegistrationCallbacks(ResourceEvent<TResource> resource)
     {
         List<Exception> innerExceptions = default;
         foreach (var registration in _registrations)
@@ -70,9 +67,9 @@ public abstract class ResourceInformer<TResource>(IHostApplicationLifetime hostA
             throw new AggregateException("One or more exceptions thrown by ResourceInformerCallback.", innerExceptions);
         }
     }
-    protected abstract Task<IAsyncStreamReader<TResource>> RetrieveResourceAsync(CancellationToken cancellationToken = default);
+
+    protected abstract IObservable<ResourceEvent<TResource>> GetObservable(bool watch);
     
- 
     public void StartWatching()
     {
         _start.Release();
@@ -82,8 +79,6 @@ public abstract class ResourceInformer<TResource>(IHostApplicationLifetime hostA
     {
         await _ready.WaitAsync(cancellationToken).ConfigureAwait(false);
         
-        // Release is called  after each WaitAsync because
-        // the semaphore is being used as a manual reset event
         _ready.Release();
     }
     

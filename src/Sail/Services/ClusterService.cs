@@ -1,70 +1,75 @@
 using ErrorOr;
-using Microsoft.EntityFrameworkCore;
 using Sail.Apis;
 using Sail.Core.Entities;
-using Sail.EntityFramework.Storage;
+using MongoDB.Driver;
+using Sail.Storage.MongoDB;
 
 namespace Sail.Services;
 
-public class ClusterService(ConfigurationContext context) : IClusterService
+public class ClusterService(SailContext context) : IClusterService
 {
-    public async Task<IEnumerable<ClusterVm>> GetAsync()
+    public async Task<IEnumerable<ClusterVm>> GetAsync(CancellationToken cancellationToken = default)
     {
-        var items = await context.Clusters.Include(x => x.Destinations).ToListAsync();
+        var filter = Builders<Cluster>.Filter.Empty;
+        var routes = await context.Clusters.FindAsync(filter, cancellationToken: cancellationToken);
+        var items = await routes.ToListAsync(cancellationToken: cancellationToken);
 
-        return items.Select(x => new ClusterVm
+        return items.Select(MapToClusterVm);
+    }
+
+    public async Task<ErrorOr<Created>> CreateAsync(ClusterRequest request,CancellationToken cancellationToken = default)
+    {
+        var cluster = new Cluster
         {
-            Id = x.Id,
-            Name = x.Name,
-            LoadBalancingPolicy = x.LoadBalancingPolicy,
-            Destinations = x.Destinations?.Select(d => new DestinationVm
+            Name = request.Name,
+            LoadBalancingPolicy = request.LoadBalancingPolicy,
+            Destinations = request.Destinations.Select(item => new Destination
             {
-                Id = d.Id,
+                Host = item.Host,
+                Address = item.Address,
+                Health = item.Health
+            }).ToList()
+        };
+        await context.Clusters.InsertOneAsync(cluster, cancellationToken: cancellationToken);
+        return Result.Created;
+    }
+
+    public async Task<ErrorOr<Updated>> UpdateAsync(Guid id, ClusterRequest request,CancellationToken cancellationToken = default)
+    {
+        var filter = Builders<Cluster>.Filter.And(Builders<Cluster>.Filter.Where(x => x.Id == id));
+        
+        var update = Builders<Cluster>.Update
+            .Set(x => x.Name,request.Name)
+            .Set(x => x.LoadBalancingPolicy, request.LoadBalancingPolicy)
+            .Set(x => x.UpdatedAt, DateTimeOffset.UtcNow);
+
+        await context.Clusters.FindOneAndUpdateAsync(filter, update, cancellationToken: cancellationToken);
+        return Result.Updated;
+    }
+
+    public async Task<ErrorOr<Deleted>> DeleteAsync(Guid id,CancellationToken cancellationToken = default)
+    {
+        var filter = Builders<Cluster>.Filter.And(Builders<Cluster>.Filter.Where(x => x.Id == id));
+        await context.Clusters.DeleteOneAsync(filter, cancellationToken);
+        return Result.Deleted;
+    }
+
+    private ClusterVm MapToClusterVm(Cluster cluster)
+    {
+        return new ClusterVm
+        {
+            Id = cluster.Id,
+            Name = cluster.Name,
+            LoadBalancingPolicy = cluster.LoadBalancingPolicy,
+            Destinations = cluster.Destinations?.Select(d => new DestinationVm
+            {
                 Host = d.Host,
                 Address = d.Address,
                 Health = d.Health
             }),
-            CreatedAt = x.CreatedAt,
-            UpdatedAt = x.UpdatedAt
-        });
-    }
-
-    public async Task<ErrorOr<Created>> CreateAsync(ClusterRequest request)
-    {
-       
-        await context.SaveChangesAsync();
-        return Result.Created;
-    }
-
-    public async Task<ErrorOr<Updated>> UpdateAsync(Guid id, ClusterRequest request)
-    {
-        var cluster = await context.Clusters.FindAsync(id);
-        if (cluster is null)
-        {
-            return Error.NotFound(description: "Cluster not found");
-        }
-
-        cluster.Name = request.Name;
-        cluster.LoadBalancingPolicy = request.LoadBalancingPolicy;
-   
-        cluster.UpdatedAt = DateTimeOffset.Now;
-        
-        context.Clusters.Update(cluster);
-        await context.SaveChangesAsync();
-        return Result.Updated;
-    }
-
-    public async Task<ErrorOr<Deleted>> DeleteAsync(Guid id)
-    {
-        var cluster = await context.Clusters.FindAsync(id);
-        if (cluster is null)
-        {
-            return Error.NotFound(description: "Cluster not found");
-        }
-
-        context.Clusters.Remove(cluster);
-        await context.SaveChangesAsync();
-        return Result.Deleted;
+            CreatedAt = cluster.CreatedAt,
+            UpdatedAt = cluster.UpdatedAt
+        };
     }
 }
 
@@ -80,7 +85,6 @@ public record ClusterVm
 
 public record DestinationVm
 {
-    public Guid Id { get; init; }
     public string Address { get; init; }
     public string? Health { get; init; }
     public string? Host { get; init; }
