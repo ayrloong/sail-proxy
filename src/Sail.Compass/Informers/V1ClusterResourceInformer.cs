@@ -21,7 +21,7 @@ public class V1ClusterResourceInformer(
 
     private IObservable<ResourceEvent<Cluster>> List()
     {
-        return Observable.Create<ResourceEvent<Cluster>>(async (observer, cancellationToken) =>
+        return Observable.Create<ResourceEvent<Cluster>>((observer, cancellationToken) =>
         {
             var list = client.List(new Empty(), cancellationToken: cancellationToken);
             foreach (var item in list.Items)
@@ -33,9 +33,10 @@ public class V1ClusterResourceInformer(
             }
 
             observer.OnCompleted();
+            return Task.CompletedTask;
         });
     }
-    
+
     private IObservable<ResourceEvent<Cluster>> Watch()
     {
         return Observable.Create<ResourceEvent<Cluster>>(async (observer, cancellationToken) =>
@@ -44,7 +45,15 @@ public class V1ClusterResourceInformer(
             var watch = result.ResponseStream;
             await foreach (var current in watch.ReadAllAsync(cancellationToken: cancellationToken))
             {
-                var resource = current.Cluster.ToResourceEvent(EventType.Created);
+                var eventType = current.EventType switch
+                {
+                    Api.V1.EventType.Create => EventType.Created,
+                    Api.V1.EventType.Update => EventType.Updated,
+                    Api.V1.EventType.Delete => EventType.Deleted,
+                    _ => EventType.Unknown,
+                };
+
+                var resource = current.Cluster.ToResourceEvent(eventType);
                 observer.OnNext(resource!);
             }
         });

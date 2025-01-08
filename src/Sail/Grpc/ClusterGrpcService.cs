@@ -72,7 +72,6 @@ public class ClusterGrpcService(SailContext dbContext, IClusterStore clusterStor
 
     private static ClusterResponse MapToClusterResponse(Cluster cluster)
     {
-
         return new ClusterResponse
         {
             ClusterId = cluster.Id.ToString(),

@@ -1,6 +1,4 @@
 using System.Collections.Immutable;
-using System.Reactive.Linq;
-using Grpc.Core;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Sail.Compass.Hosting;
@@ -25,12 +23,12 @@ public abstract class ResourceInformer<TResource>(IHostApplicationLifetime hostA
             var limiter = new Limiter(new Limit(0.2), 3);
 
             var list = GetObservable(false);
-            list.Subscribe(async item => { InvokeRegistrationCallbacks(item); },
+            list.Subscribe(InvokeRegistrationCallbacks,
                 error => { },
                 () => { _ready.Release(); });
 
             var watch = GetObservable(true);
-            watch.Subscribe(async item => { InvokeRegistrationCallbacks(item); },
+            watch.Subscribe(InvokeRegistrationCallbacks,
                 error => { });
 
             await limiter.WaitAsync(cancellationToken).ConfigureAwait(true);
@@ -38,10 +36,9 @@ public abstract class ResourceInformer<TResource>(IHostApplicationLifetime hostA
         }
         catch (Exception error)
         {
-
         }
     }
-    
+
     private void InvokeRegistrationCallbacks(ResourceEvent<TResource> resource)
     {
         List<Exception> innerExceptions = default;
@@ -55,7 +52,7 @@ public abstract class ResourceInformer<TResource>(IHostApplicationLifetime hostA
             {
                 if (innerExceptions is null)
                 {
-                    innerExceptions = new List<Exception>();
+                    innerExceptions = [];
                 }
 
                 innerExceptions.Add(innerException);

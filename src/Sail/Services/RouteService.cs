@@ -23,9 +23,7 @@ public class RouteService(SailContext context) : IRouteService
         var route = new Route
         {
             Name = request.Name,
-          
         };
-        
         await context.Routes.InsertOneAsync(route, cancellationToken: cancellationToken);
         return Result.Created;
     }
@@ -59,13 +57,11 @@ public class RouteService(SailContext context) : IRouteService
             Name = route.Name,
             Match = new RouteMatchVm
             {
-                Id = route.Match.Id,
                 Path = route.Match.Path,
                 Hosts = route.Match.Hosts,
                 Methods = route.Match.Methods,
                 Headers = route.Match.Headers.Select(h => new RouteHeaderVm
                 {
-                    Id = h.Id,
                     Name = h.Name,
                     Mode = h.Mode,
                     Values = h.Values,
@@ -73,8 +69,7 @@ public class RouteService(SailContext context) : IRouteService
 
                 }),
                 QueryParameters = route.Match.QueryParameters.Select(q => new RouteQueryParameterVm
-                {
-                    Id = q.Id,
+                {  
                     Name = q.Name,
                     Mode = q.Mode,
                     Values = q.Values,
@@ -113,7 +108,6 @@ public record RouteVm
 
 public record RouteMatchVm
 {
-    public Guid Id { get; init; }
     public List<string> Methods { get; init; }
     public List<string> Hosts { get; init; }
     public IEnumerable<RouteHeaderVm> Headers  { get; init; }
@@ -123,7 +117,6 @@ public record RouteMatchVm
 
 public record RouteHeaderVm
 {
-    public Guid Id { get; init; }
     public string Name { get; init; }
     public List<string> Values { get; init; }
     public HeaderMatchMode Mode { get; init; }
@@ -132,7 +125,6 @@ public record RouteHeaderVm
 
 public class RouteQueryParameterVm
 {
-    public Guid Id { get; init; }
     public string Name { get; init; }
     public List<string> Values { get; init; }
     public QueryParameterMatchMode Mode { get; init; }
