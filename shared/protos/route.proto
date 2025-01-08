@@ -10,8 +10,6 @@ service RouteService {
   rpc Watch(google.protobuf.Empty) returns (stream WatchRouteResponse) {}
 }
 
-message EmptyRouteRequest {}
-
 message ListRouteResponse {
   repeated Route items = 1;
 }

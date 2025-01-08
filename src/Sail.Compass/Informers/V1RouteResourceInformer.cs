@@ -20,7 +20,7 @@ public class V1RouteResourceInformer(
 
     private IObservable<ResourceEvent<Route>> List()
     {
-        return Observable.Create<ResourceEvent<Route>>(async (observer, cancellationToken) =>
+        return Observable.Create<ResourceEvent<Route>>((observer, cancellationToken) =>
         {
             var list = client.List(new Empty(), cancellationToken: cancellationToken);
             foreach (var item in list.Items)
@@ -32,6 +32,7 @@ public class V1RouteResourceInformer(
             }
 
             observer.OnCompleted();
+            return Task.CompletedTask;
         });
     }
 
@@ -43,7 +44,15 @@ public class V1RouteResourceInformer(
             var watch = result.ResponseStream;
             await foreach (var current in watch.ReadAllAsync(cancellationToken: cancellationToken))
             {
-                var resource = current.Route.ToResourceEvent(EventType.Created);
+                var eventType = current.EventType switch
+                {
+                    Api.V1.EventType.Create => EventType.Created,
+                    Api.V1.EventType.Update => EventType.Updated,
+                    Api.V1.EventType.Delete => EventType.Deleted,
+                    _ => EventType.Unknown,
+                };
+                
+                var resource = current.Route.ToResourceEvent(eventType);
                 observer.OnNext(resource!);
             }
         });

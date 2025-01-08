@@ -36,7 +36,7 @@ public class ProxyDiscoveryService : BackgroundHostedService
         _reconciler = reconciler;
         _registrations = registrations;
         _registrationsReady = false;
-        
+
         routeInformer.StartWatching();
         clusterInformer.StartWatching();
         _queue = new ProcessingRateLimitedQueue<QueueItem>(perSecond: 0.5, burst: 1);
@@ -63,7 +63,6 @@ public class ProxyDiscoveryService : BackgroundHostedService
 
             try
             {
-                Console.WriteLine("Proxy discovery");
                 await _reconciler.ProcessAsync(cancellationToken).ConfigureAwait(false);
             }
             catch
@@ -80,11 +79,13 @@ public class ProxyDiscoveryService : BackgroundHostedService
 
     private void Notification(ResourceEvent<Route> resource)
     {
+        _cache.UpdateRoute(resource);
         NotificationChanged();
     }
 
     private void Notification(ResourceEvent<Cluster> resource)
     {
+        _cache.UpdateCluster(resource);
         NotificationChanged();
     }
 

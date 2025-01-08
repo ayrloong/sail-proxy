@@ -1,17 +1,23 @@
 syntax = "proto3";
+import "common.proto";
+import "google/protobuf/empty.proto";
 
 package sail.api.v1;
 
 service CertificateService {
-  rpc StreamCertificates(CertificateRequest) returns (stream CertificateItems) {
-  }
-  
+  rpc List(google.protobuf.Empty) returns (ListCertificateResponse) {}
+  rpc Watch(google.protobuf.Empty) returns (stream WatchCertificateResponse) {}
 }
-message CertificateItems{
+
+message WatchCertificateResponse{
+  EventType event_type = 1;
+  Certificate certificate = 2;
+}
+
+message ListCertificateResponse{
   repeated Certificate items = 1;
 }
-message CertificateRequest{}
- 
+
 message Certificate {
   repeated string hosts = 1;
   string certificate_id = 2;

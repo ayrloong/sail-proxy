@@ -10,8 +10,6 @@ service ClusterService {
   rpc Watch(google.protobuf.Empty) returns (stream WatchClusterResponse) {}
 }
 
-message EmptyClusterRequest {}
-
 message ListClusterResponse {
   repeated Cluster items = 1;
 }

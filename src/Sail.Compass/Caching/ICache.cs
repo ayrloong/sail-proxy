@@ -1,11 +1,12 @@
 using Sail.Api.V1;
+using Sail.Compass.Informers;
 
 namespace Sail.Compass.Caching;
 
 public interface ICache
 {
-    void UpdateRoutes(IReadOnlyList<Route> routes);
-    void UpdateClusters(IReadOnlyList<Cluster> clusters);
+    void UpdateRoute(ResourceEvent<Route> resource);
+    void UpdateCluster(ResourceEvent<Cluster> resource);
     List<Route> GetRoutes();
     List<Cluster> GetClusters();
 }

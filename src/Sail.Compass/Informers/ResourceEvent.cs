@@ -1,17 +1,10 @@
 namespace Sail.Compass.Informers;
 
-public struct ResourceEvent<TResource>
+public readonly struct ResourceEvent<TResource>(EventType eventType, TResource value, TResource oldValue = default!)
 {
-    public ResourceEvent(EventType eventType, TResource value, TResource oldValue = default)
-    {
-        EventType = eventType;
-        Value = value;
-        OldValue = oldValue;
-    }
-
-    public EventType EventType { get; }
-    public TResource OldValue { get; }
-    public TResource Value { get; }
+    public EventType EventType { get; } = eventType;
+    public TResource OldValue { get; } = oldValue;
+    public TResource Value { get; } = value;
 }
 
 public enum EventType

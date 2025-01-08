@@ -1,44 +1,76 @@
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
-using MongoDB.Bson;
 using MongoDB.Driver;
 using Sail.Api.V1;
 using Sail.Core.Stores;
 using Sail.Storage.MongoDB;
+using Sail.Storage.MongoDB.Extensions;
 using Certificate = Sail.Core.Entities.Certificate;
 using CertificateResponse = Sail.Api.V1.Certificate;
 
 namespace Sail.Grpc;
 
-public class CertificateGrpcService(SailContext dbContext,ICertificateStore certificateStore)
+public class CertificateGrpcService(SailContext dbContext, ICertificateStore certificateStore)
     : CertificateService.CertificateServiceBase
 {
-    public override async Task StreamCertificates(CertificateRequest request,
-        IServerStreamWriter<CertificateItems> responseStream, ServerCallContext context)
+    public override async Task<ListCertificateResponse> List(Empty request, ServerCallContext context)
     {
+        var certifications = await certificateStore.GetAsync(CancellationToken.None);
+        var response = MapToCertificateItemsResponse(certifications);
+        return response;
+    }
+
+    public override async Task Watch(Empty request, IServerStreamWriter<WatchCertificateResponse> responseStream,
+        ServerCallContext context)
+    {
+        var options = new ChangeStreamOptions
+        {
+            FullDocument = ChangeStreamFullDocumentOption.Default,
+            FullDocumentBeforeChange = ChangeStreamFullDocumentBeforeChangeOption.Required
+        };
+
         while (!context.CancellationToken.IsCancellationRequested)
         {
-            
-            
-            var certifications = await certificateStore.GetAsync(CancellationToken.None);
-            var response = MapToDiscoveryResponse(certifications);
+            var watch = await dbContext.Certificates.WatchAsync(options);
 
-            await responseStream.WriteAsync(response);
+            await foreach (var changeStreamDocument in watch.ToAsyncEnumerable())
+            {
+                var document = changeStreamDocument.FullDocument;
+                if (changeStreamDocument.OperationType == ChangeStreamOperationType.Delete)
+                {
+                    document = changeStreamDocument.FullDocumentBeforeChange;
+                }
+
+                var eventType = changeStreamDocument.OperationType switch
+                {
+                    ChangeStreamOperationType.Create => EventType.Create,
+                    ChangeStreamOperationType.Update => EventType.Update,
+                    ChangeStreamOperationType.Delete => EventType.Delete,
+                    _ => EventType.Unknown
+                };
+                var certificate = MapToCertificateResponse(document);
+                var response = new WatchCertificateResponse
+                {
+                    Certificate = certificate,
+                    EventType = eventType
+                };
+                await responseStream.WriteAsync(response);
+            }
         }
     }
 
-    private static CertificateItems MapToDiscoveryResponse(List<Certificate> certificates)
+    private static ListCertificateResponse MapToCertificateItemsResponse(List<Certificate> certificates)
     {
         var items = certificates.Select(MapToCertificateResponse);
-       
-        var response = new CertificateItems
-        { 
+
+        var response = new ListCertificateResponse
+        {
             Items = { items }
         };
         return response;
     }
 
-    private static  CertificateResponse MapToCertificateResponse(Certificate certificate)
+    private static CertificateResponse MapToCertificateResponse(Certificate certificate)
     {
         return new CertificateResponse
         {

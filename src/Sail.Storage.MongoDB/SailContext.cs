@@ -5,6 +5,7 @@ using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Driver;
 using Sail.Core.Entities;
+using Sail.Core.Options;
 
 namespace Sail.Storage.MongoDB;
 
@@ -12,11 +13,10 @@ public class SailContext
 {
     private readonly IMongoDatabase _database;
 
-    public SailContext()
+    public SailContext(IOptions<DatabaseOptions> options)
     {
-        var client = new MongoClient(
-            "mongodb://127.0.0.1:27017/");
-        _database = client.GetDatabase("sail");
+        var client = new MongoClient(options.Value.ConnectionString);
+        _database = client.GetDatabase(options.Value.DatabaseName);
     }
 
     static SailContext()

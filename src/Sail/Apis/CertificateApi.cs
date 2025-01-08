@@ -26,14 +26,14 @@ public static class CertificateApi
         Guid certificateId,
         CancellationToken cancellationToken)
     {
-        var items = await service.GetSNIsAsync(certificateId);
+        var items = await service.GetSNIsAsync(certificateId, cancellationToken);
         return TypedResults.Ok(items);
     }
 
     private static async Task<Results<Created, ProblemHttpResult>> CreateSNI(ICertificateService service,
-        Guid certificateId, SNIRequest request)
+        Guid certificateId, SNIRequest request, CancellationToken cancellationToken)
     {
-        var result = await service.CreateSNIAsync(certificateId, request);
+        var result = await service.CreateSNIAsync(certificateId, request, cancellationToken);
 
         return result.Match<Results<Created, ProblemHttpResult>>(
             created => TypedResults.Created(string.Empty),
@@ -42,9 +42,9 @@ public static class CertificateApi
     }
 
     private static async Task<Results<Ok, ProblemHttpResult>> UpdateSNI(ICertificateService service, Guid certificateId,
-        Guid id, SNIRequest request)
+        Guid id, SNIRequest request, CancellationToken cancellationToken)
     {
-        var result = await service.UpdateSNIAsync(certificateId, id, request);
+        var result = await service.UpdateSNIAsync(certificateId, id, request, cancellationToken);
 
         return result.Match<Results<Ok, ProblemHttpResult>>(
             created => TypedResults.Ok(),
@@ -53,9 +53,9 @@ public static class CertificateApi
     }
 
     private static async Task<Results<Ok, ProblemHttpResult>> DeleteSNI(ICertificateService service, Guid certificateId,
-        Guid id)
+        Guid id, CancellationToken cancellationToken)
     {
-        var result = await service.DeleteSNIAsync(certificateId, id);
+        var result = await service.DeleteSNIAsync(certificateId, id, cancellationToken);
 
         return result.Match<Results<Ok, ProblemHttpResult>>(
             created => TypedResults.Ok(),
@@ -66,14 +66,14 @@ public static class CertificateApi
     private static async Task<Results<Ok<IEnumerable<CertificateVm>>, NotFound>> GetItems(ICertificateService service,
         CancellationToken cancellationToken)
     {
-        var items = await service.GetAsync();
+        var items = await service.GetAsync(cancellationToken);
         return TypedResults.Ok(items);
     }
 
     private static async Task<Results<Created, ProblemHttpResult>> Create(ICertificateService service,
-        CertificateRequest request)
+        CertificateRequest request, CancellationToken cancellationToken)
     {
-        var result = await service.CreateAsync(request);
+        var result = await service.CreateAsync(request, cancellationToken);
 
         return result.Match<Results<Created, ProblemHttpResult>>(
             created => TypedResults.Created(string.Empty),
@@ -82,9 +82,9 @@ public static class CertificateApi
     }
 
     private static async Task<Results<Ok, ProblemHttpResult>> Update(ICertificateService service, Guid id,
-        CertificateRequest request)
+        CertificateRequest request, CancellationToken cancellationToken)
     {
-        var result = await service.UpdateAsync(id, request);
+        var result = await service.UpdateAsync(id, request, cancellationToken);
 
         return result.Match<Results<Ok, ProblemHttpResult>>(
             created => TypedResults.Ok(),
@@ -92,9 +92,10 @@ public static class CertificateApi
         );
     }
 
-    private static async Task<Results<Ok, ProblemHttpResult>> Delete(ICertificateService service, Guid id)
+    private static async Task<Results<Ok, ProblemHttpResult>> Delete(ICertificateService service, Guid id,
+        CancellationToken cancellationToken)
     {
-        var result = await service.DeleteAsync(id);
+        var result = await service.DeleteAsync(id, cancellationToken);
 
         return result.Match<Results<Ok, ProblemHttpResult>>(
             created => TypedResults.Ok(),

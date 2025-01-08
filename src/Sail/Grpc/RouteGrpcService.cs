@@ -18,7 +18,6 @@ public class RouteGrpcService(SailContext dbContext,IRouteStore routeStore) : Ro
         var response = MapToRouteItemsResponse(clusters);
         return response;
     }
-
     
     public override async Task Watch(Empty request, IServerStreamWriter<WatchRouteResponse> responseStream,
         ServerCallContext context)
@@ -78,15 +77,13 @@ public class RouteGrpcService(SailContext dbContext,IRouteStore routeStore) : Ro
         return new RouteResponse
         {
             RouteId = route.Id.ToString(),
-            
-            /**
-             Order = route.Order,
-             CorsPolicy = route.CorsPolicy,
-             TimeoutPolicy = route.TimeoutPolicy,
-             AuthorizationPolicy = route.AuthorizationPolicy,
-             MaxRequestBodySize = route.MaxRequestBodySize ?? -1,
-             RateLimiterPolicy = route.RateLimiterPolicy,
-             **/
+            Match = new RouteMatch(),
+            Order = route.Order,
+            CorsPolicy = route.CorsPolicy,
+            TimeoutPolicy = route.TimeoutPolicy,
+            AuthorizationPolicy = route.AuthorizationPolicy,
+            MaxRequestBodySize = route.MaxRequestBodySize ?? -1,
+            RateLimiterPolicy = route.RateLimiterPolicy
         };
     }
 }
