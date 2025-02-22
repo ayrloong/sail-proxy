@@ -1,3 +1,4 @@
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Sail.Core.Options;
 using Sail.Services;
 
@@ -11,8 +12,8 @@ public static class Extensions
         services.AddOptions<DatabaseOptions>()
             .BindConfiguration(DatabaseOptions.Name);
 
-        services.AddTransient<IRouteService, RouteService>();
-        services.AddTransient<IClusterService, ClusterService>();
-        services.AddTransient<ICertificateService, CertificateService>();
+        services.TryAddScoped<IRouteService, RouteService>();
+        services.TryAddScoped<IClusterService, ClusterService>();
+        services.TryAddScoped<ICertificateService, CertificateService>();
     }
 }
