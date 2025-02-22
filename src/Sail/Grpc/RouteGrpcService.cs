@@ -8,9 +8,10 @@ using Sail.Storage.MongoDB.Extensions;
 using Route = Sail.Core.Entities.Route;
 using RouteResponse = Sail.Api.V1.Route;
 
+
 namespace Sail.Grpc;
 
-public class RouteGrpcService(SailContext dbContext,IRouteStore routeStore) : RouteService.RouteServiceBase
+public class RouteGrpcService(SailContext dbContext, IRouteStore routeStore) : RouteService.RouteServiceBase
 {
     public override async Task<ListRouteResponse> List(Empty request, ServerCallContext context)
     {
@@ -18,7 +19,7 @@ public class RouteGrpcService(SailContext dbContext,IRouteStore routeStore) : Ro
         var response = MapToRouteItemsResponse(clusters);
         return response;
     }
-    
+
     public override async Task Watch(Empty request, IServerStreamWriter<WatchRouteResponse> responseStream,
         ServerCallContext context)
     {
@@ -35,7 +36,7 @@ public class RouteGrpcService(SailContext dbContext,IRouteStore routeStore) : Ro
             await foreach (var changeStreamDocument in watch.ToAsyncEnumerable())
             {
                 var document = changeStreamDocument.FullDocument;
-                
+
                 if (changeStreamDocument.OperationType == ChangeStreamOperationType.Delete)
                 {
                     document = changeStreamDocument.FullDocumentBeforeChange;
@@ -52,7 +53,7 @@ public class RouteGrpcService(SailContext dbContext,IRouteStore routeStore) : Ro
 
                 var response = new WatchRouteResponse
                 {
-                    Route =  route,
+                    Route = route,
                     EventType = eventType
                 };
                 await responseStream.WriteAsync(response);
